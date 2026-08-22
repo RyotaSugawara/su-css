@@ -1,6 +1,6 @@
 {
   "name": "SuCSS - Classless CSS Framework",
-  "description": "素のHTMLタグだけで美しいデザインを実現する、Spindleライクな軽量クラスレスCSSフレームワーク",
+  "description": "素のHTMLタグだけで美しいデザインを実現する、モダンで軽量なクラスレスCSSフレームワーク",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

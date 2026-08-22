@@ -5,8 +5,8 @@ import { Playground } from './components/Playground';
 import { ThemeCustomizer, DEFAULT_THEME_CONFIG, ThemeConfig } from './components/ThemeCustomizer';
 import { AccessibilityChecker } from './components/AccessibilityChecker';
 import { DocsSection } from './components/DocsSection';
-import rawCssText from './lib/zencss.css?raw';
-import './lib/zencss.css';
+import rawCssText from './lib/sucss.css?raw';
+import './lib/sucss.css';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'showcase' | 'playground' | 'customizer' | 'a11y' | 'docs'>('showcase');

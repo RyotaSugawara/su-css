@@ -23,7 +23,7 @@ export const DocsSection: React.FC = () => {
 
 /* 必要に応じてCSS変数でブランドカラーを上書き */
 :root {
-  --hue: 158; /* Spindle グリーン */
+  --hue: 158; /* ブランドグリーン */
   --radius: 0.375rem;
 }`
     },

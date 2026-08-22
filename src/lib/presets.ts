@@ -37,7 +37,7 @@ export const HTML_PRESETS: HtmlPreset[] = [
   <p>設定ファイルを更新する場合は、<code>config.json</code>に以下を記述してください：</p>
 
   <pre><code>{
-  "name": "zencss",
+  "name": "sucss",
   "theme": "auto",
   "accessibility": {
     "contrastRatio": "WCAG_AA",
@@ -158,7 +158,7 @@ export const HTML_PRESETS: HtmlPreset[] = [
 
   <details open>
     <summary>クラス名をつけずにどうやって装飾していますか？</summary>
-    <p>ZenCSSは、<code>&lt;header&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;button&gt;</code>, <code>&lt;table&gt;</code> などのHTML標準タグに対して直接スタイルを適用します。これにより、クラス管理の手間をゼロにします。</p>
+    <p>SuCSSは、<code>&lt;header&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;button&gt;</code>, <code>&lt;table&gt;</code> などのHTML標準タグに対して直接スタイルを適用します。これにより、クラス管理の手間をゼロにします。</p>
   </details>
 
   <details>
