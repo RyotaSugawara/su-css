@@ -1,0 +1,880 @@
+/**
+ * SuCSS v1.0.0 (素のHTMLを使ったCSS)
+ * Zero-class, highly accessible, minimal classless CSS framework
+ * Powered by CSS custom properties with automatic light/dark mode support.
+ */
+
+/* --------------------------------------------------------------------------
+   1. CSS Custom Properties / Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  /* Color System - CyberAgent / Ameba Spindle Green Theme */
+  --hue: 158;
+  --sat: 90%;
+
+  --color-primary: hsl(var(--hue), var(--sat), 36%);
+  --color-primary-hover: hsl(var(--hue), var(--sat), 29%);
+  --color-primary-active: hsl(var(--hue), var(--sat), 24%);
+  --color-primary-subtle: hsl(var(--hue), 60%, 95%);
+  --color-primary-text: #ffffff;
+
+  /* Contextual Status Colors */
+  --color-success: #00a45e;
+  --color-warning: #e67e00;
+  --color-danger: #e53935;
+  --color-info: #0284c7;
+
+  /* Neutrals - Spindle Light Mode Defaults */
+  --bg-body: #f7f9fa;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f1f3f5;
+  --bg-input: #ffffff;
+
+  --text-main: #111827;
+  --text-muted: #4b5563;
+  --text-subtle: #6b7280;
+
+  --border-color: #e5e7eb;
+  --border-color-hover: #d1d5db;
+  --border-color-focus: hsl(var(--hue), var(--sat), 36%);
+
+  /* Typography - Japanese First (Spindle Standard) */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  
+  --base-size: 1rem;
+  --line-height: 1.6;
+  --heading-height: 1.25;
+
+  /* Layout & Geometry */
+  --max-width: 860px;
+  --radius: 0.375rem;
+  --radius-sm: 0.25rem;
+
+  /* Shadows - Crisp Spindle Style */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+
+  /* Accessibility & Focus Ring */
+  --focus-ring: 0 0 0 3px hsl(var(--hue), var(--sat), 82%);
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --touch-target: 44px;
+}
+
+/* Automatic Dark Mode based on system preference */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-body: #121820;
+    --bg-surface: #1c2431;
+    --bg-subtle: #253042;
+    --bg-input: #1c2431;
+
+    --text-main: #f9fafb;
+    --text-muted: #d1d5db;
+    --text-subtle: #9ca3af;
+
+    --border-color: #2e3a4e;
+    --border-color-hover: #40506a;
+    --border-color-focus: hsl(var(--hue), var(--sat), 55%);
+
+    --color-primary: hsl(var(--hue), var(--sat), 45%);
+    --color-primary-hover: hsl(var(--hue), var(--sat), 55%);
+    --color-primary-active: hsl(var(--hue), var(--sat), 60%);
+    --color-primary-subtle: rgba(0, 164, 94, 0.18);
+    --color-primary-text: #ffffff;
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+
+    --focus-ring: 0 0 0 3px rgba(0, 204, 117, 0.4);
+  }
+}
+
+/* Explicit Dark Theme */
+[data-theme="dark"] {
+  --bg-body: #121820;
+  --bg-surface: #1c2431;
+  --bg-subtle: #253042;
+  --bg-input: #1c2431;
+
+  --text-main: #f9fafb;
+  --text-muted: #d1d5db;
+  --text-subtle: #9ca3af;
+
+  --border-color: #2e3a4e;
+  --border-color-hover: #40506a;
+  --border-color-focus: hsl(var(--hue), var(--sat), 55%);
+
+  --color-primary: hsl(var(--hue), var(--sat), 45%);
+  --color-primary-hover: hsl(var(--hue), var(--sat), 55%);
+  --color-primary-active: hsl(var(--hue), var(--sat), 60%);
+  --color-primary-subtle: rgba(0, 164, 94, 0.18);
+  --color-primary-text: #ffffff;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+
+  --focus-ring: 0 0 0 3px rgba(0, 204, 117, 0.4);
+}
+
+/* Explicit Light Theme */
+[data-theme="light"] {
+  --bg-body: #f7f9fa;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f1f3f5;
+  --bg-input: #ffffff;
+
+  --text-main: #111827;
+  --text-muted: #4b5563;
+  --text-subtle: #6b7280;
+
+  --border-color: #e5e7eb;
+  --border-color-hover: #d1d5db;
+  --border-color-focus: hsl(var(--hue), var(--sat), 36%);
+
+  --color-primary: hsl(var(--hue), var(--sat), 36%);
+  --color-primary-hover: hsl(var(--hue), var(--sat), 29%);
+  --color-primary-active: hsl(var(--hue), var(--sat), 24%);
+  --color-primary-subtle: hsl(var(--hue), 60%, 95%);
+  --color-primary-text: #ffffff;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+
+  --focus-ring: 0 0 0 3px hsl(var(--hue), var(--sat), 82%);
+}
+
+/* --------------------------------------------------------------------------
+   2. Base Box Sizing & Document Setup
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-size: var(--base-size);
+  line-height: var(--line-height);
+  color: var(--text-main);
+  background-color: var(--bg-body);
+  color-scheme: light dark;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+}
+
+.zencss-container,
+main {
+  width: 100%;
+  max-width: var(--max-width, 960px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1.5rem 1rem 3rem 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Respect Reduced Motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Typography & Text Elements
+   -------------------------------------------------------------------------- */
+h1, h2, h3, h4, h5, h6 {
+  line-height: var(--heading-height);
+  color: var(--text-main);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+h1 { font-size: 2.25rem; }
+h2 { font-size: 1.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.4rem; }
+h3 { font-size: 1.35rem; }
+h4 { font-size: 1.15rem; }
+h5 { font-size: 1rem; }
+h6 { font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+
+p {
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+small {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+strong, b {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+em, i {
+  font-style: italic;
+}
+
+mark {
+  background-color: rgba(250, 204, 21, 0.3);
+  color: var(--text-main);
+  padding: 0.1em 0.3em;
+  border-radius: var(--radius-sm);
+}
+
+blockquote {
+  margin: 1.5rem 0;
+  padding: 0.85rem 1.25rem;
+  border-left: 4px solid var(--color-primary);
+  background-color: var(--bg-subtle);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+blockquote cite {
+  display: block;
+  font-style: normal;
+  font-size: 0.875rem;
+  color: var(--text-subtle);
+  margin-top: 0.5rem;
+}
+
+/* Links */
+a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition-fast);
+  border-radius: 2px;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+a:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Code & Keyboard */
+code, kbd, pre, samp {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+}
+
+code {
+  background-color: var(--bg-subtle);
+  color: var(--color-primary);
+  padding: 0.2em 0.4em;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+pre {
+  background-color: var(--bg-subtle);
+  color: var(--text-main);
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  line-height: 1.5;
+}
+
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: 0.9em;
+}
+
+kbd {
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color-hover);
+  border-radius: var(--radius-sm);
+  padding: 0.15em 0.45em;
+  font-size: 0.8em;
+  box-shadow: var(--shadow-sm);
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 2rem 0;
+}
+
+/* Lists */
+ul, ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+li {
+  margin-bottom: 0.35rem;
+}
+
+ul ul, ol ol, ul ol, ol ul {
+  margin-bottom: 0;
+  margin-top: 0.35rem;
+}
+
+dl {
+  margin-bottom: 1.5rem;
+}
+
+dt {
+  font-weight: 600;
+  color: var(--text-main);
+  margin-top: 0.75rem;
+}
+
+dd {
+  margin-left: 1.25rem;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   4. Buttons & Interactive Controls
+   -------------------------------------------------------------------------- */
+button,
+input[type="submit"],
+input[type="button"],
+input[type="reset"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: var(--touch-target);
+  padding: 0.6rem 1.25rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-primary-text);
+  background-color: var(--color-primary);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform 100ms ease;
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+  white-space: nowrap;
+}
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+input[type="reset"]:hover {
+  background-color: var(--color-primary-hover);
+}
+
+button:active,
+input[type="submit"]:active,
+input[type="button"]:active,
+input[type="reset"]:active {
+  background-color: var(--color-primary-active);
+  transform: translateY(1px);
+}
+
+button:focus-visible,
+input[type="submit"]:focus-visible,
+input[type="button"]:focus-visible,
+input[type="reset"]:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+button:disabled,
+input[type="submit"]:disabled,
+input[type="button"]:disabled,
+input[type="reset"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Secondary Button variant via attribute (e.g. type="reset" or data-secondary) */
+button[type="reset"],
+input[type="reset"],
+button[data-secondary="true"] {
+  background-color: var(--bg-subtle);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+button[type="reset"]:hover,
+input[type="reset"]:hover,
+button[data-secondary="true"]:hover {
+  background-color: var(--border-color);
+}
+
+/* --------------------------------------------------------------------------
+   5. Forms & Inputs
+   -------------------------------------------------------------------------- */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+fieldset {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  background-color: var(--bg-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+legend {
+  font-weight: 600;
+  padding: 0 0.5rem;
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="date"],
+input[type="time"],
+select,
+textarea {
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: 0.6rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+textarea {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+input:hover, select:hover, textarea:hover {
+  border-color: var(--border-color-hover);
+}
+
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: none;
+  border-color: var(--border-color-focus);
+  box-shadow: var(--focus-ring);
+}
+
+input:disabled, select:disabled, textarea:disabled {
+  background-color: var(--bg-subtle);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+::placeholder {
+  color: var(--text-subtle);
+  opacity: 0.8;
+}
+
+/* Checkboxes & Radio Buttons */
+label:has(input[type="checkbox"]),
+label:has(input[type="radio"]) {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  min-height: auto;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Switch styling for input[type="checkbox"][role="switch"] */
+input[type="checkbox"][role="switch"] {
+  appearance: none;
+  width: 2.5rem;
+  height: 1.35rem;
+  background-color: var(--border-color);
+  border-radius: 1rem;
+  position: relative;
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+input[type="checkbox"][role="switch"]::after {
+  content: "";
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: transform var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+input[type="checkbox"][role="switch"]:checked {
+  background-color: var(--color-primary);
+}
+
+input[type="checkbox"][role="switch"]:checked::after {
+  transform: translateX(1.15rem);
+}
+
+/* Range Input */
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* Progress & Meter */
+progress, meter {
+  width: 100%;
+  height: 0.75rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: none;
+  background-color: var(--bg-subtle);
+}
+
+progress::-webkit-progress-bar {
+  background-color: var(--bg-subtle);
+}
+
+progress::-webkit-progress-value {
+  background-color: var(--color-primary);
+  border-radius: 1rem;
+  transition: width 300ms ease;
+}
+
+progress::-moz-progress-bar {
+  background-color: var(--color-primary);
+  border-radius: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   6. Semantic Containers & Layout Cards
+   -------------------------------------------------------------------------- */
+article, aside, section {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+}
+
+article:last-child, aside:last-child, section:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive Grid layout helper for semantic structures */
+main > section:has(> article + article),
+section:has(> article + article),
+section:has(> aside),
+section[data-grid],
+div[data-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  border: none;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+[data-flex] {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+[data-badge] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  background-color: var(--color-primary-subtle);
+  color: var(--color-primary);
+  border: 1px solid var(--border-color);
+  line-height: 1.2;
+}
+
+/* Header & Navigation Bar */
+header {
+  position: relative;
+  width: 100%;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+}
+
+header > div[data-header-container] {
+  max-width: var(--max-width, 960px);
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+header nav[data-tabs] {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 0.25rem;
+  border-bottom: none;
+  margin-top: 0.25rem;
+}
+
+header nav[data-tabs] button,
+header nav[data-tabs] a {
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  min-height: auto;
+  box-shadow: none;
+}
+
+header nav[data-tabs] button:hover,
+header nav[data-tabs] a:hover {
+  color: var(--text-main);
+  background-color: var(--bg-subtle);
+}
+
+header nav[data-tabs] button[aria-current="page"],
+header nav[data-tabs] a[aria-current="page"] {
+  color: var(--color-primary);
+  background-color: var(--color-primary-subtle);
+  border-color: var(--border-color);
+}
+
+/* Footer */
+footer {
+  margin-top: auto;
+  padding: 1.5rem 1rem;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+  color: var(--text-subtle);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+footer > div[data-footer-container] {
+  max-width: var(--max-width, 960px);
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. Tables & Data Presentation
+   -------------------------------------------------------------------------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+  text-align: left;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  background-color: var(--bg-subtle);
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+tr:nth-child(even) td {
+  background-color: var(--bg-subtle);
+}
+
+tr:hover td {
+  background-color: var(--color-primary-subtle);
+}
+
+/* Horizontal scroll container for tables on small viewports */
+figure:has(> table) {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+figure figcaption {
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+  text-align: center;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   8. Accordion (<details>) & Modal (<dialog>)
+   -------------------------------------------------------------------------- */
+details {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 0.85rem 1.25rem;
+  background-color: var(--bg-surface);
+  margin-bottom: 1rem;
+  transition: background-color var(--transition-fast);
+}
+
+details[open] {
+  padding-bottom: 1.25rem;
+  background-color: var(--bg-surface);
+}
+
+summary {
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-main);
+  user-select: none;
+  list-style-position: inside;
+}
+
+summary:hover {
+  color: var(--color-primary);
+}
+
+summary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+details[open] summary {
+  margin-bottom: 0.75rem;
+  border-bottom: 1px dashed var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+/* Dialog / Modal */
+dialog {
+  margin: auto;
+  padding: 1.75rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  box-shadow: var(--shadow-lg);
+  max-width: 500px;
+  width: 90%;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
