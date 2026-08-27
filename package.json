@@ -1,14 +1,45 @@
 {
-  "name": "sucss",
-  "private": true,
+  "name": "su-css",
   "version": "1.0.0",
+  "description": "Zero-class, highly accessible classless CSS framework styled with pure semantic HTML.",
   "type": "module",
+  "license": "MIT",
+  "author": "Ryota Sugawara",
+  "homepage": "https://ryotasugawara.github.io/sucss/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RyotaSugawara/sucss.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RyotaSugawara/sucss/issues"
+  },
+  "keywords": [
+    "css",
+    "classless-css",
+    "css-framework",
+    "semantic-html",
+    "accessibility",
+    "dark-mode",
+    "a11y"
+  ],
+  "files": [
+    "dist"
+  ],
+  "main": "dist/sucss.css",
+  "style": "dist/sucss.css",
+  "exports": {
+    ".": "./dist/sucss.css",
+    "./sucss.css": "./dist/sucss.css",
+    "./sucss.min.css": "./dist/sucss.min.css",
+    "./package.json": "./package.json"
+  },
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
+    "build:pkg": "rm -rf dist && mkdir -p dist && cp src/lib/sucss.css dist/sucss.css && esbuild src/lib/sucss.css --minify --outfile=dist/sucss.min.css",
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"

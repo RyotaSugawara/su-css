@@ -53,6 +53,26 @@
 </html>
 ```
 
+### 2. CDN (jsDelivr) 経由での読み込み
+
+npm 公開後は、ビルド不要でCDNから直接読み込めます（バージョン固定URLを推奨）：
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/su-css@1.0.0/dist/sucss.css">
+```
+
+### 3. npm経由でのインストール
+
+```bash
+npm install su-css
+```
+
+```css
+@import "su-css/sucss.css";
+```
+
+> npm / jsDelivr への公開手順は [PUBLISHING.md](./PUBLISHING.md) を参照してください。
+
 ---
 
 ## 🛠️ ローカル開発・デモアプリの起動
