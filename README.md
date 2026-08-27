@@ -1,6 +1,11 @@
 # SuCSS (素のHTMLを使ったCSS)
 
+[![CI](https://github.com/RyotaSugawara/sucss/actions/workflows/ci.yml/badge.svg)](https://github.com/RyotaSugawara/sucss/actions/workflows/ci.yml)
+[![Deploy to GitHub Pages](https://github.com/RyotaSugawara/sucss/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/RyotaSugawara/sucss/actions/workflows/deploy-pages.yml)
+
 > クラス名や独自属性を一切書かずに、標準のHTMLタグだけで美しくモダンなデザインとダークモード・アクセシビリティを実現するクラスレスCSSフレームワーク。
+
+**🌐 デモサイト: https://ryotasugawara.github.io/sucss/**
 
 ---
 

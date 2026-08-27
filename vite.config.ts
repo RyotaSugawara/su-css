@@ -3,8 +3,11 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 
-export default defineConfig(() => {
+export default defineConfig(({command}) => {
   return {
+    // GitHub Pages serves this project from https://<user>.github.io/sucss/,
+    // so production assets must be referenced under the /sucss/ subpath.
+    base: command === 'build' ? '/sucss/' : '/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
