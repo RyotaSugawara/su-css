@@ -22,10 +22,10 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <header>
-      <div data-header-container>
+      <div>
         <nav>
           {/* Logo & Info */}
-          <div data-flex>
+          <div>
             <div
               style={{
                 display: 'inline-flex',
@@ -48,17 +48,16 @@ export const Header: React.FC<HeaderProps> = ({
             <h1 style={{ margin: 0, border: 0, padding: 0, fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               SuCSS
             </h1>
-            <span data-badge>v1.0 • 素のHTML</span>
+            <mark>v1.0 • 素のHTML</mark>
           </div>
 
           {/* Actions & Theme */}
-          <div data-flex>
+          <div>
             {/* Theme Toggle Buttons */}
-            <div data-flex style={{ gap: '0.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
               <button
                 type="button"
                 onClick={() => setTheme('light')}
-                data-secondary={theme !== 'light' ? 'true' : undefined}
                 aria-current={theme === 'light' ? 'true' : undefined}
                 title="ライトモード"
                 style={{ padding: '0.35rem 0.6rem', fontSize: '0.8rem' }}
@@ -68,7 +67,6 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 type="button"
                 onClick={() => setTheme('dark')}
-                data-secondary={theme !== 'dark' ? 'true' : undefined}
                 aria-current={theme === 'dark' ? 'true' : undefined}
                 title="ダークモード"
                 style={{ padding: '0.35rem 0.6rem', fontSize: '0.8rem' }}
@@ -78,7 +76,6 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 type="button"
                 onClick={() => setTheme('auto')}
-                data-secondary={theme !== 'auto' ? 'true' : undefined}
                 aria-current={theme === 'auto' ? 'true' : undefined}
                 title="システム設定"
                 style={{ padding: '0.35rem 0.6rem', fontSize: '0.8rem' }}
@@ -88,11 +85,10 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Actions */}
-            <div data-flex style={{ gap: '0.35rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <button
                 type="button"
                 onClick={onCopyCss}
-                data-secondary="true"
                 title="CSSをコピー"
                 style={{ padding: '0.35rem 0.65rem', fontSize: '0.8rem' }}
               >
@@ -100,7 +96,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>{copied ? 'コピー完了' : 'CSSコピー'}</span>
               </button>
               <button
-                type="button"
+                type="submit"
                 onClick={onDownloadCss}
                 title="CSSをダウンロード"
                 style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
@@ -113,7 +109,7 @@ export const Header: React.FC<HeaderProps> = ({
         </nav>
 
         {/* Tab Navigation */}
-        <nav data-tabs>
+        <nav>
           <button
             type="button"
             onClick={() => setActiveTab('showcase')}

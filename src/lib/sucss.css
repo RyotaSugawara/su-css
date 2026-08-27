@@ -179,7 +179,6 @@ body {
   color: var(--text-main);
 }
 
-.sucss-container,
 main {
   width: 100%;
   max-width: var(--max-width, 960px);
@@ -244,11 +243,21 @@ em, i {
   font-style: italic;
 }
 
-mark {
-  background-color: rgba(250, 204, 21, 0.3);
-  color: var(--text-main);
-  padding: 0.1em 0.3em;
-  border-radius: var(--radius-sm);
+mark,
+samp,
+output,
+[role="status"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  background-color: var(--color-primary-subtle);
+  color: var(--color-primary);
+  border: 1px solid var(--border-color);
+  line-height: 1.2;
 }
 
 blockquote {
@@ -432,18 +441,35 @@ input[type="reset"]:disabled {
   box-shadow: none;
 }
 
-/* Secondary Button variant via attribute (e.g. type="reset" or data-secondary) */
+/* Primary / Default Button */
+button,
+button[type="submit"],
+input[type="submit"] {
+  background-color: var(--color-primary);
+  color: var(--color-primary-text);
+  border-color: transparent;
+}
+
+button:hover,
+button[type="submit"]:hover,
+input[type="submit"]:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* Secondary / Action Button variants via standard type attribute (type="button" / type="reset") */
+button[type="button"],
 button[type="reset"],
-input[type="reset"],
-button[data-secondary="true"] {
+input[type="button"],
+input[type="reset"] {
   background-color: var(--bg-subtle);
   color: var(--text-main);
   border: 1px solid var(--border-color);
 }
 
+button[type="button"]:hover,
 button[type="reset"]:hover,
-input[type="reset"]:hover,
-button[data-secondary="true"]:hover {
+input[type="button"]:hover,
+input[type="reset"]:hover {
   background-color: var(--border-color);
 }
 
@@ -536,6 +562,7 @@ input:disabled, select:disabled, textarea:disabled {
 /* Checkboxes & Radio Buttons */
 label:has(input[type="checkbox"]),
 label:has(input[type="radio"]) {
+  display: flex;
   flex-direction: row;
   align-items: center;
   gap: 0.6rem;
@@ -547,42 +574,73 @@ input[type="checkbox"],
 input[type="radio"] {
   width: 1.2rem;
   height: 1.2rem;
-  min-height: auto;
+  min-width: 1.2rem;
+  min-height: 1.2rem;
+  max-width: 1.2rem;
+  max-height: 1.2rem;
+  flex-shrink: 0;
   accent-color: var(--color-primary);
   cursor: pointer;
   margin: 0;
 }
 
-/* Switch styling for input[type="checkbox"][role="switch"] */
-input[type="checkbox"][role="switch"] {
+/* Switch styling for input[type="checkbox"][role="switch"] and input[type="checkbox"][switch] */
+input[type="checkbox"][role="switch"],
+input[type="checkbox"][switch] {
   appearance: none;
+  -webkit-appearance: none;
   width: 2.5rem;
+  min-width: 2.5rem;
+  max-width: 2.5rem;
   height: 1.35rem;
+  min-height: 1.35rem;
+  max-height: 1.35rem;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
   background-color: var(--border-color);
-  border-radius: 1rem;
+  border-radius: 9999px;
   position: relative;
   transition: background-color var(--transition-fast);
   cursor: pointer;
+  border: none;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-input[type="checkbox"][role="switch"]::after {
+input[type="checkbox"][role="switch"]:focus-visible,
+input[type="checkbox"][switch]:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+input[type="checkbox"][role="switch"]::after,
+input[type="checkbox"][switch]::after {
   content: "";
   position: absolute;
   top: 0.125rem;
   left: 0.125rem;
   width: 1.1rem;
   height: 1.1rem;
+  min-width: 1.1rem;
+  min-height: 1.1rem;
+  max-width: 1.1rem;
+  max-height: 1.1rem;
   background-color: #ffffff;
   border-radius: 50%;
   transition: transform var(--transition-fast);
   box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
 }
 
-input[type="checkbox"][role="switch"]:checked {
+input[type="checkbox"][role="switch"]:checked,
+input[type="checkbox"][switch]:checked {
   background-color: var(--color-primary);
 }
 
-input[type="checkbox"][role="switch"]:checked::after {
+input[type="checkbox"][role="switch"]:checked::after,
+input[type="checkbox"][switch]:checked::after {
   transform: translateX(1.15rem);
 }
 
@@ -634,12 +692,12 @@ article:last-child, aside:last-child, section:last-child {
   margin-bottom: 0;
 }
 
-/* Responsive Grid layout helper for semantic structures */
+/* Responsive Grid layout for semantic structures */
 main > section:has(> article + article),
 section:has(> article + article),
-section:has(> aside),
-section[data-grid],
-div[data-grid] {
+section:has(> aside + article),
+section:has(> article + aside),
+section:has(> section + section) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.25rem;
@@ -647,27 +705,6 @@ div[data-grid] {
   background: transparent;
   padding: 0;
   box-shadow: none;
-}
-
-[data-flex] {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-[data-badge] {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 9999px;
-  background-color: var(--color-primary-subtle);
-  color: var(--color-primary);
-  border: 1px solid var(--border-color);
-  line-height: 1.2;
 }
 
 /* Header & Navigation Bar */
@@ -691,7 +728,8 @@ header {
   }
 }
 
-header > div[data-header-container] {
+header > div,
+footer > div {
   max-width: var(--max-width, 960px);
   width: 100%;
   margin-left: auto;
@@ -709,7 +747,19 @@ header nav {
   flex-wrap: wrap;
 }
 
-header nav[data-tabs] {
+header nav > div,
+header nav menu,
+footer > div > div {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Tab Navigation inside nav */
+header nav:last-child,
+nav:has(> button[aria-current]),
+nav:has(> a[aria-current]) {
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -720,8 +770,10 @@ header nav[data-tabs] {
   margin-top: 0.25rem;
 }
 
-header nav[data-tabs] button,
-header nav[data-tabs] a {
+header nav button,
+header nav a,
+nav:has(> button[aria-current]) button,
+nav:has(> a[aria-current]) a {
   background-color: transparent;
   color: var(--text-muted);
   border: 1px solid transparent;
@@ -733,14 +785,22 @@ header nav[data-tabs] a {
   box-shadow: none;
 }
 
-header nav[data-tabs] button:hover,
-header nav[data-tabs] a:hover {
+header nav button:hover,
+header nav a:hover,
+nav:has(> button[aria-current]) button:hover,
+nav:has(> a[aria-current]) a:hover {
   color: var(--text-main);
   background-color: var(--bg-subtle);
 }
 
-header nav[data-tabs] button[aria-current="page"],
-header nav[data-tabs] a[aria-current="page"] {
+header nav button[aria-current="page"],
+header nav button[aria-current="true"],
+header nav a[aria-current="page"],
+header nav a[aria-current="true"],
+nav:has(> button[aria-current]) button[aria-current="page"],
+nav:has(> button[aria-current]) button[aria-current="true"],
+nav:has(> a[aria-current]) a[aria-current="page"],
+nav:has(> a[aria-current]) a[aria-current="true"] {
   color: var(--color-primary);
   background-color: var(--color-primary-subtle);
   border-color: var(--border-color);
@@ -757,12 +817,8 @@ footer {
   text-align: center;
 }
 
-footer > div[data-footer-container] {
-  max-width: var(--max-width, 960px);
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
+footer > div {
+  flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;

@@ -104,12 +104,12 @@ export default function App() {
 
       {/* Footer */}
       <footer>
-        <div data-footer-container>
-          <div data-flex>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <strong>SuCSS</strong>
             <small>— 素のHTMLを使った高アクセシブル軽量クラスレスCSS</small>
           </div>
-          <div data-flex>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <small>ライセンス: MIT</small>
             <small>•</small>
             <small>ダークモード標準対応</small>

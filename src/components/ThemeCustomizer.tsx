@@ -79,17 +79,16 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ config, setCon
   };
 
   return (
-    <section data-grid style={{ margin: 0 }}>
+    <section style={{ margin: 0 }}>
       {/* Controls Form (Left Column) */}
       <article style={{ margin: 0 }}>
-        <div data-flex style={{ justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-          <h2 data-flex style={{ margin: 0, padding: 0, border: 0, fontSize: '1.15rem', gap: '0.35rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+          <h2 style={{ display: 'flex', alignItems: 'center', margin: 0, padding: 0, border: 0, fontSize: '1.15rem', gap: '0.35rem' }}>
             <Sliders size={20} /> CSS変数リアルタイム編集
           </h2>
           <button
             type="button"
             onClick={resetTheme}
-            data-secondary="true"
             style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', minHeight: 'auto' }}
           >
             <RotateCcw size={14} /> リセット
@@ -149,7 +148,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ config, setCon
               </select>
             </label>
 
-            <div data-grid>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
               <label>
                 <span>角丸 (--radius): {config.radius}rem</span>
                 <input
@@ -203,7 +202,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ config, setCon
           {/* Custom Colors */}
           <fieldset>
             <legend>背景色カスタマイズ</legend>
-            <div data-grid>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem' }}>
               <label>
                 <span>Light Body 背景色</span>
                 <input
@@ -246,8 +245,8 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ config, setCon
 
       {/* Generated CSS Snippet Output (Right Column) */}
       <article style={{ margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div data-flex style={{ justifyContent: 'space-between' }}>
-          <h3 data-flex style={{ margin: 0, gap: '0.35rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', margin: 0, gap: '0.35rem' }}>
             <Code size={20} /> 生成されたCSSコード
           </h3>
           <button
@@ -270,7 +269,7 @@ export const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ config, setCon
 
         {/* Live Card Sample */}
         <aside style={{ margin: 0 }}>
-          <strong data-flex style={{ gap: '0.35rem', marginBottom: '0.35rem' }}>
+          <strong style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.35rem' }}>
             <Eye size={16} /> プレビューカードサンプル
           </strong>
           <small>パラメータ変更に応じて、現在のページ全体およびカードの見た目が動的にリアルタイム反映されます。</small>

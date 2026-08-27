@@ -115,7 +115,7 @@ export const HTML_PRESETS: HtmlPreset[] = [
       <li>基本カスタマイズ</li>
       <li>コミュニティサポート</li>
     </ul>
-    <button data-secondary="true" style="width: 100%;">無料ではじめる</button>
+    <button type="reset" style="width: 100%;">無料ではじめる</button>
   </article>
 
   <article>
@@ -132,7 +132,7 @@ export const HTML_PRESETS: HtmlPreset[] = [
       <li>優先メールサポート</li>
       <li>ダークモード自動同期</li>
     </ul>
-    <button style="width: 100%;">プロにアップグレード</button>
+    <button type="submit" style="width: 100%;">プロにアップグレード</button>
   </article>
 
   <article>
@@ -145,7 +145,7 @@ export const HTML_PRESETS: HtmlPreset[] = [
       <li>SLA 99.9% 保証</li>
       <li>オンプレミス / 専用CDN</li>
     </ul>
-    <button data-secondary="true" style="width: 100%;">担当者に相談</button>
+    <button type="reset" style="width: 100%;">担当者に相談</button>
   </article>
 </section>`
   },

@@ -64,7 +64,7 @@ export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({ conf
     <article style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Overview Banner */}
       <section style={{ margin: 0 }}>
-        <div data-flex>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <ShieldCheck size={28} />
           <div>
             <h2 style={{ margin: 0, padding: 0, border: 0 }}>アクセシビリティ (a11y) 検証レポート</h2>
@@ -74,71 +74,71 @@ export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({ conf
       </section>
 
       {/* WCAG Contrast Ratio Live Calculators */}
-      <section data-grid style={{ margin: 0 }}>
+      <section style={{ margin: 0 }}>
         {/* Light Mode Contrast */}
         <article style={{ margin: 0 }}>
-          <div data-flex style={{ justifyContent: 'space-between', marginBottom: '1rem' }}>
-            <strong data-flex style={{ gap: '0.35rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <strong style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <Sun size={18} /> ライトモード コントラスト検証
             </strong>
-            <span data-badge>Light Mode</span>
+            <mark>Light Mode</mark>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <div data-flex style={{ justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <strong>本文テキスト vs 背景色</strong>
                 <br />
                 <small>コントラスト比: {ratioLightTextBg.toFixed(2)} : 1</small>
               </div>
-              <span data-badge style={{ opacity: 0.9 }}>
+              <mark style={{ opacity: 0.9 }}>
                 {statusLightTextBg.level}
-              </span>
+              </mark>
             </div>
 
-            <div data-flex style={{ justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <strong>プライマリボタン文字 vs ボタン背景</strong>
                 <br />
                 <small>コントラスト比: {ratioLightBtn.toFixed(2)} : 1</small>
               </div>
-              <span data-badge style={{ opacity: 0.9 }}>
+              <mark style={{ opacity: 0.9 }}>
                 {statusLightBtn.level}
-              </span>
+              </mark>
             </div>
           </div>
         </article>
 
         {/* Dark Mode Contrast */}
         <article style={{ margin: 0 }}>
-          <div data-flex style={{ justifyContent: 'space-between', marginBottom: '1rem' }}>
-            <strong data-flex style={{ gap: '0.35rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <strong style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <Moon size={18} /> ダークモード コントラスト検証
             </strong>
-            <span data-badge>Dark Mode</span>
+            <mark>Dark Mode</mark>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <div data-flex style={{ justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <strong>本文テキスト vs 背景色</strong>
                 <br />
                 <small>コントラスト比: {ratioDarkTextBg.toFixed(2)} : 1</small>
               </div>
-              <span data-badge style={{ opacity: 0.9 }}>
+              <mark style={{ opacity: 0.9 }}>
                 {statusDarkTextBg.level}
-              </span>
+              </mark>
             </div>
 
-            <div data-flex style={{ justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <strong>プライマリボタン文字 vs ボタン背景</strong>
                 <br />
                 <small>コントラスト比: {ratioDarkBtn.toFixed(2)} : 1</small>
               </div>
-              <span data-badge style={{ opacity: 0.9 }}>
+              <mark style={{ opacity: 0.9 }}>
                 {statusDarkBtn.level}
-              </span>
+              </mark>
             </div>
           </div>
         </article>
@@ -150,23 +150,23 @@ export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({ conf
           <Sparkles size={20} /> SuCSS に標準組み込み済みのアクセシビリティ仕様
         </h3>
 
-        <div data-grid>
+        <section style={{ margin: 0, padding: 0 }}>
           {a11yFeatures.map((item, idx) => {
             const Icon = item.icon;
             return (
               <article key={idx} style={{ margin: 0 }}>
-                <div data-flex style={{ justifyContent: 'space-between', marginBottom: '0.35rem' }}>
-                  <strong data-flex style={{ gap: '0.35rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                  <strong style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                     <Icon size={16} />
                     {item.title}
                   </strong>
-                  <span data-badge>{item.status}</span>
+                  <mark>{item.status}</mark>
                 </div>
                 <small>{item.description}</small>
               </article>
             );
           })}
-        </div>
+        </section>
       </section>
     </article>
   );

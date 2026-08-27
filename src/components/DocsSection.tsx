@@ -52,7 +52,7 @@ function setTheme(mode) {
     <article style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Intro */}
       <section style={{ margin: 0 }}>
-        <div data-flex style={{ marginBottom: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
           <BookOpen size={24} />
           <div>
             <h2 style={{ margin: 0, padding: 0, border: 0 }}>SuCSS 導入ガイド & ドキュメント</h2>
@@ -60,24 +60,23 @@ function setTheme(mode) {
           </div>
         </div>
         <p>
-          SuCSS（素のHTMLを使ったCSS）は、ユーティリティクラスやCSSモジュールを一切使用せず、純粋なHTML要素（<code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;button&gt;</code>, <code>&lt;input&gt;</code> 等）を書き進めるだけで、自動的に均整の取れたデザインとダークモード、アクセシビリティを提供するCSSライブラリです。
+          SuCSS（素のHTMLを使ったCSS）は、ユーティリティクラスやカスタム属性を一切使用せず、純粋なHTML要素（<code>&lt;header&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;button&gt;</code>, <code>&lt;input&gt;</code> 等）を書き進めるだけで、自動的に均整の取れたデザインとダークモード、アクセシビリティを提供するCSSライブラリです。
         </p>
       </section>
 
       {/* Code Snippets */}
       <section style={{ margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <h3 style={{ margin: 0, display: 'flex', items: 'center', gap: '0.5rem' }}>
+        <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <FileCode2 size={20} /> クイックスタート & コード例
         </h3>
 
         {snippets.map((item, idx) => (
           <article key={idx} style={{ margin: 0 }}>
-            <div data-flex style={{ justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
               <strong>{item.title}</strong>
               <button
                 type="button"
                 onClick={() => handleCopy(item.code, idx)}
-                data-secondary="true"
                 style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', minHeight: 'auto' }}
               >
                 {copiedIndex === idx ? <Check size={14} /> : <Copy size={14} />}
@@ -105,12 +104,12 @@ function setTheme(mode) {
 
           <dt>2. 自動グリッドレイアウト: <code>&lt;section&gt;</code> 内の <code>&lt;article&gt;</code></dt>
           <dd>
-            <code>&lt;section&gt;</code> 内に複数の <code>&lt;article&gt;</code> を並べると、画面幅に応じたCSS Gridレスポンシブカードとして自動変換されます。
+            <code>&lt;section&gt;</code> 内に複数の <code>&lt;article&gt;</code> を並べると、<code>:has()</code> セレクタにより画面幅に応じたCSS Gridレスポンシブカードとして自動配置されます。
           </dd>
 
-          <dt>3. サブボタン指定: <code>type="reset"</code> または <code>data-secondary="true"</code></dt>
+          <dt>3. ボタンの種類: <code>type="submit"</code> / <code>type="button"</code> / <code>type="reset"</code></dt>
           <dd>
-            控えめなボタンデザインにするには、<code>&lt;button data-secondary="true"&gt;</code> 属性を付与するだけで機能します。
+            主要な強調アクションには <code>&lt;button type="submit"&gt;</code>、通常ボタンには <code>&lt;button type="button"&gt;</code>、セカンダリ・リセットには <code>&lt;button type="reset"&gt;</code> を指定します。
           </dd>
         </dl>
       </section>

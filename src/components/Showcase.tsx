@@ -22,7 +22,7 @@ export const Showcase: React.FC<ShowcaseProps> = () => {
   return (
     <article style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', margin: 0 }}>
       {/* Category selector pill bar */}
-      <nav data-tabs style={{ marginBottom: '0.5rem' }}>
+      <nav style={{ marginBottom: '0.5rem' }}>
         {categories.map((cat) => {
           const Icon = cat.icon;
           const isActive = activeCategory === cat.id;
@@ -31,7 +31,6 @@ export const Showcase: React.FC<ShowcaseProps> = () => {
               key={cat.id}
               type="button"
               onClick={() => setActiveCategory(cat.id)}
-              data-secondary={!isActive ? 'true' : undefined}
               aria-current={isActive ? 'page' : undefined}
               style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.35rem 0.75rem', fontSize: '0.85rem' }}
             >
@@ -44,14 +43,14 @@ export const Showcase: React.FC<ShowcaseProps> = () => {
 
       {/* Banner message reminding zero classes */}
       <aside style={{ margin: 0 }}>
-        <div data-flex>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <Sparkles size={24} />
           <div>
-            <strong data-flex style={{ gap: '0.35rem', margin: 0 }}>
-              クラス名の指定は一切ありません
+            <strong style={{ margin: 0 }}>
+              クラス名・カスタム属性の指定は一切ありません
             </strong>
-            <small>
-              以下の要素はすべて<code>class</code>属性を一切使用せず、標準のHTMLタグ（<code>&lt;h1&gt;</code>, <code>&lt;button&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;table&gt;</code> 等）をそのまま書いてレンダリングしています。
+            <small style={{ display: 'block', marginTop: '0.25rem' }}>
+              以下の要素はすべて<code>class</code>属性やカスタム属性を一切使用せず、標準のHTMLタグ（<code>&lt;h1&gt;</code>, <code>&lt;button&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;table&gt;</code> 等）をそのまま書いてレンダリングしています。
             </small>
           </div>
         </div>
@@ -140,17 +139,17 @@ export const Showcase: React.FC<ShowcaseProps> = () => {
             <Code size={20} /> 2. ボタン & インタラクティブ要素
           </h2>
           <small style={{ display: 'block', marginBottom: '1rem' }}>
-            標準ボタン、サブセカンダリボタン、非活性状態、リンクスタイル
+            標準送信ボタン、標準ボタン、リセットボタン、非活性状態、リンクスタイル
           </small>
 
-          <div data-flex style={{ marginBottom: '1rem' }}>
-            <button type="button">プライマリボタン</button>
-            <button type="reset">セカンダリボタン (type="reset")</button>
-            <button type="button" data-secondary="true">サブボタン (data-secondary)</button>
-            <button type="button" disabled>無効化ボタン</button>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+            <button type="submit">送信ボタン (type="submit")</button>
+            <button type="button">標準ボタン (type="button")</button>
+            <button type="reset">リセットボタン (type="reset")</button>
+            <button type="button" disabled>無効化ボタン (disabled)</button>
           </div>
 
-          <div data-flex>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <a href="#link-demo">標準のハイパーリンク</a>
             <a href="https://example.com" target="_blank" rel="noreferrer">
               外部サイトへのリンク ↗
@@ -217,7 +216,7 @@ export const Showcase: React.FC<ShowcaseProps> = () => {
 
               <div>
                 <label style={{ fontWeight: 600, marginBottom: '0.35rem' }}>契約プランの選択（ラジオボタン）</label>
-                <div data-flex>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                   <label>
                     <input type="radio" name="plan" value="free" />
                     フリープラン
@@ -250,7 +249,7 @@ export const Showcase: React.FC<ShowcaseProps> = () => {
                 </label>
               </div>
 
-              <div data-flex style={{ marginTop: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
                 <button type="submit">送信する</button>
                 <button type="reset">クリア</button>
               </div>
@@ -273,7 +272,7 @@ export const Showcase: React.FC<ShowcaseProps> = () => {
           <header style={{ marginBottom: '1.25rem' }}>
             <nav>
               <strong>SuApp</strong>
-              <div data-flex>
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
                 <a href="#" aria-current="page">ホーム</a>
                 <a href="#">機能紹介</a>
                 <a href="#">料金</a>
@@ -283,7 +282,7 @@ export const Showcase: React.FC<ShowcaseProps> = () => {
           </header>
 
           {/* Automatic Card Grid via section > article */}
-          <section data-grid>
+          <section>
             <article>
               <h3>🚀 超軽量設計</h3>
               <p>圧縮後わずか3KB未満。外部ライブラリやJS依存関係は一切不要で、最速のページロードを実現します。</p>
@@ -396,7 +395,7 @@ export const Showcase: React.FC<ShowcaseProps> = () => {
             <dialog ref={dialogRef}>
               <h3>お知らせモーダル</h3>
               <p>標準の<code>&lt;dialog&gt;</code>要素です。背景のぼかし（backdrop-filter）やシャドウが綺麗に適用されています。</p>
-              <div data-flex style={{ justifyContent: 'flex-end', marginTop: '1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
                 <button type="button" onClick={() => dialogRef.current?.close()}>
                   閉じる
                 </button>
