@@ -12,11 +12,12 @@
   --hue: 158;
   --sat: 90%;
 
-  --color-primary: hsl(var(--hue), var(--sat), 36%);
-  --color-primary-hover: hsl(var(--hue), var(--sat), 29%);
-  --color-primary-active: hsl(var(--hue), var(--sat), 24%);
-  --color-primary-subtle: hsl(var(--hue), 60%, 95%);
-  --color-primary-text: #ffffff;
+  /* Lightness kept dark enough that white button/link text clears WCAG AA (4.5:1) */
+  --color-primary: hsl(var(--hue) var(--sat) 27%);
+  --color-primary-hover: hsl(var(--hue) var(--sat) 22%);
+  --color-primary-active: hsl(var(--hue) var(--sat) 18%);
+  --color-primary-subtle: hsl(var(--hue) 60% 95%);
+  --color-primary-text: #fff;
 
   /* Contextual Status Colors */
   --color-success: #00a45e;
@@ -26,9 +27,9 @@
 
   /* Neutrals - Light Mode Defaults */
   --bg-body: #f7f9fa;
-  --bg-surface: #ffffff;
+  --bg-surface: #fff;
   --bg-subtle: #f1f3f5;
-  --bg-input: #ffffff;
+  --bg-input: #fff;
 
   --text-main: #111827;
   --text-muted: #4b5563;
@@ -36,11 +37,11 @@
 
   --border-color: #e5e7eb;
   --border-color-hover: #d1d5db;
-  --border-color-focus: hsl(var(--hue), var(--sat), 36%);
+  --border-color-focus: hsl(var(--hue) var(--sat) 36%);
 
   /* Typography - Japanese First */
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: -apple-system, blinkmacsystemfont, "Segoe UI", roboto, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+  --font-mono: ui-monospace, sfmono-regular, menlo, monaco, consolas, "Liberation Mono", "Courier New", monospace;
   
   --base-size: 1rem;
   --line-height: 1.6;
@@ -52,12 +53,12 @@
   --radius-sm: 0.25rem;
 
   /* Shadows - Crisp Modern Style */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 4%);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 6%), 0 2px 4px -2px rgb(0 0 0 / 4%);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 7%), 0 4px 6px -4px rgb(0 0 0 / 3%);
 
   /* Accessibility & Focus Ring */
-  --focus-ring: 0 0 0 3px hsl(var(--hue), var(--sat), 82%);
+  --focus-ring: 0 0 0 3px hsl(var(--hue) var(--sat) 82%);
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --touch-target: 44px;
 }
@@ -76,19 +77,21 @@
 
     --border-color: #2e3a4e;
     --border-color-hover: #40506a;
-    --border-color-focus: hsl(var(--hue), var(--sat), 55%);
+    --border-color-focus: hsl(var(--hue) var(--sat) 55%);
 
-    --color-primary: hsl(var(--hue), var(--sat), 45%);
-    --color-primary-hover: hsl(var(--hue), var(--sat), 55%);
-    --color-primary-active: hsl(var(--hue), var(--sat), 60%);
-    --color-primary-subtle: rgba(0, 164, 94, 0.18);
-    --color-primary-text: #ffffff;
+    --color-primary: hsl(var(--hue) var(--sat) 45%);
+    --color-primary-hover: hsl(var(--hue) var(--sat) 55%);
+    --color-primary-active: hsl(var(--hue) var(--sat) 60%);
+    --color-primary-subtle: rgb(0 164 94 / 18%);
 
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    /* Primary is light in dark mode (for link/border contrast), so button text must be dark, not white, to clear WCAG AA (4.5:1) */
+    --color-primary-text: #121820;
 
-    --focus-ring: 0 0 0 3px rgba(0, 204, 117, 0.4);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 40%);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 50%);
+
+    --focus-ring: 0 0 0 3px rgb(0 204 117 / 40%);
   }
 }
 
@@ -105,27 +108,29 @@
 
   --border-color: #2e3a4e;
   --border-color-hover: #40506a;
-  --border-color-focus: hsl(var(--hue), var(--sat), 55%);
+  --border-color-focus: hsl(var(--hue) var(--sat) 55%);
 
-  --color-primary: hsl(var(--hue), var(--sat), 45%);
-  --color-primary-hover: hsl(var(--hue), var(--sat), 55%);
-  --color-primary-active: hsl(var(--hue), var(--sat), 60%);
-  --color-primary-subtle: rgba(0, 164, 94, 0.18);
-  --color-primary-text: #ffffff;
+  --color-primary: hsl(var(--hue) var(--sat) 45%);
+  --color-primary-hover: hsl(var(--hue) var(--sat) 55%);
+  --color-primary-active: hsl(var(--hue) var(--sat) 60%);
+  --color-primary-subtle: rgb(0 164 94 / 18%);
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  /* Primary is light in dark mode (for link/border contrast), so button text must be dark, not white, to clear WCAG AA (4.5:1) */
+  --color-primary-text: #121820;
 
-  --focus-ring: 0 0 0 3px rgba(0, 204, 117, 0.4);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 40%);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 50%);
+
+  --focus-ring: 0 0 0 3px rgb(0 204 117 / 40%);
 }
 
 /* Explicit Light Theme */
 [data-theme="light"] {
   --bg-body: #f7f9fa;
-  --bg-surface: #ffffff;
+  --bg-surface: #fff;
   --bg-subtle: #f1f3f5;
-  --bg-input: #ffffff;
+  --bg-input: #fff;
 
   --text-main: #111827;
   --text-muted: #4b5563;
@@ -133,19 +138,19 @@
 
   --border-color: #e5e7eb;
   --border-color-hover: #d1d5db;
-  --border-color-focus: hsl(var(--hue), var(--sat), 36%);
+  --border-color-focus: hsl(var(--hue) var(--sat) 36%);
 
-  --color-primary: hsl(var(--hue), var(--sat), 36%);
-  --color-primary-hover: hsl(var(--hue), var(--sat), 29%);
-  --color-primary-active: hsl(var(--hue), var(--sat), 24%);
-  --color-primary-subtle: hsl(var(--hue), 60%, 95%);
-  --color-primary-text: #ffffff;
+  --color-primary: hsl(var(--hue) var(--sat) 27%);
+  --color-primary-hover: hsl(var(--hue) var(--sat) 22%);
+  --color-primary-active: hsl(var(--hue) var(--sat) 18%);
+  --color-primary-subtle: hsl(var(--hue) 60% 95%);
+  --color-primary-text: #fff;
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 4%);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 6%), 0 2px 4px -2px rgb(0 0 0 / 4%);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 7%), 0 4px 6px -4px rgb(0 0 0 / 3%);
 
-  --focus-ring: 0 0 0 3px hsl(var(--hue), var(--sat), 82%);
+  --focus-ring: 0 0 0 3px hsl(var(--hue) var(--sat) 82%);
 }
 
 /* --------------------------------------------------------------------------
@@ -184,7 +189,7 @@ main {
   max-width: var(--max-width, 960px);
   margin-left: auto;
   margin-right: auto;
-  padding: 1.5rem 1rem 3rem 1rem;
+  padding: 1.5rem 1rem 3rem;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -214,11 +219,23 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 { font-size: 2.25rem; }
-h2 { font-size: 1.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.4rem; }
+
+h2 {
+  font-size: 1.75rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.4rem;
+}
+
 h3 { font-size: 1.35rem; }
 h4 { font-size: 1.15rem; }
 h5 { font-size: 1rem; }
-h6 { font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+
+h6 {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
 
 p {
   margin-bottom: 1rem;
@@ -627,7 +644,7 @@ input[type="checkbox"][switch]::after {
   min-height: 1.1rem;
   max-width: 1.1rem;
   max-height: 1.1rem;
-  background-color: #ffffff;
+  background-color: #fff;
   border-radius: 50%;
   transition: transform var(--transition-fast);
   box-shadow: var(--shadow-sm);
@@ -818,8 +835,7 @@ footer {
 }
 
 footer > div {
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -931,6 +947,6 @@ dialog {
 }
 
 dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgb(0 0 0 / 50%);
   backdrop-filter: blur(4px);
 }

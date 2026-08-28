@@ -70,6 +70,23 @@ npm run dev
 npm run build
 ```
 
+### 品質チェック
+
+```bash
+# TypeScript型チェック + CSSリント (Stylelint)
+npm run lint
+
+# CSSリントのみ (--fixで自動修正)
+npm run lint:css
+npm run lint:css:fix
+
+# テスト実行 (colorUtilsの単体テスト、sucss.cssのコントラスト比・構造テスト)
+npm run test
+npm run test:watch
+```
+
+`tests/css/contrast.test.ts` は `src/lib/sucss.css` のCSSカスタムプロパティ（トークン）を実際にパースし、ライト/ダークの各テーマでWCAG AA (4.5:1) を満たしているかを検証します。`tests/css/structure.test.ts` は `prefers-reduced-motion` 対応や `:focus-visible` の存在、タッチターゲットサイズなど、README冒頭で謳っているアクセシビリティ要件をCSS構造として検証します。
+
 ---
 
 ## 📄 ライセンス
