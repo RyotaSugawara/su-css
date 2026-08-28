@@ -11,7 +11,12 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "npm run lint:ts && npm run lint:css",
+    "lint:ts": "tsc --noEmit",
+    "lint:css": "stylelint \"src/**/*.css\"",
+    "lint:css:fix": "stylelint \"src/**/*.css\" --fix",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -26,9 +31,13 @@
     "@types/react-dom": "^19.2.5",
     "autoprefixer": "^10.5.4",
     "esbuild": "^0.28.2",
+    "postcss": "^8.5.26",
+    "stylelint": "^16.26.1",
+    "stylelint-config-standard": "^38.0.0",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2",
-    "vite": "^8.2.2"
+    "vite": "^8.2.2",
+    "vitest": "^3.2.7"
   }
 }
