@@ -5,9 +5,9 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(({command}) => {
   return {
-    // GitHub Pages serves this project from https://<user>.github.io/sucss/,
-    // so production assets must be referenced under the /sucss/ subpath.
-    base: command === 'build' ? '/sucss/' : '/',
+    // GitHub Pages serves this project from https://<user>.github.io/su-css/,
+    // so production assets must be referenced under the /su-css/ subpath.
+    base: command === 'build' ? '/su-css/' : '/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
