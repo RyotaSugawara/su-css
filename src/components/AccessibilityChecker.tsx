@@ -1,45 +1,26 @@
 import React from 'react';
 import { ShieldCheck, MousePointer, Eye, CheckCircle2, Sun, Moon, Sparkles } from 'lucide-react';
 import { ThemeConfig } from './ThemeCustomizer';
-import type { DesignStyle } from '../App';
 import { getContrastRatio, getWcagLevel, hexToRgb, hslToRgb } from '../lib/colorUtils';
 
 interface AccessibilityCheckerProps {
   config: ThemeConfig;
   theme: 'auto' | 'light' | 'dark';
-  designStyle: DesignStyle;
 }
 
-// Glass 2.0's own tokens (mirrors src/lib/themes/glassmorphism.css :root).
-// The ThemeCustomizer only edits Classic's tokens, so Glass ignores it and
-// this checker needs its own fixed values to report real numbers.
-const GLASS_TOKENS = {
-  hue: 262,
-  sat: 85,
-  lightLightness: 44,
-  darkLightness: 68,
-  bodyLight: '#eef0fb',
-  bodyDark: '#0c0a16',
-  textMainLight: [25, 21, 39] as [number, number, number], // #191527
-  textMainDark: [244, 242, 251] as [number, number, number], // #f4f2fb
-  btnTextDark: [21, 15, 38] as [number, number, number], // #150f26 (dark-mode button text)
-};
-
-export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({ config, designStyle }) => {
-  const isGlass = designStyle === 'glass';
-
-  // Primary RGB in Light Mode
-  const primaryRgbLight = hslToRgb(isGlass ? GLASS_TOKENS.hue : config.hue, isGlass ? GLASS_TOKENS.sat : config.sat, isGlass ? GLASS_TOKENS.lightLightness : 36);
-  const bodyBgLight = hexToRgb(isGlass ? GLASS_TOKENS.bodyLight : config.lightBgBody);
-  const textMainLight: [number, number, number] = isGlass ? GLASS_TOKENS.textMainLight : [17, 24, 39]; // #111827
+export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({ config }) => {
+  // Primary RGB in Light Mode (mirrors --color-primary's lightness in sucss.css :root)
+  const primaryRgbLight = hslToRgb(config.hue, config.sat, 44);
+  const bodyBgLight = hexToRgb(config.lightBgBody);
+  const textMainLight: [number, number, number] = [25, 21, 39]; // #191527
   const whiteRgb: [number, number, number] = [255, 255, 255];
 
-  // Primary RGB in Dark Mode
-  const primaryRgbDark = hslToRgb(isGlass ? GLASS_TOKENS.hue : config.hue, isGlass ? GLASS_TOKENS.sat : config.sat, isGlass ? GLASS_TOKENS.darkLightness : 45);
-  const bodyBgDark = hexToRgb(isGlass ? GLASS_TOKENS.bodyDark : config.darkBgBody);
-  const textMainDark: [number, number, number] = isGlass ? GLASS_TOKENS.textMainDark : [249, 250, 251]; // #f9fafb
-  // Glass buttons use dark text on the (light) primary color in dark mode; Classic keeps white button text throughout.
-  const darkBtnText: [number, number, number] = isGlass ? GLASS_TOKENS.btnTextDark : [255, 255, 255];
+  // Primary RGB in Dark Mode (mirrors --color-primary's lightness in [data-theme="dark"])
+  const primaryRgbDark = hslToRgb(config.hue, config.sat, 68);
+  const bodyBgDark = hexToRgb(config.darkBgBody);
+  const textMainDark: [number, number, number] = [244, 242, 251]; // #f4f2fb
+  // Primary is light in dark mode, so button text must stay dark for AA contrast (see --color-primary-text).
+  const darkBtnText: [number, number, number] = [21, 15, 38]; // #150f26
 
   // Ratios
   const ratioLightTextBg = getContrastRatio(textMainLight, bodyBgLight);

@@ -3,7 +3,7 @@
 [![CI](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml/badge.svg)](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml)
 [![Deploy to GitHub Pages](https://github.com/RyotaSugawara/su-css/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/RyotaSugawara/su-css/actions/workflows/deploy-pages.yml)
 
-> クラス名や独自属性を一切書かずに、標準のHTMLタグだけで美しくモダンなデザインとダークモード・アクセシビリティを実現するクラスレスCSSフレームワーク。
+> クラス名や独自属性を一切書かずに、標準のHTMLタグだけでGlassmorphism 2.0(フロストガラス調)のモダンなデザインとダークモード・アクセシビリティを実現するクラスレスCSSフレームワーク。
 
 **🌐 デモサイト: https://ryotasugawara.github.io/su-css/**
 
@@ -14,7 +14,7 @@
 - **Zero Class Names / Zero Custom Attributes**: `class="..."` や独自の `data-*` 属性は一切不要。純粋なセマンティックHTML（`<header>`, `<main>`, `<article>`, `<button>`, `<dialog>` 等）のみでスタイリング。
 - **ダークモード標準対応**: OSのカラーテーマ（`prefers-color-scheme`）および `data-theme` 切り替えに自動連動。
 - **高アクセシビリティ**: WCAG AA/AAA コントラスト比（4.5:1 / 7:1以上）をクリア、キーボード操作のフォーカスリング（`:focus-visible`）完備、`prefers-reduced-motion` 対応。
-- **超軽量 & 依存ゼロ**: 単一のCSSファイル（圧縮時 約3KB）。JavaScriptライブラリやビルド設定は一切不要。
+- **超軽量 & 依存ゼロ**: 単一のCSSファイル（圧縮時 5KB未満）。JavaScriptライブラリやビルド設定は一切不要。
 - **インタラクティブ要素のネイティブサポート**: `<dialog>` のモーダル、`<details>`/`<summary>` のアコーディオン、`input[role="switch"]` のトグルスイッチ等に対応。
 
 ---
@@ -58,8 +58,6 @@
 ## 🛠️ ローカル開発・デモアプリの起動
 
 本リポジトリには SuCSS のショーケース、ライブプレビューエディタ（Playground）、テーマカスタマイザー、a11yコントラストチェッカーを含むデモアプリが含まれています。
-
-デモアプリのヘッダーでは「Classic」（標準デザイン）と「Glass 2.0」（試作中のGlassmorphismテイスト、`src/lib/themes/glassmorphism.css`）を切り替えて見た目を比較できます。Glass 2.0 も同じCSSカスタムプロパティ名を使った素のHTML向けクラスレスCSSで、フロストガラス調のパネルに`prefers-reduced-transparency`とbackdrop-filter未対応環境向けのフォールバックを備えています。
 
 ```bash
 # 依存関係のインストール

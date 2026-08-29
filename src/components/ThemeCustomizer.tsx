@@ -16,17 +16,17 @@ export interface ThemeConfig {
 }
 
 export const DEFAULT_THEME_CONFIG: ThemeConfig = {
-  hue: 158,
-  sat: 90,
+  hue: 262,
+  sat: 85,
   baseSize: 1,
   lineHeight: 1.6,
   maxWidth: 860,
-  radius: 0.375,
+  radius: 1,
   fontSans: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif',
-  lightBgBody: '#f7f9fa',
+  lightBgBody: '#eef0fb',
   lightBgSurface: '#ffffff',
-  darkBgBody: '#121820',
-  darkBgSurface: '#1c2431',
+  darkBgBody: '#0c0a16',
+  darkBgSurface: '#171325',
 };
 
 interface ThemeCustomizerProps {

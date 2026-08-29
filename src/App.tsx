@@ -1,65 +1,32 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Showcase } from './components/Showcase';
 import { Playground } from './components/Playground';
 import { ThemeCustomizer, DEFAULT_THEME_CONFIG, ThemeConfig } from './components/ThemeCustomizer';
 import { AccessibilityChecker } from './components/AccessibilityChecker';
 import { DocsSection } from './components/DocsSection';
-import classicCssRaw from './lib/sucss.css?raw';
-import classicCssUrl from './lib/sucss.css?url';
-import glassCssRaw from './lib/themes/glassmorphism.css?raw';
-import glassCssUrl from './lib/themes/glassmorphism.css?url';
-
-export type DesignStyle = 'classic' | 'glass';
+import rawCssText from './lib/sucss.css?raw';
+import './lib/sucss.css';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'showcase' | 'playground' | 'customizer' | 'a11y' | 'docs'>('showcase');
   const [theme, setTheme] = useState<'auto' | 'light' | 'dark'>('auto');
-  const [designStyle, setDesignStyle] = useState<DesignStyle>('classic');
   const [themeConfig, setThemeConfig] = useState<ThemeConfig>(DEFAULT_THEME_CONFIG);
   const [copiedCss, setCopiedCss] = useState(false);
-
-  const rawCssText = designStyle === 'glass' ? glassCssRaw : classicCssRaw;
-
-  // The active design-taste stylesheet is loaded through a single, plain
-  // <link> element managed directly via the DOM (bypassing React 19's
-  // stylesheet-resource hoisting, which otherwise fights manual href
-  // swaps). Switching designStyle simply repoints its href.
-  const styleLinkRef = useRef<HTMLLinkElement | null>(null);
-
-  useLayoutEffect(() => {
-    if (!styleLinkRef.current) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-      styleLinkRef.current = link;
-    }
-    styleLinkRef.current.href = designStyle === 'glass' ? glassCssUrl : classicCssUrl;
-  }, [designStyle]);
 
   // Apply theme attribute, Tailwind dark class & CSS variables to html document
   useEffect(() => {
     const root = document.documentElement;
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-    // The ThemeCustomizer tab only knows about Classic's token values, so its
-    // live overrides should only apply while Classic is the active design
-    // taste — otherwise they'd stamp Classic's green hue and flat colors
-    // over Glass 2.0's own violet/frosted defaults. When Glass is active,
-    // clear any inline overrides left over from Classic instead.
-    const customizableVars = ['--hue', '--sat', '--font-sans', '--base-size', '--line-height', '--max-width', '--radius', '--bg-body', '--bg-surface'];
-
-    if (designStyle === 'classic') {
-      root.style.setProperty('--hue', String(themeConfig.hue));
-      root.style.setProperty('--sat', `${themeConfig.sat}%`);
-      root.style.setProperty('--font-sans', themeConfig.fontSans);
-      root.style.setProperty('--base-size', `${themeConfig.baseSize}rem`);
-      root.style.setProperty('--line-height', String(themeConfig.lineHeight));
-      root.style.setProperty('--max-width', `${themeConfig.maxWidth}px`);
-      root.style.setProperty('--radius', `${themeConfig.radius}rem`);
-    } else {
-      customizableVars.forEach((name) => root.style.removeProperty(name));
-    }
+    // Common CSS variables
+    root.style.setProperty('--hue', String(themeConfig.hue));
+    root.style.setProperty('--sat', `${themeConfig.sat}%`);
+    root.style.setProperty('--font-sans', themeConfig.fontSans);
+    root.style.setProperty('--base-size', `${themeConfig.baseSize}rem`);
+    root.style.setProperty('--line-height', String(themeConfig.lineHeight));
+    root.style.setProperty('--max-width', `${themeConfig.maxWidth}px`);
+    root.style.setProperty('--radius', `${themeConfig.radius}rem`);
 
     const updateTheme = () => {
       const isDark = theme === 'dark' || (theme === 'auto' && mediaQuery.matches);
@@ -70,11 +37,6 @@ export default function App() {
         root.setAttribute('data-theme', 'light');
       } else {
         root.removeAttribute('data-theme');
-      }
-
-      if (designStyle !== 'classic') {
-        root.classList.remove('dark');
-        return;
       }
 
       if (isDark) {
@@ -92,7 +54,7 @@ export default function App() {
 
     mediaQuery.addEventListener('change', updateTheme);
     return () => mediaQuery.removeEventListener('change', updateTheme);
-  }, [theme, themeConfig, designStyle]);
+  }, [theme, themeConfig]);
 
   // Copy full CSS library text
   const handleCopyCss = () => {
@@ -107,7 +69,7 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = designStyle === 'glass' ? 'sucss.glass.css' : 'sucss.css';
+    a.download = 'sucss.css';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -122,8 +84,6 @@ export default function App() {
         setActiveTab={setActiveTab}
         theme={theme}
         setTheme={setTheme}
-        designStyle={designStyle}
-        setDesignStyle={setDesignStyle}
         onCopyCss={handleCopyCss}
         onDownloadCss={handleDownloadCss}
         copied={copiedCss}
@@ -137,7 +97,7 @@ export default function App() {
           <ThemeCustomizer config={themeConfig} setConfig={setThemeConfig} />
         )}
         {activeTab === 'a11y' && (
-          <AccessibilityChecker config={themeConfig} theme={theme} designStyle={designStyle} />
+          <AccessibilityChecker config={themeConfig} theme={theme} />
         )}
         {activeTab === 'docs' && <DocsSection />}
       </main>
@@ -161,4 +121,3 @@ export default function App() {
     </>
   );
 }
-

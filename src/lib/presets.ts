@@ -28,7 +28,7 @@ export const HTML_PRESETS: HtmlPreset[] = [
     <li>クラス名が一切不要（完全クラスレス）</li>
     <li><mark>CSS変数のみ</mark>でテーマを自在に制御</li>
     <li>標準でダークモード対応 (<kbd>Shift</kbd> + <kbd>D</kbd>)</li>
-    <li>軽量（圧縮後わずか3KB未満）</li>
+    <li>軽量（圧縮後わずか5KB未満）</li>
   </ul>
 
   <hr />
