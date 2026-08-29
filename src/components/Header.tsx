@@ -1,11 +1,14 @@
 import React from 'react';
-import { Sun, Moon, Monitor, Download, Copy, Check } from 'lucide-react';
+import { Sun, Moon, Monitor, Download, Copy, Check, Sparkles, Square } from 'lucide-react';
+import type { DesignStyle } from '../App';
 
 interface HeaderProps {
   activeTab: 'showcase' | 'playground' | 'customizer' | 'a11y' | 'docs';
   setActiveTab: (tab: 'showcase' | 'playground' | 'customizer' | 'a11y' | 'docs') => void;
   theme: 'auto' | 'light' | 'dark';
   setTheme: (theme: 'auto' | 'light' | 'dark') => void;
+  designStyle: DesignStyle;
+  setDesignStyle: (style: DesignStyle) => void;
   onCopyCss: () => void;
   onDownloadCss: () => void;
   copied: boolean;
@@ -16,6 +19,8 @@ export const Header: React.FC<HeaderProps> = ({
   setActiveTab,
   theme,
   setTheme,
+  designStyle,
+  setDesignStyle,
   onCopyCss,
   onDownloadCss,
   copied,
@@ -53,6 +58,28 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Actions & Theme */}
           <div>
+            {/* Design Taste Toggle Buttons */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <button
+                type="button"
+                onClick={() => setDesignStyle('classic')}
+                aria-current={designStyle === 'classic' ? 'true' : undefined}
+                title="クラシック（標準デザイン）"
+                style={{ padding: '0.35rem 0.6rem', fontSize: '0.8rem' }}
+              >
+                <Square size={14} /> Classic
+              </button>
+              <button
+                type="button"
+                onClick={() => setDesignStyle('glass')}
+                aria-current={designStyle === 'glass' ? 'true' : undefined}
+                title="Glassmorphism 2.0（試作デザイン）"
+                style={{ padding: '0.35rem 0.6rem', fontSize: '0.8rem' }}
+              >
+                <Sparkles size={14} /> Glass 2.0
+              </button>
+            </div>
+
             {/* Theme Toggle Buttons */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
               <button

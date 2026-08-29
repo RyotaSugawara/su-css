@@ -1,1 +1,2 @@
-@import url("./lib/sucss.css");
+/* Base stylesheet is loaded dynamically in App.tsx so the demo can switch
+   between design tastes (Classic SuCSS / Glass 2.0) at runtime. */

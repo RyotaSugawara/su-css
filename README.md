@@ -59,6 +59,8 @@
 
 本リポジトリには SuCSS のショーケース、ライブプレビューエディタ（Playground）、テーマカスタマイザー、a11yコントラストチェッカーを含むデモアプリが含まれています。
 
+デモアプリのヘッダーでは「Classic」（標準デザイン）と「Glass 2.0」（試作中のGlassmorphismテイスト、`src/lib/themes/glassmorphism.css`）を切り替えて見た目を比較できます。Glass 2.0 も同じCSSカスタムプロパティ名を使った素のHTML向けクラスレスCSSで、フロストガラス調のパネルに`prefers-reduced-transparency`とbackdrop-filter未対応環境向けのフォールバックを備えています。
+
 ```bash
 # 依存関係のインストール
 npm install
