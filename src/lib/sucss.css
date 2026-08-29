@@ -1,61 +1,73 @@
 /**
- * SuCSS v1.0.0 (素のHTMLを使ったCSS)
- * Zero-class, highly accessible, minimal classless CSS framework
- * Powered by CSS custom properties with automatic light/dark mode support.
+ * SuCSS v2.0.0 (素のHTMLを使ったCSS) — Glassmorphism 2.0
+ * Zero-class, highly accessible, minimal classless CSS framework.
+ * Layered frosted-glass surfaces floating over a hue-linked gradient mesh,
+ * powered by CSS custom properties with automatic light/dark mode support
+ * and accessibility fallbacks for `prefers-reduced-transparency` /
+ * `prefers-reduced-motion` and browsers without backdrop-filter support.
  */
 
 /* --------------------------------------------------------------------------
    1. CSS Custom Properties / Tokens
    -------------------------------------------------------------------------- */
 :root {
-  /* Color System - Emerald Green Theme */
-  --hue: 158;
-  --sat: 90%;
+  /* Color System - Iris Violet Theme (shifts the background mesh too) */
+  --hue: 262;
+  --sat: 85%;
 
-  /* Lightness kept dark enough that white button/link text clears WCAG AA (4.5:1) */
-  --color-primary: hsl(var(--hue) var(--sat) 27%);
-  --color-primary-hover: hsl(var(--hue) var(--sat) 22%);
-  --color-primary-active: hsl(var(--hue) var(--sat) 18%);
-  --color-primary-subtle: hsl(var(--hue) 60% 95%);
+  --color-primary: hsl(var(--hue) var(--sat) 44%);
+  --color-primary-hover: hsl(var(--hue) var(--sat) 38%);
+  --color-primary-active: hsl(var(--hue) var(--sat) 32%);
+  --color-primary-subtle: hsl(var(--hue) 70% 95% / 70%);
   --color-primary-text: #fff;
 
   /* Contextual Status Colors */
   --color-success: #00a45e;
-  --color-warning: #e67e00;
-  --color-danger: #e53935;
-  --color-info: #0284c7;
+  --color-warning: #c96a00;
+  --color-danger: #d3352f;
+  --color-info: #0074b3;
 
-  /* Neutrals - Light Mode Defaults */
-  --bg-body: #f7f9fa;
+  /* Neutrals - Light Mode Defaults (the pale base the gradient mesh sits on) */
+  --bg-body: #eef0fb;
   --bg-surface: #fff;
-  --bg-subtle: #f1f3f5;
+  --bg-subtle: #eef1fa;
   --bg-input: #fff;
 
-  --text-main: #111827;
-  --text-muted: #4b5563;
-  --text-subtle: #6b7280;
+  --text-main: #191527;
+  --text-muted: #453f5c;
+  --text-subtle: #5c5573;
 
-  --border-color: #e5e7eb;
-  --border-color-hover: #d1d5db;
-  --border-color-focus: hsl(var(--hue) var(--sat) 36%);
+  --border-color: #d9d4ee;
+  --border-color-hover: #c1b9e6;
+  --border-color-focus: hsl(var(--hue) var(--sat) 40%);
+
+  /* Glass Surface Tokens */
+  --glass-blur: 20px;
+  --glass-saturate: 180%;
+  --glass-bg: rgb(255 255 255 / 68%);
+  --glass-bg-strong: rgb(255 255 255 / 82%);
+  --glass-border: rgb(255 255 255 / 55%);
+  --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 55%);
+  --glass-shadow: 0 8px 32px -8px rgb(76 29 149 / 25%), var(--glass-highlight);
+  --glass-shadow-lg: 0 20px 48px -12px rgb(76 29 149 / 32%), var(--glass-highlight);
 
   /* Typography - Japanese First */
   --font-sans: -apple-system, blinkmacsystemfont, "Segoe UI", roboto, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
   --font-mono: ui-monospace, sfmono-regular, menlo, monaco, consolas, "Liberation Mono", "Courier New", monospace;
-  
+
   --base-size: 1rem;
   --line-height: 1.6;
   --heading-height: 1.25;
 
-  /* Layout & Geometry */
+  /* Layout & Geometry - softer, more pronounced radii read as "glass" */
   --max-width: 860px;
-  --radius: 0.375rem;
-  --radius-sm: 0.25rem;
+  --radius: 1rem;
+  --radius-sm: 0.6rem;
 
-  /* Shadows - Crisp Modern Style */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 4%);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 6%), 0 2px 4px -2px rgb(0 0 0 / 4%);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 7%), 0 4px 6px -4px rgb(0 0 0 / 3%);
+  /* Shadows - kept for elements that intentionally stay opaque (e.g. dialog::backdrop) */
+  --shadow-sm: 0 1px 2px 0 rgb(76 29 149 / 6%);
+  --shadow-md: var(--glass-shadow);
+  --shadow-lg: var(--glass-shadow-lg);
 
   /* Accessibility & Focus Ring */
   --focus-ring: 0 0 0 3px hsl(var(--hue) var(--sat) 82%);
@@ -66,89 +78,108 @@
 /* Automatic Dark Mode based on system preference */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg-body: #121820;
-    --bg-surface: #1c2431;
-    --bg-subtle: #253042;
-    --bg-input: #1c2431;
+    --bg-body: #0c0a16;
+    --bg-surface: #171325;
+    --bg-subtle: #201b32;
+    --bg-input: #1c1830;
 
-    --text-main: #f9fafb;
-    --text-muted: #d1d5db;
-    --text-subtle: #9ca3af;
+    --text-main: #f4f2fb;
+    --text-muted: #cbc4e6;
+    --text-subtle: #9d94c2;
 
-    --border-color: #2e3a4e;
-    --border-color-hover: #40506a;
-    --border-color-focus: hsl(var(--hue) var(--sat) 55%);
+    --border-color: #332a52;
+    --border-color-hover: #493c73;
+    --border-color-focus: hsl(var(--hue) var(--sat) 62%);
 
-    --color-primary: hsl(var(--hue) var(--sat) 45%);
-    --color-primary-hover: hsl(var(--hue) var(--sat) 55%);
-    --color-primary-active: hsl(var(--hue) var(--sat) 60%);
-    --color-primary-subtle: rgb(0 164 94 / 18%);
+    --color-primary: hsl(var(--hue) var(--sat) 68%);
+    --color-primary-hover: hsl(var(--hue) var(--sat) 75%);
+    --color-primary-active: hsl(var(--hue) var(--sat) 80%);
+    --color-primary-subtle: hsl(var(--hue) 60% 30% / 45%);
 
-    /* Primary is light in dark mode (for link/border contrast), so button text must be dark, not white, to clear WCAG AA (4.5:1) */
-    --color-primary-text: #121820;
+    /* Primary is light in dark mode, so button text must stay dark for AA contrast */
+    --color-primary-text: #150f26;
 
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 40%);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 50%);
+    --glass-bg: rgb(23 19 38 / 58%);
+    --glass-bg-strong: rgb(23 19 38 / 78%);
+    --glass-border: rgb(255 255 255 / 10%);
+    --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 8%);
+    --glass-shadow: 0 8px 32px -8px rgb(0 0 0 / 55%), var(--glass-highlight);
+    --glass-shadow-lg: 0 24px 56px -12px rgb(0 0 0 / 65%), var(--glass-highlight);
 
-    --focus-ring: 0 0 0 3px rgb(0 204 117 / 40%);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 35%);
+    --shadow-md: var(--glass-shadow);
+    --shadow-lg: var(--glass-shadow-lg);
+
+    --focus-ring: 0 0 0 3px hsl(var(--hue) var(--sat) 45% / 45%);
   }
 }
 
 /* Explicit Dark Theme */
 [data-theme="dark"] {
-  --bg-body: #121820;
-  --bg-surface: #1c2431;
-  --bg-subtle: #253042;
-  --bg-input: #1c2431;
+  --bg-body: #0c0a16;
+  --bg-surface: #171325;
+  --bg-subtle: #201b32;
+  --bg-input: #1c1830;
 
-  --text-main: #f9fafb;
-  --text-muted: #d1d5db;
-  --text-subtle: #9ca3af;
+  --text-main: #f4f2fb;
+  --text-muted: #cbc4e6;
+  --text-subtle: #9d94c2;
 
-  --border-color: #2e3a4e;
-  --border-color-hover: #40506a;
-  --border-color-focus: hsl(var(--hue) var(--sat) 55%);
+  --border-color: #332a52;
+  --border-color-hover: #493c73;
+  --border-color-focus: hsl(var(--hue) var(--sat) 62%);
 
-  --color-primary: hsl(var(--hue) var(--sat) 45%);
-  --color-primary-hover: hsl(var(--hue) var(--sat) 55%);
-  --color-primary-active: hsl(var(--hue) var(--sat) 60%);
-  --color-primary-subtle: rgb(0 164 94 / 18%);
+  --color-primary: hsl(var(--hue) var(--sat) 68%);
+  --color-primary-hover: hsl(var(--hue) var(--sat) 75%);
+  --color-primary-active: hsl(var(--hue) var(--sat) 80%);
+  --color-primary-subtle: hsl(var(--hue) 60% 30% / 45%);
+  --color-primary-text: #150f26;
 
-  /* Primary is light in dark mode (for link/border contrast), so button text must be dark, not white, to clear WCAG AA (4.5:1) */
-  --color-primary-text: #121820;
+  --glass-bg: rgb(23 19 38 / 58%);
+  --glass-bg-strong: rgb(23 19 38 / 78%);
+  --glass-border: rgb(255 255 255 / 10%);
+  --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 8%);
+  --glass-shadow: 0 8px 32px -8px rgb(0 0 0 / 55%), var(--glass-highlight);
+  --glass-shadow-lg: 0 24px 56px -12px rgb(0 0 0 / 65%), var(--glass-highlight);
 
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 40%);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 50%);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 35%);
+  --shadow-md: var(--glass-shadow);
+  --shadow-lg: var(--glass-shadow-lg);
 
-  --focus-ring: 0 0 0 3px rgb(0 204 117 / 40%);
+  --focus-ring: 0 0 0 3px hsl(var(--hue) var(--sat) 45% / 45%);
 }
 
 /* Explicit Light Theme */
 [data-theme="light"] {
-  --bg-body: #f7f9fa;
+  --bg-body: #eef0fb;
   --bg-surface: #fff;
-  --bg-subtle: #f1f3f5;
+  --bg-subtle: #eef1fa;
   --bg-input: #fff;
 
-  --text-main: #111827;
-  --text-muted: #4b5563;
-  --text-subtle: #6b7280;
+  --text-main: #191527;
+  --text-muted: #453f5c;
+  --text-subtle: #5c5573;
 
-  --border-color: #e5e7eb;
-  --border-color-hover: #d1d5db;
-  --border-color-focus: hsl(var(--hue) var(--sat) 36%);
+  --border-color: #d9d4ee;
+  --border-color-hover: #c1b9e6;
+  --border-color-focus: hsl(var(--hue) var(--sat) 40%);
 
-  --color-primary: hsl(var(--hue) var(--sat) 27%);
-  --color-primary-hover: hsl(var(--hue) var(--sat) 22%);
-  --color-primary-active: hsl(var(--hue) var(--sat) 18%);
-  --color-primary-subtle: hsl(var(--hue) 60% 95%);
+  --color-primary: hsl(var(--hue) var(--sat) 44%);
+  --color-primary-hover: hsl(var(--hue) var(--sat) 38%);
+  --color-primary-active: hsl(var(--hue) var(--sat) 32%);
+  --color-primary-subtle: hsl(var(--hue) 70% 95% / 70%);
   --color-primary-text: #fff;
 
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 4%);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 6%), 0 2px 4px -2px rgb(0 0 0 / 4%);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 7%), 0 4px 6px -4px rgb(0 0 0 / 3%);
+  --glass-bg: rgb(255 255 255 / 68%);
+  --glass-bg-strong: rgb(255 255 255 / 82%);
+  --glass-border: rgb(255 255 255 / 55%);
+  --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 55%);
+  --glass-shadow: 0 8px 32px -8px rgb(76 29 149 / 25%), var(--glass-highlight);
+  --glass-shadow-lg: 0 20px 48px -12px rgb(76 29 149 / 32%), var(--glass-highlight);
+
+  --shadow-sm: 0 1px 2px 0 rgb(76 29 149 / 6%);
+  --shadow-md: var(--glass-shadow);
+  --shadow-lg: var(--glass-shadow-lg);
 
   --focus-ring: 0 0 0 3px hsl(var(--hue) var(--sat) 82%);
 }
@@ -175,13 +206,41 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* The "2.0" mesh: a fixed, hue-linked gradient the frosted panels reveal
+   through blur. It reacts to --hue, so the ThemeCustomizer's hue slider
+   re-tints the whole atmosphere, not just buttons. */
 body {
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-body);
   color: var(--text-main);
+  background-color: var(--bg-body);
+  background-image:
+    radial-gradient(circle at 12% 18%, hsl(calc(var(--hue) + 55) 90% 78% / 55%), transparent 42%),
+    radial-gradient(circle at 88% 12%, hsl(calc(var(--hue) - 90) 92% 72% / 50%), transparent 45%),
+    radial-gradient(circle at 25% 92%, hsl(calc(var(--hue) + 130) 80% 70% / 35%), transparent 50%),
+    radial-gradient(circle at 92% 85%, hsl(var(--hue) 85% 68% / 40%), transparent 48%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body {
+    background-image:
+      radial-gradient(circle at 12% 18%, hsl(calc(var(--hue) + 55) 65% 28% / 65%), transparent 42%),
+      radial-gradient(circle at 88% 12%, hsl(calc(var(--hue) - 90) 70% 24% / 55%), transparent 45%),
+      radial-gradient(circle at 25% 92%, hsl(calc(var(--hue) + 130) 55% 22% / 45%), transparent 50%),
+      radial-gradient(circle at 92% 85%, hsl(var(--hue) 65% 26% / 50%), transparent 48%);
+  }
+}
+
+[data-theme="dark"] body {
+  background-image:
+    radial-gradient(circle at 12% 18%, hsl(calc(var(--hue) + 55) 65% 28% / 65%), transparent 42%),
+    radial-gradient(circle at 88% 12%, hsl(calc(var(--hue) - 90) 70% 24% / 55%), transparent 45%),
+    radial-gradient(circle at 25% 92%, hsl(calc(var(--hue) + 130) 55% 22% / 45%), transparent 50%),
+    radial-gradient(circle at 92% 85%, hsl(var(--hue) 65% 26% / 50%), transparent 48%);
 }
 
 main {
@@ -267,13 +326,15 @@ output,
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.2rem 0.6rem;
+  padding: 0.2rem 0.65rem;
   font-size: 0.75rem;
   font-weight: 600;
   border-radius: 9999px;
   background-color: var(--color-primary-subtle);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   color: var(--color-primary);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
   line-height: 1.2;
 }
 
@@ -332,11 +393,14 @@ code {
 }
 
 pre {
-  background-color: var(--bg-subtle);
+  background-color: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   color: var(--text-main);
   padding: 1.25rem;
   border-radius: var(--radius);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
   overflow-x: auto;
   margin: 1.5rem 0;
   line-height: 1.5;
@@ -351,12 +415,14 @@ pre code {
 }
 
 kbd {
-  background-color: var(--bg-surface);
+  background-color: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   color: var(--text-main);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
   border-bottom: 2px solid var(--border-color-hover);
   border-radius: var(--radius-sm);
-  padding: 0.15em 0.45em;
+  padding: 0.15em 0.5em;
   font-size: 0.8em;
   box-shadow: var(--shadow-sm);
 }
@@ -415,12 +481,12 @@ input[type="reset"] {
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-primary-text);
-  background-color: var(--color-primary);
-  border: 1px solid transparent;
-  border-radius: var(--radius);
+  background-image: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  border: 1px solid rgb(255 255 255 / 30%);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform 100ms ease;
-  box-shadow: var(--shadow-sm);
+  transition: filter var(--transition-fast), transform 100ms ease, box-shadow var(--transition-fast);
+  box-shadow: 0 6px 20px -6px hsl(var(--hue) var(--sat) 44% / 55%), var(--glass-highlight);
   user-select: none;
   white-space: nowrap;
 }
@@ -429,14 +495,14 @@ button:hover,
 input[type="submit"]:hover,
 input[type="button"]:hover,
 input[type="reset"]:hover {
-  background-color: var(--color-primary-hover);
+  filter: brightness(1.08);
 }
 
 button:active,
 input[type="submit"]:active,
 input[type="button"]:active,
 input[type="reset"]:active {
-  background-color: var(--color-primary-active);
+  filter: brightness(0.96);
   transform: translateY(1px);
 }
 
@@ -456,21 +522,15 @@ input[type="reset"]:disabled {
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  filter: none;
 }
 
 /* Primary / Default Button */
 button,
 button[type="submit"],
 input[type="submit"] {
-  background-color: var(--color-primary);
+  background-image: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
   color: var(--color-primary-text);
-  border-color: transparent;
-}
-
-button:hover,
-button[type="submit"]:hover,
-input[type="submit"]:hover {
-  background-color: var(--color-primary-hover);
 }
 
 /* Secondary / Action Button variants via standard type attribute (type="button" / type="reset") */
@@ -478,16 +538,21 @@ button[type="button"],
 button[type="reset"],
 input[type="button"],
 input[type="reset"] {
-  background-color: var(--bg-subtle);
+  background-image: none;
+  background-color: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   color: var(--text-main);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
 }
 
 button[type="button"]:hover,
 button[type="reset"]:hover,
 input[type="button"]:hover,
 input[type="reset"]:hover {
-  background-color: var(--border-color);
+  background-color: var(--bg-subtle);
+  filter: none;
 }
 
 /* --------------------------------------------------------------------------
@@ -501,10 +566,13 @@ form {
 }
 
 fieldset {
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   padding: 1.25rem;
-  background-color: var(--bg-surface);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-shadow);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -543,9 +611,11 @@ textarea {
   font-family: inherit;
   font-size: 0.95rem;
   color: var(--text-main);
-  background-color: var(--bg-input);
+  background-color: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--border-color);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
@@ -653,6 +723,7 @@ input[type="checkbox"][switch]::after {
 
 input[type="checkbox"][role="switch"]:checked,
 input[type="checkbox"][switch]:checked {
+  background-image: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
   background-color: var(--color-primary);
 }
 
@@ -683,26 +754,29 @@ progress::-webkit-progress-bar {
 }
 
 progress::-webkit-progress-value {
-  background-color: var(--color-primary);
+  background-image: linear-gradient(90deg, var(--color-primary), var(--color-primary-hover));
   border-radius: 1rem;
   transition: width 300ms ease;
 }
 
 progress::-moz-progress-bar {
-  background-color: var(--color-primary);
+  background-image: linear-gradient(90deg, var(--color-primary), var(--color-primary-hover));
   border-radius: 1rem;
 }
 
 /* --------------------------------------------------------------------------
-   6. Semantic Containers & Layout Cards
+   6. Semantic Containers & Layout Cards (the core "frosted panel" look)
    -------------------------------------------------------------------------- */
 article, aside, section {
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-color);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--glass-shadow);
   margin-bottom: 1.5rem;
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
 article:last-child, aside:last-child, section:last-child {
@@ -720,18 +794,22 @@ section:has(> section + section) {
   gap: 1.25rem;
   border: none;
   background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   padding: 0;
   box-shadow: none;
 }
 
-/* Header & Navigation Bar */
+/* Header & Navigation Bar - the frosted nav is the signature glass moment */
 header {
   position: relative;
   width: 100%;
-  background-color: var(--bg-surface);
-  border-bottom: 1px solid var(--border-color);
+  background-color: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border-bottom: 1px solid var(--glass-border);
   padding: 0.75rem 1rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--glass-shadow);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -791,6 +869,7 @@ header nav button,
 header nav a,
 nav:has(> button[aria-current]) button,
 nav:has(> a[aria-current]) a {
+  background-image: none;
   background-color: transparent;
   color: var(--text-muted);
   border: 1px solid transparent;
@@ -820,15 +899,17 @@ nav:has(> a[aria-current]) a[aria-current="page"],
 nav:has(> a[aria-current]) a[aria-current="true"] {
   color: var(--color-primary);
   background-color: var(--color-primary-subtle);
-  border-color: var(--border-color);
+  border-color: var(--glass-border);
 }
 
 /* Footer */
 footer {
   margin-top: auto;
   padding: 1.5rem 1rem;
-  border-top: 1px solid var(--border-color);
-  background-color: var(--bg-surface);
+  border-top: 1px solid var(--glass-border);
+  background-color: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   color: var(--text-subtle);
   font-size: 0.85rem;
   text-align: center;
@@ -841,7 +922,6 @@ footer > div {
   gap: 1rem;
 }
 
-
 /* --------------------------------------------------------------------------
    7. Tables & Data Presentation
    -------------------------------------------------------------------------- */
@@ -853,26 +933,35 @@ table {
   text-align: left;
   border-radius: var(--radius);
   overflow: hidden;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-shadow);
 }
 
 th, td {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 th {
-  background-color: var(--bg-subtle);
+  background-color: rgb(255 255 255 / 12%);
   font-weight: 600;
   color: var(--text-main);
 }
 
 tr:nth-child(even) td {
-  background-color: var(--bg-subtle);
+  background-color: rgb(255 255 255 / 8%);
 }
 
 tr:hover td {
   background-color: var(--color-primary-subtle);
+}
+
+[data-theme="dark"] th,
+[data-theme="dark"] tr:nth-child(even) td {
+  background-color: rgb(255 255 255 / 4%);
 }
 
 /* Horizontal scroll container for tables on small viewports */
@@ -896,17 +985,20 @@ figure figcaption {
    8. Accordion (<details>) & Modal (<dialog>)
    -------------------------------------------------------------------------- */
 details {
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius);
   padding: 0.85rem 1.25rem;
-  background-color: var(--bg-surface);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-shadow);
   margin-bottom: 1rem;
   transition: background-color var(--transition-fast);
 }
 
 details[open] {
   padding-bottom: 1.25rem;
-  background-color: var(--bg-surface);
+  background-color: var(--glass-bg-strong);
 }
 
 summary {
@@ -929,7 +1021,7 @@ summary:focus-visible {
 
 details[open] summary {
   margin-bottom: 0.75rem;
-  border-bottom: 1px dashed var(--border-color);
+  border-bottom: 1px dashed var(--glass-border);
   padding-bottom: 0.5rem;
 }
 
@@ -938,15 +1030,51 @@ dialog {
   margin: auto;
   padding: 1.75rem;
   border-radius: var(--radius);
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-surface);
+  border: 1px solid var(--glass-border);
+  background-color: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   color: var(--text-main);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--glass-shadow-lg);
   max-width: 500px;
   width: 90%;
 }
 
 dialog::backdrop {
-  background-color: rgb(0 0 0 / 50%);
-  backdrop-filter: blur(4px);
+  background-color: rgb(12 10 22 / 55%);
+  backdrop-filter: blur(6px);
+}
+
+/* --------------------------------------------------------------------------
+   9. Accessibility fallbacks — the "2.0" part of Glassmorphism 2.0.
+   Classic glassmorphism (2020-21) was criticized for low text contrast and
+   for ignoring users who disable transparency effects. Both are handled here
+   instead of only shipping the trend.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-transparency: reduce) {
+  article, aside, section, header, footer, dialog, fieldset, details,
+  table, pre, kbd,
+  input[type="text"], input[type="email"], input[type="password"],
+  input[type="number"], input[type="search"], input[type="tel"],
+  input[type="url"], input[type="date"], input[type="time"],
+  select, textarea,
+  button[type="button"], button[type="reset"],
+  input[type="button"], input[type="reset"] {
+    background-color: var(--bg-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  article, aside, section, header, footer, dialog, fieldset, details,
+  table, pre, kbd,
+  input[type="text"], input[type="email"], input[type="password"],
+  input[type="number"], input[type="search"], input[type="tel"],
+  input[type="url"], input[type="date"], input[type="time"],
+  select, textarea,
+  button[type="button"], button[type="reset"],
+  input[type="button"], input[type="reset"] {
+    background-color: var(--bg-surface);
+  }
 }

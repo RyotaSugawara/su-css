@@ -285,7 +285,7 @@ export const Showcase: React.FC<ShowcaseProps> = () => {
           <section>
             <article>
               <h3>🚀 超軽量設計</h3>
-              <p>圧縮後わずか3KB未満。外部ライブラリやJS依存関係は一切不要で、最速のページロードを実現します。</p>
+              <p>圧縮後わずか5KB未満。外部ライブラリやJS依存関係は一切不要で、最速のページロードを実現します。</p>
             </article>
 
             <article>

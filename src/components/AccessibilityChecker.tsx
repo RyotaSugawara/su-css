@@ -9,17 +9,18 @@ interface AccessibilityCheckerProps {
 }
 
 export const AccessibilityChecker: React.FC<AccessibilityCheckerProps> = ({ config }) => {
-  // Primary RGB in Light Mode
-  const primaryRgbLight = hslToRgb(config.hue, config.sat, 36);
+  // Primary RGB in Light Mode (mirrors --color-primary's lightness in sucss.css :root)
+  const primaryRgbLight = hslToRgb(config.hue, config.sat, 44);
   const bodyBgLight = hexToRgb(config.lightBgBody);
-  const textMainLight: [number, number, number] = [17, 24, 39]; // #111827
+  const textMainLight: [number, number, number] = [25, 21, 39]; // #191527
   const whiteRgb: [number, number, number] = [255, 255, 255];
 
-  // Primary RGB in Dark Mode
-  const primaryRgbDark = hslToRgb(config.hue, config.sat, 45);
+  // Primary RGB in Dark Mode (mirrors --color-primary's lightness in [data-theme="dark"])
+  const primaryRgbDark = hslToRgb(config.hue, config.sat, 68);
   const bodyBgDark = hexToRgb(config.darkBgBody);
-  const textMainDark: [number, number, number] = [249, 250, 251]; // #f9fafb
-  const darkBtnText: [number, number, number] = [255, 255, 255]; // white text on primary button
+  const textMainDark: [number, number, number] = [244, 242, 251]; // #f4f2fb
+  // Primary is light in dark mode, so button text must stay dark for AA contrast (see --color-primary-text).
+  const darkBtnText: [number, number, number] = [21, 15, 38]; // #150f26
 
   // Ratios
   const ratioLightTextBg = getContrastRatio(textMainLight, bodyBgLight);
