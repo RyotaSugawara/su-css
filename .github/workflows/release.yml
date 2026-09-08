@@ -1,6 +1,9 @@
 name: Release
 
 on:
+  # A tag pushed by a person. Tags created by release-please or version-bump.yml
+  # carry the GITHUB_TOKEN identity and deliberately do not trigger workflows, so
+  # those two call this workflow directly instead (see workflow_call below).
   push:
     tags: ['v*.*.*']
   workflow_dispatch:
@@ -9,6 +12,16 @@ on:
         description: 'Run every check and `npm stage publish --dry-run` without staging anything'
         type: boolean
         default: true
+  workflow_call:
+    inputs:
+      dry_run:
+        description: 'Stage nothing; run the checks and `npm stage publish --dry-run`'
+        type: boolean
+        default: false
+      ref:
+        description: 'Commit, tag or branch to release. Defaults to the commit that started the run, which is wrong for a caller that creates the version commit itself.'
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -33,6 +46,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Empty means "the commit that started the run", which is what a tag
+          # push and a workflow_dispatch both want.
+          ref: ${{ inputs.ref || github.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -67,8 +84,11 @@ jobs:
           fi
           echo "Releasing v$pkg"
 
-      - name: Verify the CSS version banner
-        run: npm run check:version
+      - name: Verify the version is not already released
+        # `npm stage publish` rejects a duplicate version server-side, even with
+        # --dry-run, but only after building and uploading the tarball. Fail here
+        # instead, with a message that says to bump the version.
+        run: npm run check:unpublished
 
       - name: Type check
         run: npm run lint:ts
@@ -140,9 +160,11 @@ jobs:
   github-release:
     name: Create GitHub Release
     # Marks the tagged source. The npm side is only staged at this point and stays
-    # invisible to consumers until a maintainer approves it.
+    # invisible to consumers until a maintainer approves it. Skipped for
+    # workflow_call, where release-please and version-bump.yml own the tag and the
+    # release themselves.
     needs: publish
-    if: startsWith(github.ref, 'refs/tags/')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     permissions:
       contents: write

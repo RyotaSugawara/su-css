@@ -1,6 +1,6 @@
 {
   "name": "@ryo9ra/su-css",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "素のHTMLだけでGlassmorphism 2.0を実現する、クラスレス・依存ゼロのアクセシブルなCSSフレームワーク / A zero-class, zero-dependency, accessible CSS framework for plain semantic HTML.",
   "keywords": [
     "css",
@@ -58,12 +58,10 @@
     "lint:ts": "tsc --noEmit",
     "lint:css": "stylelint \"src/**/*.css\"",
     "lint:css:fix": "stylelint \"src/**/*.css\" --fix",
-    "sync:version": "node scripts/sync-version.mjs",
-    "check:version": "node scripts/sync-version.mjs --check",
+    "check:unpublished": "node scripts/check-unpublished.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "prepack": "npm run build:lib",
-    "version": "npm run sync:version && git add src/lib/sucss.css",
     "release:dry-run": "npm publish --dry-run"
   },
   "devDependencies": {
