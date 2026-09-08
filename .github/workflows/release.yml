@@ -156,33 +156,3 @@ jobs:
             echo "npm stage approve <stage-id>   # prompts for 2FA"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-
-  github-release:
-    name: Create GitHub Release
-    # Marks the tagged source. The npm side is only staged at this point and stays
-    # invisible to consumers until a maintainer approves it. Skipped for
-    # workflow_call, where release-please and version-bump.yml own the tag and the
-    # release themselves.
-    needs: publish
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-
-      - name: Create or update the release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            echo "Release $GITHUB_REF_NAME already exists; leaving it untouched."
-          else
-            gh release create "$GITHUB_REF_NAME" \
-              --title "$GITHUB_REF_NAME" \
-              --generate-notes \
-              --verify-tag
-          fi
