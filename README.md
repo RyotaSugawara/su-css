@@ -1,142 +1,143 @@
-# SuCSS (素のHTMLを使ったCSS)
+# SuCSS
 
 [![CI](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml/badge.svg)](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml)
-[![Deploy to GitHub Pages](https://github.com/RyotaSugawara/su-css/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/RyotaSugawara/su-css/actions/workflows/deploy-pages.yml)
+[![npm](https://img.shields.io/npm/v/@ryo9ra/su-css.svg)](https://www.npmjs.com/package/@ryo9ra/su-css)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-> クラス名や独自属性を一切書かずに、標準のHTMLタグだけでGlassmorphism 2.0(フロストガラス調)のモダンなデザインとダークモード・アクセシビリティを実現するクラスレスCSSフレームワーク。
+A classless CSS framework. Write plain semantic HTML — no class names, no custom
+attributes — and get a frosted-glass design with dark mode and accessibility
+built in.
 
-**🌐 デモサイト: https://ryotasugawara.github.io/su-css/**
+**Demo: https://ryotasugawara.github.io/su-css/**
 
----
+> *Su* (素) is Japanese for "plain" or "unadorned" — SuCSS styles plain HTML.
 
-## ✨ 特徴
+## Features
 
-- **Zero Class Names / Zero Custom Attributes**: `class="..."` や独自の `data-*` 属性は一切不要。純粋なセマンティックHTML（`<header>`, `<main>`, `<article>`, `<button>`, `<dialog>` 等）のみでスタイリング。
-- **ダークモード標準対応**: OSのカラーテーマ（`prefers-color-scheme`）および `data-theme` 切り替えに自動連動。
-- **高アクセシビリティ**: WCAG AA/AAA コントラスト比（4.5:1 / 7:1以上）をクリア、キーボード操作のフォーカスリング（`:focus-visible`）完備、`prefers-reduced-motion` 対応。
-- **超軽量 & 依存ゼロ**: 単一のCSSファイル（圧縮時 5KB未満）。JavaScriptライブラリやビルド設定は一切不要。
-- **インタラクティブ要素のネイティブサポート**: `<dialog>` のモーダル、`<details>`/`<summary>` のアコーディオン、`input[role="switch"]` のトグルスイッチ等に対応。
+- **No class names.** Styling comes from the elements themselves: `<header>`,
+  `<main>`, `<article>`, `<button>`, `<dialog>`, `<table>`, and friends.
+- **Dark mode included.** Follows `prefers-color-scheme`, and can be forced with
+  `data-theme="light"` or `data-theme="dark"`.
+- **Accessible by default.** WCAG AA/AAA contrast, visible `:focus-visible`
+  rings, adequate touch targets, and `prefers-reduced-motion` /
+  `prefers-reduced-transparency` support.
+- **Small and dependency-free.** One CSS file, ~4 KB gzipped. No JavaScript, no
+  build step.
+- **Themeable.** Every color, radius, and shadow is a CSS custom property.
 
----
-
-## 📦 インストール
-
-npm パッケージ [`@ryo9ra/su-css`](https://www.npmjs.com/package/@ryo9ra/su-css) として配布しています。中身はCSS 1ファイルのみで、依存パッケージはありません。
+## Install
 
 ```bash
 npm install @ryo9ra/su-css
 ```
 
-| インポート指定子 | 実ファイル | 内容 |
+| Import specifier | File | Size |
 | --- | --- | --- |
-| `@ryo9ra/su-css` / `@ryo9ra/su-css/sucss.css` | `dist-lib/sucss.css` | 整形済み・コメント付き（約 29KB / gzip 約 6KB） |
-| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 圧縮版（約 22KB / gzip 約 4.3KB） |
+| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 29 KB (6 KB gzipped) |
+| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 22 KB (4.3 KB gzipped) |
 
-### バンドラ（Vite / webpack / Next.js など）から使う
+From a bundler (Vite, webpack, Next.js, …):
 
 ```js
-import '@ryo9ra/su-css';                 // = @ryo9ra/su-css/sucss.css
-import '@ryo9ra/su-css/sucss.min.css';   // 圧縮版を使う場合
+import '@ryo9ra/su-css/sucss.min.css';
 ```
 
-### `<link>` で使う
+Or straight from a CDN, with no install at all:
 
 ```html
-<link rel="stylesheet" href="/node_modules/@ryo9ra/su-css/dist-lib/sucss.min.css">
-```
-
-### CDN で使う（インストール不要）
-
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css/dist-lib/sucss.min.css">
-<!-- バージョン固定を推奨（0.x の間は破壊的変更が入りうるため完全一致で固定） -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@0.0.1/dist-lib/sucss.min.css">
 ```
 
----
+> Pin an exact version while SuCSS is on `0.x` — minor releases may still change
+> how things look.
 
-## 🚀 クイックスタート
+## Usage
 
-### 1. CSSファイルの読み込み
-上記のいずれかの方法で読み込んだCSSを、HTMLの `<head>` に指定するだけです：
+Link the stylesheet and write ordinary HTML. That is the whole API.
 
 ```html
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Website</title>
-  <link rel="stylesheet" href="sucss.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@0.0.1/dist-lib/sucss.min.css">
 </head>
 <body>
   <header>
     <nav>
-      <strong>サイトタイトル</strong>
-      <a href="#about">概要</a>
+      <strong>My Site</strong>
+      <a href="#about">About</a>
     </nav>
   </header>
 
   <main>
     <article>
-      <h1>こんにちは！</h1>
-      <p>これはクラス名を一切書かずに作成されたページです。</p>
-      <button type="submit">送信する</button>
-      <button type="reset">リセット</button>
+      <h1>Hello!</h1>
+      <p>This page does not contain a single class name.</p>
+      <button type="submit">Send</button>
+      <button type="reset">Reset</button>
     </article>
   </main>
 </body>
 </html>
 ```
 
----
+Interactive elements work natively too: `<dialog>` for modals,
+`<details>`/`<summary>` for accordions, and
+`<input type="checkbox" role="switch">` for toggles.
 
-## 🛠️ ローカル開発・デモアプリの起動
+## Theming
 
-本リポジトリには SuCSS のショーケース、ライブプレビューエディタ（Playground）、テーマカスタマイザー、a11yコントラストチェッカーを含むデモアプリが含まれています。
+Override custom properties on `:root`. Shifting `--hue` recolors the whole page,
+including the background gradient.
+
+```css
+:root {
+  --hue: 210;          /* 0-360 */
+  --sat: 80%;
+  --radius: 12px;
+  --glass-blur: 24px;
+}
+```
+
+Dark mode follows the operating system by default. To control it yourself, set
+`data-theme` on `<html>`:
+
+```html
+<html lang="en" data-theme="dark">
+```
+
+## Browser support
+
+Modern evergreen browsers: Chrome/Edge 111+, Safari 16.4+, Firefox 128+.
+Browsers without `backdrop-filter` fall back to solid surfaces.
+
+## Development
+
+This repository also contains the demo app — a showcase, a live playground, a
+theme customizer, and a contrast checker.
 
 ```bash
-# 依存関係のインストール
 npm install
-
-# 開発サーバー起動
-npm run dev
-
-# プロダクションビルド
-npm run build
+npm run dev      # start the dev server
+npm run build    # build the demo site
+npm run lint     # TypeScript + Stylelint
+npm run test     # unit, contrast, and CSS structure tests
 ```
 
-### 品質チェック
+The framework itself is a single hand-written file: [`src/lib/sucss.css`](src/lib/sucss.css).
+`npm run build:lib` generates the distributable CSS, and `npm run release:dry-run`
+shows exactly what would be published.
 
-```bash
-# TypeScript型チェック + CSSリント (Stylelint)
-npm run lint
+The test suite parses `src/lib/sucss.css` directly: `tests/css/contrast.test.ts`
+checks every token pair against WCAG AA in both themes, and
+`tests/css/structure.test.ts` asserts the accessibility features promised above
+are actually present.
 
-# CSSリントのみ (--fixで自動修正)
-npm run lint:css
-npm run lint:css:fix
+Release process: [docs/RELEASING.md](docs/RELEASING.md).
 
-# テスト実行 (colorUtilsの単体テスト、sucss.cssのコントラスト比・構造テスト)
-npm run test
-npm run test:watch
-```
+## License
 
-### npmパッケージのビルド
-
-```bash
-# dist-lib/sucss.css と dist-lib/sucss.min.css を生成
-npm run build:lib
-
-# 公開されるtarballの中身を確認（実際には公開しない）
-npm run release:dry-run
-```
-
-リリース手順は [docs/RELEASING.md](docs/RELEASING.md) を参照してください。
-
-`tests/css/contrast.test.ts` は `src/lib/sucss.css` のCSSカスタムプロパティ（トークン）を実際にパースし、ライト/ダークの各テーマでWCAG AA (4.5:1) を満たしているかを検証します。`tests/css/structure.test.ts` は `prefers-reduced-motion` 対応や `:focus-visible` の存在、タッチターゲットサイズなど、README冒頭で謳っているアクセシビリティ要件をCSS構造として検証します。
-
----
-
-## 📄 ライセンス
-
-[MIT License](LICENSE)
+[MIT](LICENSE)
