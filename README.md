@@ -45,7 +45,7 @@ import '@ryo9ra/su-css/sucss.min.css';
 Or straight from a CDN, with no install at all:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@0.0.1/dist-lib/sucss.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@0.0.2/dist-lib/sucss.min.css">
 ```
 
 > Pin an exact version while SuCSS is on `0.x` — minor releases may still change
@@ -62,7 +62,7 @@ Link the stylesheet and write ordinary HTML. That is the whole API.
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Website</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@0.0.1/dist-lib/sucss.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@0.0.2/dist-lib/sucss.min.css">
 </head>
 <body>
   <header>
@@ -130,6 +130,9 @@ npm run test     # unit, contrast, and CSS structure tests
 The framework itself is a single hand-written file: [`src/lib/sucss.css`](src/lib/sucss.css).
 `npm run build:lib` generates the distributable CSS, and `npm run release:dry-run`
 shows exactly what would be published.
+
+Releases go through npm's staging queue: CI stages the tarball, and a maintainer
+approves it with a 2FA challenge before it becomes installable.
 
 The test suite parses `src/lib/sucss.css` directly: `tests/css/contrast.test.ts`
 checks every token pair against WCAG AA in both themes, and

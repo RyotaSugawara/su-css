@@ -171,6 +171,12 @@ GitHub の **Actions → Release → Run workflow** から手動実行できま�
 `dry_run` を `true`（既定値）のままにすると、全チェックと `npm stage publish --dry-run` のみが実行され、
 ステージングキューには何も積まれません。
 
+> **`package.json` のバージョンが未公開である必要があります。**
+> `npm stage publish` は `--dry-run` でもレジストリ側でバージョン重複を検査するため、
+> 公開済みバージョンのままでは dry run も失敗します。
+> ワークフローの「Verify the version is not already released」ステップが冒頭でこれを検出し、
+> `npm version` でバージョンを上げるよう促します。
+
 ---
 
 ## 4. バージョニング方針
@@ -194,7 +200,9 @@ GitHub の **Actions → Release → Run workflow** から手動実行できま�
 | 症状 | 対処 |
 | --- | --- |
 | `Tag vX.Y.Z does not match package.json version` | タグを削除し、`npm version` でバージョンを上げ直してから push する |
-| `npm run check:version` が失敗 | `npm run sync:version` を実行し、`src/lib/sucss.css` の差分をコミットする |
+| `npm run check:version` が失敗 | `npm run sync:version` を実行し、`src/lib/sucss.css` と `README.md` の差分をコミットする |
+| `... is already published. Bump the version` | そのバージョンは公開済み。`npm version <patch\|minor\|major>` で上げ直す（dry run でも未公開バージョンが必要です） |
+| `You cannot publish over the previously published versions` | 同上。ローカルで `npm run check:unpublished` を実行すると事前に確認できます |
 | `ENEEDAUTH` / `E401` | OIDC未設定でトークンも無い状態。Trusted Publisher 設定（手順B）を見直すか、`NPM_TOKEN` を再登録する |
 | publish が `404 Not Found` | Trusted Publisher の設定値のいずれかが不一致（org / repo / ワークフロー名 / Environment）。npmは不一致を401ではなく404で返すため、各項目を大文字小文字まで完全一致で見直す |
 | OIDCが使われず認証エラーになる | npm が 11.5.1 未満、または Node が 22.14.0 未満。ワークフローの「Update npm」ステップのログで `node --version` / `npm --version` を確認する |

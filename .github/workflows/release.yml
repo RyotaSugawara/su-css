@@ -70,6 +70,12 @@ jobs:
       - name: Verify the CSS version banner
         run: npm run check:version
 
+      - name: Verify the version is not already released
+        # `npm stage publish` rejects a duplicate version server-side, even with
+        # --dry-run, but only after building and uploading the tarball. Fail here
+        # instead, with a message that says to bump the version.
+        run: npm run check:unpublished
+
       - name: Type check
         run: npm run lint:ts
 
