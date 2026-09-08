@@ -144,7 +144,9 @@ checks every token pair against WCAG AA in both themes, and
 `tests/css/structure.test.ts` asserts the accessibility features promised above
 are actually present.
 
-Release process: [docs/RELEASING.md](docs/RELEASING.md).
+Conventions, the invariants the stylesheet has to hold to, and how to get a
+change released: [CONTRIBUTING.md](CONTRIBUTING.md) and
+[docs/RELEASING.md](docs/RELEASING.md).
 
 ## License
 

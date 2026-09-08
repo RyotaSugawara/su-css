@@ -1,5 +1,8 @@
 # リリース手順（npm 公開）
 
+> このドキュメントはリリース作業の手順書です。日々の開発ルール（PRタイトル規約、
+> スタイルシートが守るべき不変条件、チェックの走らせ方）は [CONTRIBUTING.md](../CONTRIBUTING.md) にあります。
+
 SuCSS は npm パッケージ [`@ryo9ra/su-css`](https://www.npmjs.com/package/@ryo9ra/su-css) として公開しています。
 スコープ付きパッケージなので、公開時には `--access public` が必須です（ワークフローで指定済み。付けないと private 公開扱いとなり、有料プラン以外では失敗します）。
 
