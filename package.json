@@ -1,14 +1,13 @@
 {
   "name": "@ryo9ra/su-css",
   "version": "0.0.2",
-  "description": "素のHTMLだけでGlassmorphism 2.0を実現する、クラスレス・依存ゼロのアクセシブルなCSSフレームワーク / A zero-class, zero-dependency, accessible CSS framework for plain semantic HTML.",
+  "description": "素のHTMLだけで整ったUIを実現する、クラスレス・依存ゼロのアクセシブルなCSSフレームワーク / A zero-class, zero-dependency, accessible CSS framework for plain semantic HTML.",
   "keywords": [
     "css",
     "classless",
     "classless-css",
     "css-framework",
     "semantic-html",
-    "glassmorphism",
     "dark-mode",
     "accessibility",
     "a11y",

@@ -1,5 +1,5 @@
 /**
- * SuCSS (素のHTMLを使ったCSS) — Glassmorphism 2.0
+ * SuCSS (素のHTMLを使ったCSS)
  * The version banner is stamped onto dist-lib/ at build time from package.json.
  * Zero-class, highly accessible, minimal classless CSS framework.
  * Layered frosted-glass surfaces floating over a hue-linked gradient mesh,
@@ -207,7 +207,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* The "2.0" mesh: a fixed, hue-linked gradient the frosted panels reveal
+/* The mesh: a fixed, hue-linked gradient the frosted panels reveal
    through blur. It reacts to --hue, so the ThemeCustomizer's hue slider
    re-tints the whole atmosphere, not just buttons. */
 body {
@@ -1047,10 +1047,10 @@ dialog::backdrop {
 }
 
 /* --------------------------------------------------------------------------
-   9. Accessibility fallbacks — the "2.0" part of Glassmorphism 2.0.
-   Classic glassmorphism (2020-21) was criticized for low text contrast and
-   for ignoring users who disable transparency effects. Both are handled here
-   instead of only shipping the trend.
+   9. Accessibility fallbacks.
+   Translucent, blurred surfaces easily hurt text contrast and ignore users
+   who turn transparency effects off. Both are handled here instead of only
+   shipping the visual effect.
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-transparency: reduce) {
   article, aside, section, header, footer, dialog, fieldset, details,

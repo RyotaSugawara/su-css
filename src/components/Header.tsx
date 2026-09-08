@@ -48,7 +48,6 @@ export const Header: React.FC<HeaderProps> = ({
             <h1 style={{ margin: 0, border: 0, padding: 0, fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               SuCSS
             </h1>
-            <mark>v2.0 • Glassmorphism</mark>
           </div>
 
           {/* Actions & Theme */}
