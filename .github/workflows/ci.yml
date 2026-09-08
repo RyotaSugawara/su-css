@@ -43,5 +43,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Check the CSS version banner
+        run: npm run check:version
+
+      - name: Verify the npm package contents
+        run: npm pack --dry-run
+
       - name: Audit dependencies (non-blocking)
         run: npm audit --omit=dev || true
