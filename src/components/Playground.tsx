@@ -95,7 +95,7 @@ export const Playground: React.FC<PlaygroundProps> = () => {
             <strong style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <Eye size={18} /> リアルタイムレンダリング結果
             </strong>
-            <small>SuCSS v2.0 適用中</small>
+            <small>SuCSS 適用中</small>
           </div>
 
           <div style={{ padding: '1.25rem', border: '1px solid var(--border-color)', borderRadius: 'var(--radius)', backgroundColor: 'var(--bg-surface)', minHeight: '400px' }}>
