@@ -49,8 +49,8 @@ import '@ryo9ra/su-css/sucss.min.css';   // 圧縮版を使う場合
 
 ```html
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css/dist-lib/sucss.min.css">
-<!-- バージョン固定を推奨 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@2/dist-lib/sucss.min.css">
+<!-- バージョン固定を推奨（0.x の間は破壊的変更が入りうるため完全一致で固定） -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@0.0.1/dist-lib/sucss.min.css">
 ```
 
 ---
