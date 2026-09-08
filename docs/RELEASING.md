@@ -5,23 +5,67 @@ SuCSS は npm パッケージ [`su-css`](https://www.npmjs.com/package/su-css) �
 
 ---
 
-## 1. 初回のみ必要な設定
+## 1. 認証方式
 
-### npm アクセストークンの登録
+リリースワークフローは **Trusted Publishing（OIDC）を優先**します。
+GitHub Actions が発行するOIDCトークンをnpmが検証するため、**長期間有効なnpmトークンをリポジトリに保存する必要がありません**。
 
-1. npmjs.com にログインし、**Access Tokens** から **Granular Access Token** を発行する。
-   - Packages and scopes: `su-css`（初回公開前で対象パッケージが存在しない場合は、公開権限のある scope / `Read and write` を選択）
+ワークフローは `NPM_TOKEN` シークレットの有無で自動的に切り替わります。
+
+| `NPM_TOKEN` シークレット | 使われる認証 |
+| --- | --- |
+| 未設定 | Trusted Publishing（OIDC）← 通常はこちら |
+| 設定あり | 従来のトークン認証（初回公開時のみ必要） |
+
+### なぜ初回だけトークンが必要か
+
+npm の Trusted Publisher 設定は「**公開済みのパッケージの設定画面**」で行うため、
+まだ npm 上に存在しない `su-css` に対しては事前設定ができません。
+そのため **1回目だけトークンで公開し、その後OIDCへ切り替える**のが公式に案内されている手順です。
+
+---
+
+### 手順A: 初回公開（トークンを一時的に使用）
+
+1. npmjs.com → **Access Tokens** → **Granular Access Token** を発行
    - Permissions: **Read and write**
-   - Expiration: 運用に合わせて設定（期限切れ時は再発行して差し替える）
-2. GitHub リポジトリの **Settings → Secrets and variables → Actions** で、シークレット `NPM_TOKEN` として登録する。
+   - Packages and scopes: すべて（対象パッケージが未作成のため）
+   - 2FA を有効にしている場合は **Bypass 2FA** を有効にする
+   - Expiration: 最短（数日）で十分。直後に削除するため
+2. GitHub の **Settings → Secrets and variables → Actions** で `NPM_TOKEN` として登録
+3. 後述の「リリースの流れ」でタグを push し、`su-css` の初回バージョンを公開
+4. 公開が成功したら **手順B** に進み、トークンを削除する
 
-> リリースワークフローは `environment: npm` を使用します。Environment 側にシークレットを置くと、リリース時のみトークンが露出するよう制限でき、承認レビューを挟むこともできます（リポジトリレベルのシークレットのままでも動作します）。
+### 手順B: OIDC（Trusted Publishing）へ切り替え
 
-### 2FA を有効にしている場合
+1. npmjs.com → **Packages → su-css → Settings → Trusted publishing** を開く
+2. GitHub Actions を選び、以下を**大文字小文字も含めて完全一致**で入力する
 
-npm アカウントで「Require two-factor authentication for write actions」を有効にしていると、CI からの publish が失敗します。
-Granular Access Token は 2FA をバイパスできる設定で発行するか、パッケージ設定の Publishing access を
-**Require two-factor authentication or an automation token** にしてください。
+   | 項目 | 値 |
+   | --- | --- |
+   | Organization or user | `RyotaSugawara` |
+   | Repository | `su-css` |
+   | Workflow filename | `release.yml` |
+   | Environment | （空欄） |
+
+   > 値がずれていると publish が **404** で失敗します（401ではなく404が返る点に注意）。
+   > Environment を使う場合は、`release.yml` の `publish` ジョブに `environment: <名前>` を追加し、この欄にも同じ名前を入力してください（private リポジトリで Environment を使うには GitHub Pro/Team/Enterprise が必要です）。
+
+3. GitHub の `NPM_TOKEN` シークレットを**削除**する
+4. npmjs.com 側の Access Token も**削除**する
+
+これ以降、リリースはトークンなしで実行されます。
+
+### 前提条件（ワークフローで対応済み）
+
+- `permissions: id-token: write`（OIDCトークンの発行に必要）
+- npm CLI **11.5.1 以上**（`.nvmrc` の Node 20 に同梱される npm 10 では動かないため、ワークフローで `npm@^11.5.1` へ更新しています）
+- **GitHub ホストランナー**であること（セルフホストランナーは未対応）
+
+### provenance（来歴署名）について
+
+Trusted Publishing では provenance が自動生成されますが、**private リポジトリでは生成できません**（パッケージ自体が public でも同様）。
+本リポジトリが private の間は自動的にスキップされ、public にすると自動で有効になります。
 
 ---
 
@@ -53,7 +97,7 @@ git push origin main --follow-tags
 2. `src/lib/sucss.css` のバージョンバナーの一致を検証（`npm run check:version`）
 3. 型チェック / Stylelint / テスト
 4. `npm run build:lib` で `dist-lib/` を生成
-5. `npm publish --access public`（リポジトリが public の場合は `--provenance` 付き）
+5. `npm publish --access public`（`NPM_TOKEN` が無ければOIDC認証／リポジトリが public の場合は `--provenance` 付き）
 6. `gh release create` で GitHub Release を作成（リリースノートは自動生成）
 
 ---
@@ -83,6 +127,8 @@ GitHub の **Actions → Release → Run workflow** から手動実行できま�
 | --- | --- |
 | `Tag vX.Y.Z does not match package.json version` | タグを削除し、`npm version` でバージョンを上げ直してから push する |
 | `npm run check:version` が失敗 | `npm run sync:version` を実行し、`src/lib/sucss.css` の差分をコミットする |
-| `ENEEDAUTH` / `E401` | `NPM_TOKEN` が未設定・期限切れ。トークンを再発行してシークレットを更新する |
+| `ENEEDAUTH` / `E401` | OIDC未設定でトークンも無い状態。Trusted Publisher 設定（手順B）を見直すか、`NPM_TOKEN` を再登録する |
+| publish が `404 Not Found` | Trusted Publisher の設定値のいずれかが不一致（org / repo / ワークフロー名 / Environment）。npmは不一致を401ではなく404で返すため、各項目を大文字小文字まで完全一致で見直す |
+| OIDCが使われず認証エラーになる | npm が 11.5.1 未満だとOIDCを試行せず従来のトークン認証にフォールバックします。ワークフローの「Update npm」ステップのログでバージョンを確認する |
 | `E403 Forbidden` | 同一バージョンが公開済み、またはパッケージへの権限不足。バージョンを上げ直す |
 | `Provenance generation ... public repository` | リポジトリが private の間は provenance を自動的にスキップします。エラーが出る場合はワークフローの visibility 判定を確認する |

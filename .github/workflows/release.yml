@@ -21,10 +21,14 @@ jobs:
   publish:
     name: Publish to npm
     runs-on: ubuntu-latest
-    environment: npm
+    # Optional hardening: add `environment: npm` here to gate releases behind an
+    # environment (required reviewers, scoped secrets). If you do, the npm trusted
+    # publisher config must carry the same environment name. Environments in private
+    # repositories require GitHub Pro/Team/Enterprise, so it is left off by default.
     permissions:
       contents: read
-      # Required by `npm publish --provenance` to mint a Sigstore signing certificate.
+      # Required to mint the OIDC token used by npm trusted publishing (and by
+      # `npm publish --provenance` for its Sigstore signing certificate).
       id-token: write
     steps:
       - name: Checkout
@@ -35,7 +39,16 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+          # Required even though it is the default: it makes setup-node write the
+          # .npmrc that both the OIDC exchange and NODE_AUTH_TOKEN rely on.
           registry-url: https://registry.npmjs.org
+
+      - name: Update npm
+        # Trusted publishing (OIDC) needs npm >= 11.5.1; Node 20 still ships npm 10.
+        # Pinned to the 11.x line because npm 12 requires Node >= 22.
+        run: |
+          npm install -g npm@^11.5.1
+          npm --version
 
       - name: Install dependencies
         run: npm ci
@@ -68,8 +81,17 @@ jobs:
 
       - name: Publish
         # `prepack` rebuilds dist-lib/, so the published tarball always matches src/lib/sucss.css.
-        # npm provenance is only accepted for public repositories, so it is enabled automatically
-        # once this repository becomes public and skipped while it is private.
+        #
+        # Authentication is picked automatically:
+        #   - no NPM_TOKEN secret  -> trusted publishing (OIDC), the preferred path.
+        #   - NPM_TOKEN secret set -> classic token auth, needed only for the very first
+        #     publish, because a trusted publisher can only be configured on npmjs.com
+        #     once the package exists. Delete the secret afterwards to switch to OIDC.
+        #
+        # Provenance is only accepted for public repositories, so it is enabled
+        # automatically once this repository becomes public and skipped while it is private.
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           args=(--access public)
           if [ "${{ github.event.repository.visibility }}" = "public" ]; then
@@ -80,10 +102,16 @@ jobs:
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             args+=(--dry-run)
           fi
+
+          if [ -n "$NPM_TOKEN" ]; then
+            echo "::notice::NPM_TOKEN is set; publishing with token auth."
+            export NODE_AUTH_TOKEN="$NPM_TOKEN"
+          else
+            echo "::notice::No NPM_TOKEN; publishing with trusted publishing (OIDC)."
+          fi
+
           echo "npm publish ${args[*]}"
           npm publish "${args[@]}"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   github-release:
     name: Create GitHub Release
