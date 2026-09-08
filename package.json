@@ -1,5 +1,5 @@
 {
-  "name": "su-css",
+  "name": "@ryo9ra/su-css",
   "version": "2.0.0",
   "description": "素のHTMLだけでGlassmorphism 2.0を実現する、クラスレス・依存ゼロのアクセシブルなCSSフレームワーク / A zero-class, zero-dependency, accessible CSS framework for plain semantic HTML.",
   "keywords": [

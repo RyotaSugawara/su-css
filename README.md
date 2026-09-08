@@ -21,36 +21,36 @@
 
 ## 📦 インストール
 
-npm パッケージ [`su-css`](https://www.npmjs.com/package/su-css) として配布しています。中身はCSS 1ファイルのみで、依存パッケージはありません。
+npm パッケージ [`@ryo9ra/su-css`](https://www.npmjs.com/package/@ryo9ra/su-css) として配布しています。中身はCSS 1ファイルのみで、依存パッケージはありません。
 
 ```bash
-npm install su-css
+npm install @ryo9ra/su-css
 ```
 
 | インポート指定子 | 実ファイル | 内容 |
 | --- | --- | --- |
-| `su-css` / `su-css/sucss.css` | `dist-lib/sucss.css` | 整形済み・コメント付き（約 29KB / gzip 約 6KB） |
-| `su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 圧縮版（約 22KB / gzip 約 4.3KB） |
+| `@ryo9ra/su-css` / `@ryo9ra/su-css/sucss.css` | `dist-lib/sucss.css` | 整形済み・コメント付き（約 29KB / gzip 約 6KB） |
+| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 圧縮版（約 22KB / gzip 約 4.3KB） |
 
 ### バンドラ（Vite / webpack / Next.js など）から使う
 
 ```js
-import 'su-css';            // = su-css/sucss.css
-import 'su-css/sucss.min.css'; // 圧縮版を使う場合
+import '@ryo9ra/su-css';                 // = @ryo9ra/su-css/sucss.css
+import '@ryo9ra/su-css/sucss.min.css';   // 圧縮版を使う場合
 ```
 
 ### `<link>` で使う
 
 ```html
-<link rel="stylesheet" href="/node_modules/su-css/dist-lib/sucss.min.css">
+<link rel="stylesheet" href="/node_modules/@ryo9ra/su-css/dist-lib/sucss.min.css">
 ```
 
 ### CDN で使う（インストール不要）
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/su-css/dist-lib/sucss.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css/dist-lib/sucss.min.css">
 <!-- バージョン固定を推奨 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/su-css@2/dist-lib/sucss.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@2/dist-lib/sucss.min.css">
 ```
 
 ---

@@ -1,6 +1,7 @@
 # リリース手順（npm 公開）
 
-SuCSS は npm パッケージ [`su-css`](https://www.npmjs.com/package/su-css) として公開しています。
+SuCSS は npm パッケージ [`@ryo9ra/su-css`](https://www.npmjs.com/package/@ryo9ra/su-css) として公開しています。
+スコープ付きパッケージなので、公開時には `--access public` が必須です（ワークフローで指定済み。付けないと private 公開扱いとなり、有料プラン以外では失敗します）。
 公開されるのは `src/lib/sucss.css` から生成したCSS 2ファイルのみで、デモアプリ（React / Vite）のコードや依存関係は含まれません。
 
 ---
@@ -20,25 +21,26 @@ GitHub Actions が発行するOIDCトークンをnpmが検証するため、**�
 ### なぜ初回だけトークンが必要か
 
 npm の Trusted Publisher 設定は「**公開済みのパッケージの設定画面**」で行うため、
-まだ npm 上に存在しない `su-css` に対しては事前設定ができません。
+まだ npm 上に存在しない `@ryo9ra/su-css` に対しては事前設定ができません。
 そのため **1回目だけトークンで公開し、その後OIDCへ切り替える**のが公式に案内されている手順です。
 
 ---
 
 ### 手順A: 初回公開（トークンを一時的に使用）
 
-1. npmjs.com → **Access Tokens** → **Granular Access Token** を発行
+1. npmjs.com で `ryo9ra` ユーザーにログインしていることを確認する（`@ryo9ra` はユーザースコープなので、追加のOrganization作成は不要）
+2. npmjs.com → **Access Tokens** → **Granular Access Token** を発行
    - Permissions: **Read and write**
-   - Packages and scopes: すべて（対象パッケージが未作成のため）
+   - Packages and scopes: **Selected scopes → `@ryo9ra`**（パッケージが未作成でもスコープ単位なら指定できます）
    - 2FA を有効にしている場合は **Bypass 2FA** を有効にする
    - Expiration: 最短（数日）で十分。直後に削除するため
-2. GitHub の **Settings → Secrets and variables → Actions** で `NPM_TOKEN` として登録
-3. 後述の「リリースの流れ」でタグを push し、`su-css` の初回バージョンを公開
-4. 公開が成功したら **手順B** に進み、トークンを削除する
+3. GitHub の **Settings → Secrets and variables → Actions** で `NPM_TOKEN` として登録
+4. 後述の「リリースの流れ」でタグを push し、`@ryo9ra/su-css` の初回バージョンを公開
+5. 公開が成功したら **手順B** に進み、トークンを削除する
 
 ### 手順B: OIDC（Trusted Publishing）へ切り替え
 
-1. npmjs.com → **Packages → su-css → Settings → Trusted publishing** を開く
+1. npmjs.com → **Packages → @ryo9ra/su-css → Settings → Trusted publishing** を開く
 2. GitHub Actions を選び、以下を**大文字小文字も含めて完全一致**で入力する
 
    | 項目 | 値 |
@@ -131,4 +133,6 @@ GitHub の **Actions → Release → Run workflow** から手動実行できま�
 | publish が `404 Not Found` | Trusted Publisher の設定値のいずれかが不一致（org / repo / ワークフロー名 / Environment）。npmは不一致を401ではなく404で返すため、各項目を大文字小文字まで完全一致で見直す |
 | OIDCが使われず認証エラーになる | npm が 11.5.1 未満だとOIDCを試行せず従来のトークン認証にフォールバックします。ワークフローの「Update npm」ステップのログでバージョンを確認する |
 | `E403 Forbidden` | 同一バージョンが公開済み、またはパッケージへの権限不足。バージョンを上げ直す |
+| `E402 Payment Required` | スコープ付きパッケージが private 扱いで公開されようとしている。`--access public` が付いているか確認する |
+| `E404 Scope not found` | npm アカウント名が `ryo9ra` でない、またはトークンのスコープ権限が不足している |
 | `Provenance generation ... public repository` | リポジトリが private の間は provenance を自動的にスキップします。エラーが出る場合はワークフローの visibility 判定を確認する |
