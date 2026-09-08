@@ -1,0 +1,140 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run every check and `npm publish --dry-run` without publishing'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    # Optional hardening: add `environment: npm` here to gate releases behind an
+    # environment (required reviewers, scoped secrets). If you do, the npm trusted
+    # publisher config must carry the same environment name. Environments in private
+    # repositories require GitHub Pro/Team/Enterprise, so it is left off by default.
+    permissions:
+      contents: read
+      # Required to mint the OIDC token used by npm trusted publishing (and by
+      # `npm publish --provenance` for its Sigstore signing certificate).
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          # Required even though it is the default: it makes setup-node write the
+          # .npmrc that both the OIDC exchange and NODE_AUTH_TOKEN rely on.
+          registry-url: https://registry.npmjs.org
+
+      - name: Update npm
+        # Trusted publishing (OIDC) needs npm >= 11.5.1; Node 20 still ships npm 10.
+        # Pinned to the 11.x line because npm 12 requires Node >= 22.
+        run: |
+          npm install -g npm@^11.5.1
+          npm --version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify the tag matches package.json
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$pkg" ]; then
+            echo "::error::Tag v$tag does not match package.json version $pkg."
+            exit 1
+          fi
+          echo "Releasing v$pkg"
+
+      - name: Verify the CSS version banner
+        run: npm run check:version
+
+      - name: Type check
+        run: npm run lint:ts
+
+      - name: Lint CSS
+        run: npm run lint:css
+
+      - name: Test
+        run: npm run test
+
+      - name: Build package artifacts
+        run: npm run build:lib
+
+      - name: Publish
+        # `prepack` rebuilds dist-lib/, so the published tarball always matches src/lib/sucss.css.
+        #
+        # Authentication is picked automatically:
+        #   - no NPM_TOKEN secret  -> trusted publishing (OIDC), the preferred path.
+        #   - NPM_TOKEN secret set -> classic token auth, needed only for the very first
+        #     publish, because a trusted publisher can only be configured on npmjs.com
+        #     once the package exists. Delete the secret afterwards to switch to OIDC.
+        #
+        # Provenance is only accepted for public repositories, so it is enabled
+        # automatically once this repository becomes public and skipped while it is private.
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          args=(--access public)
+          if [ "${{ github.event.repository.visibility }}" = "public" ]; then
+            args+=(--provenance)
+          else
+            echo "::notice::Repository is ${{ github.event.repository.visibility }}; publishing without provenance."
+          fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            args+=(--dry-run)
+          fi
+
+          if [ -n "$NPM_TOKEN" ]; then
+            echo "::notice::NPM_TOKEN is set; publishing with token auth."
+            export NODE_AUTH_TOKEN="$NPM_TOKEN"
+          else
+            echo "::notice::No NPM_TOKEN; publishing with trusted publishing (OIDC)."
+          fi
+
+          echo "npm publish ${args[*]}"
+          npm publish "${args[@]}"
+
+  github-release:
+    name: Create GitHub Release
+    needs: publish
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists; leaving it untouched."
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --title "$GITHUB_REF_NAME" \
+              --generate-notes \
+              --verify-tag
+          fi

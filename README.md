@@ -19,10 +19,46 @@
 
 ---
 
+## 📦 インストール
+
+npm パッケージ [`@ryo9ra/su-css`](https://www.npmjs.com/package/@ryo9ra/su-css) として配布しています。中身はCSS 1ファイルのみで、依存パッケージはありません。
+
+```bash
+npm install @ryo9ra/su-css
+```
+
+| インポート指定子 | 実ファイル | 内容 |
+| --- | --- | --- |
+| `@ryo9ra/su-css` / `@ryo9ra/su-css/sucss.css` | `dist-lib/sucss.css` | 整形済み・コメント付き（約 29KB / gzip 約 6KB） |
+| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 圧縮版（約 22KB / gzip 約 4.3KB） |
+
+### バンドラ（Vite / webpack / Next.js など）から使う
+
+```js
+import '@ryo9ra/su-css';                 // = @ryo9ra/su-css/sucss.css
+import '@ryo9ra/su-css/sucss.min.css';   // 圧縮版を使う場合
+```
+
+### `<link>` で使う
+
+```html
+<link rel="stylesheet" href="/node_modules/@ryo9ra/su-css/dist-lib/sucss.min.css">
+```
+
+### CDN で使う（インストール不要）
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css/dist-lib/sucss.min.css">
+<!-- バージョン固定を推奨（0.x の間は破壊的変更が入りうるため完全一致で固定） -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@0.0.1/dist-lib/sucss.min.css">
+```
+
+---
+
 ## 🚀 クイックスタート
 
 ### 1. CSSファイルの読み込み
-`src/lib/sucss.css`（またはCDN / 配布CSS）をHTMLの `<head>` で読み込むだけです：
+上記のいずれかの方法で読み込んだCSSを、HTMLの `<head>` に指定するだけです：
 
 ```html
 <!DOCTYPE html>
@@ -84,6 +120,18 @@ npm run lint:css:fix
 npm run test
 npm run test:watch
 ```
+
+### npmパッケージのビルド
+
+```bash
+# dist-lib/sucss.css と dist-lib/sucss.min.css を生成
+npm run build:lib
+
+# 公開されるtarballの中身を確認（実際には公開しない）
+npm run release:dry-run
+```
+
+リリース手順は [docs/RELEASING.md](docs/RELEASING.md) を参照してください。
 
 `tests/css/contrast.test.ts` は `src/lib/sucss.css` のCSSカスタムプロパティ（トークン）を実際にパースし、ライト/ダークの各テーマでWCAG AA (4.5:1) を満たしているかを検証します。`tests/css/structure.test.ts` は `prefers-reduced-motion` 対応や `:focus-visible` の存在、タッチターゲットサイズなど、README冒頭で謳っているアクセシビリティ要件をCSS構造として検証します。
 
