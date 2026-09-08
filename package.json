@@ -58,13 +58,10 @@
     "lint:ts": "tsc --noEmit",
     "lint:css": "stylelint \"src/**/*.css\"",
     "lint:css:fix": "stylelint \"src/**/*.css\" --fix",
-    "sync:version": "node scripts/sync-version.mjs",
-    "check:version": "node scripts/sync-version.mjs --check",
     "check:unpublished": "node scripts/check-unpublished.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "prepack": "npm run build:lib",
-    "version": "npm run sync:version && git add src/lib/sucss.css",
     "release:dry-run": "npm publish --dry-run"
   },
   "devDependencies": {

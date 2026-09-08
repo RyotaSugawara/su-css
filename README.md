@@ -45,11 +45,13 @@ import '@ryo9ra/su-css/sucss.min.css';
 Or straight from a CDN, with no install at all:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@0.0.2/dist-lib/sucss.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css/dist-lib/sucss.min.css">
 ```
 
-> Pin an exact version while SuCSS is on `0.x` — minor releases may still change
-> how things look.
+> That URL always serves the newest release. While SuCSS is on `0.x`, minor
+> releases may still change how things look, so pin an exact version in
+> production by appending it to the package name —
+> `@ryo9ra/su-css@1.2.3/dist-lib/sucss.min.css`.
 
 ## Usage
 
@@ -62,7 +64,7 @@ Link the stylesheet and write ordinary HTML. That is the whole API.
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Website</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css@0.0.2/dist-lib/sucss.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css/dist-lib/sucss.min.css">
 </head>
 <body>
   <header>
@@ -131,8 +133,11 @@ The framework itself is a single hand-written file: [`src/lib/sucss.css`](src/li
 `npm run build:lib` generates the distributable CSS, and `npm run release:dry-run`
 shows exactly what would be published.
 
-Releases go through npm's staging queue: CI stages the tarball, and a maintainer
-approves it with a 2FA challenge before it becomes installable.
+Versioning is automated. Land [Conventional Commits](https://www.conventionalcommits.org/)
+on `main` (`feat:`, `fix:`, `feat!:`) and release-please keeps a release PR open
+with the next version and changelog; merging it cuts the release. Releases then
+go through npm's staging queue, where a maintainer approves them with a 2FA
+challenge before they become installable.
 
 The test suite parses `src/lib/sucss.css` directly: `tests/css/contrast.test.ts`
 checks every token pair against WCAG AA in both themes, and

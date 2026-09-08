@@ -1,5 +1,6 @@
 /**
- * SuCSS v0.0.2 (素のHTMLを使ったCSS) — Glassmorphism 2.0
+ * SuCSS (素のHTMLを使ったCSS) — Glassmorphism 2.0
+ * The version banner is stamped onto dist-lib/ at build time from package.json.
  * Zero-class, highly accessible, minimal classless CSS framework.
  * Layered frosted-glass surfaces floating over a hue-linked gradient mesh,
  * powered by CSS custom properties with automatic light/dark mode support

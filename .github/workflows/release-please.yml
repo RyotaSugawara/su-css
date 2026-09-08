@@ -1,0 +1,50 @@
+name: Release Please
+
+# Reads the Conventional Commits landing on main, keeps a "Release PR" open with
+# the next version and the CHANGELOG entry, and — once that PR is merged — tags
+# the release and hands off to release.yml to stage it on npm.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    name: Maintain the release PR
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  stage:
+    name: Stage the release
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    # The tag release-please just created carries the GITHUB_TOKEN identity, so it
+    # cannot trigger release.yml on its own. Call it directly instead.
+    #
+    # npm authorizes the workflow that *starts* the run, so this file — not
+    # release.yml — is what the npm trusted publisher must name for this path.
+    uses: ./.github/workflows/release.yml
+    permissions:
+      contents: read
+      id-token: write
+    secrets: inherit
