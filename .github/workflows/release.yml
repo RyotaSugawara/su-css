@@ -44,10 +44,12 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Update npm
-        # Trusted publishing (OIDC) needs npm >= 11.5.1; Node 20 still ships npm 10.
-        # Pinned to the 11.x line because npm 12 requires Node >= 22.
+        # Trusted publishing (OIDC) needs npm >= 11.5.1 on Node >= 22.14.0; the npm
+        # bundled with Node 22 is older than that. Pinned to the 11.x line so the
+        # step does not silently depend on whatever npm@latest requires next.
         run: |
           npm install -g npm@^11.5.1
+          node --version
           npm --version
 
       - name: Install dependencies
