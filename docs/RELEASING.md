@@ -175,6 +175,11 @@ npm stage reject  <stage-id>       # 破棄する場合（2FA必要）
 > 同じバージョン番号を二重にステージすることはできません。破棄する場合は `npm stage reject` を使ってください。
 > また、dist-tag はステージ時に確定し、後から変更できません。
 
+> タグを手で push した場合の GitHub Release 作成は、別ワークフロー `github-release.yml` が担当します。
+> release.yml から切り出してあるのは、再利用ワークフローは呼び出し元より強い権限を要求できず、
+> `contents: write` を release.yml に残すと**すべての呼び出し元に書き込み権限を要求させてしまう**ためです。
+> （release-please と Version Bump は自分で Release を作るので、この分離で困りません。）
+
 ### なぜ起点ごとにワークフローが分かれているのか
 
 GITHUB_TOKEN が作成したタグは**ワークフローを起動しません**（GitHub の無限ループ防止）。
@@ -241,6 +246,8 @@ GitHub の **Actions → Release → Run workflow** から手動実行できま�
 | `Tag vX.Y.Z does not match package.json version` | タグを削除し、`npm version` でバージョンを上げ直してから push する |
 | Release PR が立たない | リポジトリ設定 → Actions → General → 「Allow GitHub Actions to create and approve pull requests」を有効にする。リリース対象のコミットが1件も無い（`docs:` / `chore:` のみ）場合も立ちません |
 | Release PR をマージしたのにステージされない | npm の Trusted Publisher に `release-please.yml` を登録しているか確認する（起点ごとに別登録が必要です） |
+| ワークフローが `startup_failure` になる | 再利用ワークフロー側のジョブが、呼び出し元より強い `permissions` を要求している。呼び出し元の `permissions` を合わせるか、その権限が必要なジョブを別ワークフローに切り出す |
+| `Tag vX.Y.Z does not match package.json version` | タグが古いコミットを指している。タグを削除し、`package.json` がそのバージョンになっているコミット上で作り直す |
 | `... is already published. Bump the version` | そのバージョンは公開済み。`npm version <patch\|minor\|major>` で上げ直す（dry run でも未公開バージョンが必要です） |
 | `You cannot publish over the previously published versions` | 同上。ローカルで `npm run check:unpublished` を実行すると事前に確認できます |
 | `ENEEDAUTH` / `E401` | OIDC未設定でトークンも無い状態。Trusted Publisher 設定（手順B）を見直すか、`NPM_TOKEN` を再登録する |
