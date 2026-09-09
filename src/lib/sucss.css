@@ -426,6 +426,17 @@ address {
   margin-bottom: 1rem;
 }
 
+/* Ruby. The annotation is the part that needs saying: at the browser default it
+   is as dark as the base text, which makes the reading compete with the word it
+   is annotating. rp is deliberately left to the UA stylesheet, which hides it in
+   every browser SuCSS targets - overriding it here could only break the
+   fallback parentheses it exists to provide. */
+rt {
+  font-size: 0.5em;
+  color: var(--text-subtle);
+  text-align: center;
+}
+
 mark,
 samp,
 output,
