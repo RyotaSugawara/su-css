@@ -61,7 +61,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
           # Required even though it is the default: it makes setup-node write the
-          # .npmrc that both the OIDC exchange and NODE_AUTH_TOKEN rely on.
+          # .npmrc that the OIDC exchange relies on.
           registry-url: https://registry.npmjs.org
 
       - name: Update npm
@@ -112,15 +112,13 @@ jobs:
         # compromised workflow cannot reach consumers on its own. `prepack` rebuilds
         # dist-lib/, so the staged tarball always matches src/lib/sucss.css.
         #
-        # Authentication is picked automatically:
-        #   - no NPM_TOKEN secret  -> trusted publishing (OIDC), the preferred path.
-        #   - NPM_TOKEN secret set -> classic token auth, the bootstrap path used
-        #     before a trusted publisher could be configured on npmjs.com.
+        # Authentication is trusted publishing (OIDC) only. There is no token
+        # fallback: the npm credential is minted per run from the OIDC token
+        # this job requests, so there is nothing long-lived to leak or revoke.
         #
         # Provenance is only accepted for public repositories, so it is enabled
         # automatically once this repository becomes public and skipped while it is private.
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           # Expression values reach the script as environment variables rather
           # than being spliced into it, the same way pr-title.yml handles the
           # PR title. Neither value is attacker-controlled today, but keeping
@@ -136,13 +134,6 @@ jobs:
           fi
           if [ "$DRY_RUN" = "true" ]; then
             args+=(--dry-run)
-          fi
-
-          if [ -n "$NPM_TOKEN" ]; then
-            echo "::notice::NPM_TOKEN is set; staging with token auth."
-            export NODE_AUTH_TOKEN="$NPM_TOKEN"
-          else
-            echo "::notice::No NPM_TOKEN; staging with trusted publishing (OIDC)."
           fi
 
           echo "npm stage publish ${args[*]}"

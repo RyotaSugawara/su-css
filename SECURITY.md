@@ -52,7 +52,8 @@ defeats one of them is especially valuable:
   challenge. The npm trusted publisher is deliberately limited to
   `npm stage publish` so there is no route around that gate.
 - **No long-lived npm token.** Publishing authenticates through OIDC trusted
-  publishing rather than a stored credential.
+  publishing alone — there is no token fallback in the workflow and no
+  publish credential stored in the repository, so there is nothing to leak.
 - **Every GitHub Action is pinned to a commit SHA**, so a moved tag cannot
   change what runs.
 - **Workflows request the least privilege they need**, defaulting to

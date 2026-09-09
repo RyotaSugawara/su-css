@@ -46,9 +46,6 @@ jobs:
     uses: ./.github/workflows/release.yml
     permissions:
       contents: read
+      # release.yml authenticates to npm through OIDC alone, so it needs no
+      # secrets from this caller — only the token minted from this permission.
       id-token: write
-    secrets:
-      # release.yml uses NPM_TOKEN alone, and only as the bootstrap path before
-      # trusted publishing took over. Naming it keeps `inherit` from quietly
-      # handing every future secret to the release job.
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
