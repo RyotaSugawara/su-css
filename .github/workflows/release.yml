@@ -1,9 +1,10 @@
 name: Release
 
 on:
-  # A tag pushed by a person. Tags created by release-please or version-bump.yml
-  # carry the GITHUB_TOKEN identity and deliberately do not trigger workflows, so
-  # those two call this workflow directly instead (see workflow_call below).
+  # A tag pushed by a person. A tag created by release-please carries the
+  # GITHUB_TOKEN identity and deliberately does not trigger workflows, so
+  # release-please calls this workflow directly instead (see workflow_call
+  # below).
   push:
     tags: ['v*.*.*']
   workflow_dispatch:
@@ -19,7 +20,7 @@ on:
         type: boolean
         default: false
       ref:
-        description: 'Commit, tag or branch to release. Defaults to the commit that started the run, which is wrong for a caller that creates the version commit itself.'
+        description: 'Commit, tag or branch to release. Defaults to the commit that started the run, which is what the current caller wants; a caller that creates the version commit inside its own run would need to name the new tag here.'
         type: string
         default: ''
 
@@ -47,6 +48,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          # This job never writes back to git, so don't leave the checkout
+          # token behind in .git/config for later steps to reach.
+          persist-credentials: false
           # Empty means "the commit that started the run", which is what a tag
           # push and a workflow_dispatch both want.
           ref: ${{ inputs.ref || github.ref }}
@@ -57,7 +61,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
           # Required even though it is the default: it makes setup-node write the
-          # .npmrc that both the OIDC exchange and NODE_AUTH_TOKEN rely on.
+          # .npmrc that the OIDC exchange relies on.
           registry-url: https://registry.npmjs.org
 
       - name: Update npm
@@ -108,31 +112,28 @@ jobs:
         # compromised workflow cannot reach consumers on its own. `prepack` rebuilds
         # dist-lib/, so the staged tarball always matches src/lib/sucss.css.
         #
-        # Authentication is picked automatically:
-        #   - no NPM_TOKEN secret  -> trusted publishing (OIDC), the preferred path.
-        #   - NPM_TOKEN secret set -> classic token auth, the bootstrap path used
-        #     before a trusted publisher could be configured on npmjs.com.
+        # Authentication is trusted publishing (OIDC) only. There is no token
+        # fallback: the npm credential is minted per run from the OIDC token
+        # this job requests, so there is nothing long-lived to leak or revoke.
         #
         # Provenance is only accepted for public repositories, so it is enabled
         # automatically once this repository becomes public and skipped while it is private.
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Expression values reach the script as environment variables rather
+          # than being spliced into it, the same way pr-title.yml handles the
+          # PR title. Neither value is attacker-controlled today, but keeping
+          # one habit means no one has to decide case by case.
+          VISIBILITY: ${{ github.event.repository.visibility }}
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
           args=(--access public)
-          if [ "${{ github.event.repository.visibility }}" = "public" ]; then
+          if [ "$VISIBILITY" = "public" ]; then
             args+=(--provenance)
           else
-            echo "::notice::Repository is ${{ github.event.repository.visibility }}; staging without provenance."
+            echo "::notice::Repository is $VISIBILITY; staging without provenance."
           fi
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
+          if [ "$DRY_RUN" = "true" ]; then
             args+=(--dry-run)
-          fi
-
-          if [ -n "$NPM_TOKEN" ]; then
-            echo "::notice::NPM_TOKEN is set; staging with token auth."
-            export NODE_AUTH_TOKEN="$NPM_TOKEN"
-          else
-            echo "::notice::No NPM_TOKEN; staging with trusted publishing (OIDC)."
           fi
 
           echo "npm stage publish ${args[*]}"

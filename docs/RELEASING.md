@@ -22,40 +22,23 @@ SuCSS は npm パッケージ [`@ryo9ra/su-css`](https://www.npmjs.com/package/@
 
 ## 1. 認証方式
 
-リリースワークフローは **Trusted Publishing（OIDC）を優先**します。
-GitHub Actions が発行するOIDCトークンをnpmが検証するため、**長期間有効なnpmトークンをリポジトリに保存する必要がありません**。
+リリースワークフローは **Trusted Publishing（OIDC）のみ**で npm に認証します。
+GitHub Actions が実行ごとに発行するOIDCトークンをnpmが検証するため、
+**長期間有効なnpmトークンはどこにも保存していません**。フォールバックもありません。
 
-ワークフローは `NPM_TOKEN` シークレットの有無で自動的に切り替わります。
+漏れて困る資格情報が存在しない、というのがこの構成の一番の狙いです。
+リポジトリのシークレットに publish 用のトークンを足すと、
+冒頭に書いた「メンテナが 2FA で承認するまで公開されない」というゲートを
+迂回する経路を CI に与えることになるので、追加しないでください。
 
-| `NPM_TOKEN` シークレット | 使われる認証 |
-| --- | --- |
-| 未設定 | Trusted Publishing（OIDC）← 通常はこちら |
-| 設定あり | 従来のトークン認証（初回公開時のみ必要） |
-
-### なぜ初回だけトークンが必要か
-
-npm の Trusted Publisher 設定は「**公開済みのパッケージの設定画面**」で行うため、
-まだ npm 上に存在しない `@ryo9ra/su-css` に対しては事前設定ができません。
-そのため **1回目だけトークンで公開し、その後OIDCへ切り替える**のが公式に案内されている手順です。
+> かつては初回公開だけトークンを使っていました。npm の Trusted Publisher 設定は
+> 「公開済みパッケージの設定画面」で行うため、npm 上に存在しないパッケージには
+> 事前設定ができないからです。`@ryo9ra/su-css` は公開済みで OIDC へ移行が済んでおり、
+> `NPM_TOKEN` シークレットと npm 側の Access Token はどちらも削除済みです。
 
 ---
 
-### 手順A: 初回公開（トークンを一時的に使用）
-
-1. npmjs.com で `ryo9ra` ユーザーにログインしていることを確認する（`@ryo9ra` はユーザースコープなので、追加のOrganization作成は不要）
-2. npmjs.com → **Access Tokens** → **Granular Access Token** を発行
-   - Permissions: **Read and write**
-   - Packages and scopes: **Selected scopes → `@ryo9ra`**（パッケージが未作成でもスコープ単位なら指定できます）
-   - 2FA を有効にしている場合は **Bypass 2FA** を有効にする
-   - Expiration: 最短（数日）で十分。直後に削除するため
-3. GitHub の **Settings → Secrets and variables → Actions** で `NPM_TOKEN` として登録
-4. 後述の「リリースの流れ」でタグを push し、`@ryo9ra/su-css` の初回バージョンを公開
-5. 公開が成功したら **手順B** に進み、トークンを削除する
-
-### 手順B: OIDC（Trusted Publishing）へ切り替え
-
-> **順番が重要です。** 先に Trusted Publisher を設定してOIDCで公開できることを確認し、
-> それからトークンを削除してください。逆順にすると公開手段が無くなります。
+### 設定A: Trusted Publisher の設定内容
 
 1. npmjs.com → **Packages → @ryo9ra/su-css → Settings → Trusted publishing** を開く
 2. GitHub Actions を選び、以下を**大文字小文字も含めて完全一致**で入力する
@@ -77,27 +60,19 @@ npm の Trusted Publisher 設定は「**公開済みのパッケージの設定�
    本ワークフローは `npm stage publish` しか実行しません。
 
 4. **タグを打たずに動作確認する。** Actions → Release → Run workflow を `dry_run: true` で実行し、
-   ログに「publishing with trusted publishing (OIDC)」ではなく token 認証と出ていないか、
-   publish がエラーにならないかを確認します。
-   ※ この時点ではまだ `NPM_TOKEN` があるためトークン認証が使われます。OIDC の実地確認は手順5の後になります。
+   publish がエラーにならないことを確認します。設定値がずれていると 404 で落ちるので、
+   設定を触ったあとは毎回ここまで確認しておくと安全です。
 
-5. GitHub の `NPM_TOKEN` シークレットを**削除**する → 再度 `dry_run: true` で実行し、
-   ログが **「No NPM_TOKEN; publishing with trusted publishing (OIDC)」** になり成功することを確認する
+### 設定B: 公開経路をCIのみに限定する（推奨）
 
-6. npmjs.com 側の Access Token も**削除**する
-
-これ以降、リリースはトークンなしで実行されます。
-
-### 手順C: 公開経路をCIのみに限定する（推奨）
-
-手順Bが完了したら、npmjs.com → **Packages → @ryo9ra/su-css → Settings → Publishing access** で
+npmjs.com → **Packages → @ryo9ra/su-css → Settings → Publishing access** で
 **「Require two-factor authentication and disallow tokens」** を選択します。
 
 - Granular Access Token は **bypass 2FA の設定にかかわらず** publish に使えなくなります
 - Trusted Publisher（OIDC）は影響を受けず、そのまま動作します
 - 手元から publish する場合は 2FA プロンプトへの対話応答が必須になります
 
-これにより、**トークンが漏洩しても公開できない**状態になります。
+これにより、**仮にトークンが発行・漏洩しても公開できない**状態になります。
 
 ### 前提条件（ワークフローで対応済み）
 
@@ -115,12 +90,11 @@ Trusted Publishing では provenance が自動生成されますが、**private 
 
 ## 2. リリースの流れ
 
-リリースの起点は3つあり、どれも最後は同じ `release.yml`（ステージング）に合流します。
+リリースの起点は2つあり、どちらも最後は同じ `release.yml`（ステージング）に合流します。
 
 | 起点 | 使う場面 | 操作 |
 | --- | --- | --- |
 | **release-please**（既定） | 通常のリリース | 自動で立つ Release PR をマージするだけ |
-| **Version Bump**（手動） | コミット履歴からバージョンを決められないとき | Actions から patch/minor/major を選んで実行 |
 | **タグを直接 push** | 緊急時・手元から | `git tag vX.Y.Z && git push origin vX.Y.Z` |
 
 ### 2-A. release-please（推奨）
@@ -140,15 +114,16 @@ docs: ...  chore: ...  ci: ...            → リリースを起こさない
 > `0.x` の間は `bump-minor-pre-major` により `feat:` でも minor に留め、
 > 破壊的変更（`!` または `BREAKING CHANGE:`）で初めて 1.0.0 に上がる設定にしています。
 
-### 2-B. Version Bump（手動トリガー）
+> **かつてあった Version Bump ワークフローは削除しました。**
+> `npm version` で直接バージョンを上げて main に push する手動ディスパッチでしたが、
+> release-please のマニフェスト（`.release-please-manifest.json`）を更新しないため、
+> これを使うと release-please が最後のリリースを見失います。実際 0.1.0 をこれで切った結果、
+> マニフェストが 0.0.2 のまま取り残され、次のリリース PR が公開済みより低い 0.0.3 を
+> 提案する状態になりました。
+> main への直接 push はブランチ保護とも噛み合わないため、リリースの起点は
+> release-please に一本化しています。
 
-**Actions → Version Bump → Run workflow** で `patch` / `minor` / `major` を選ぶだけです。
-`npm version` → コミット → タグ push → GitHub Release 作成 → ステージングまで自動で進みます。
-コミットメッセージの規約に縛られたくないとき、スマホから完結させたいときに使います。
-
-`dry_run` を `true` にすると、バージョンは上がりますが npm には何も積まれません。
-
-### 2-C. 共通: ステージング後に承認して公開する
+### 2-B. 共通: ステージング後に承認して公開する
 
 いずれの起点でも、`release.yml` が次を順に実行します。
 
@@ -156,7 +131,7 @@ docs: ...  chore: ...  ci: ...            → リリースを起こさない
 2. そのバージョンが未公開であることを検証（`npm run check:unpublished`）
 3. 型チェック / Stylelint / テスト
 4. `npm run build:lib` で `dist-lib/` を生成
-5. `npm stage publish --access public`（`NPM_TOKEN` が無ければOIDC認証／リポジトリが public の場合は `--provenance` 付き）
+5. `npm stage publish --access public`（OIDC認証／リポジトリが public の場合は `--provenance` 付き）
 
 **この時点ではまだ公開されていません。** ジョブのサマリに承認手順が出力されます。
 
@@ -181,12 +156,12 @@ npm stage reject  <stage-id>       # 破棄する場合（2FA必要）
 > タグを手で push した場合の GitHub Release 作成は、別ワークフロー `github-release.yml` が担当します。
 > release.yml から切り出してあるのは、再利用ワークフローは呼び出し元より強い権限を要求できず、
 > `contents: write` を release.yml に残すと**すべての呼び出し元に書き込み権限を要求させてしまう**ためです。
-> （release-please と Version Bump は自分で Release を作るので、この分離で困りません。）
+> （release-please は自分で Release を作るので、この分離で困りません。）
 
 ### なぜ起点ごとにワークフローが分かれているのか
 
 GITHUB_TOKEN が作成したタグは**ワークフローを起動しません**（GitHub の無限ループ防止）。
-そのため release-please と Version Bump は、タグ push による連鎖に頼らず
+そのため release-please は、タグ push による連鎖に頼らず
 `release.yml` を **`workflow_call` で直接呼び出し**ています。
 
 この違いは npm 側の設定に影響します。npm は**実行を開始したワークフロー**を認可するため、
@@ -196,7 +171,9 @@ Trusted Publisher には起点ごとのファイル名を登録する必要が�
 | --- | --- |
 | タグ push / 手動 dry run | `release.yml` |
 | release-please | `release-please.yml` |
-| Version Bump | `version-bump.yml` |
+
+> `version-bump.yml` の登録が npm 側に残っている場合は削除してください。
+> 対応するワークフローが無くなったため、認可される必要のない入口になります。
 
 ### バージョン情報の一元管理
 
@@ -253,7 +230,7 @@ GitHub の **Actions → Release → Run workflow** から手動実行できま�
 | `Tag vX.Y.Z does not match package.json version` | タグが古いコミットを指している。タグを削除し、`package.json` がそのバージョンになっているコミット上で作り直す |
 | `... is already published. Bump the version` | そのバージョンは公開済み。`npm version <patch\|minor\|major>` で上げ直す（dry run でも未公開バージョンが必要です） |
 | `You cannot publish over the previously published versions` | 同上。ローカルで `npm run check:unpublished` を実行すると事前に確認できます |
-| `ENEEDAUTH` / `E401` | OIDC未設定でトークンも無い状態。Trusted Publisher 設定（手順B）を見直すか、`NPM_TOKEN` を再登録する |
+| `ENEEDAUTH` / `E401` | OIDC の認証に失敗している。Trusted Publisher の設定値（設定A）と、ジョブに `id-token: write` があるかを見直す。トークンを足して回避しないこと |
 | publish が `404 Not Found` | Trusted Publisher の設定値のいずれかが不一致（org / repo / ワークフロー名 / Environment）。npmは不一致を401ではなく404で返すため、各項目を大文字小文字まで完全一致で見直す |
 | OIDCが使われず認証エラーになる | npm が 11.5.1 未満、または Node が 22.14.0 未満。ワークフローの「Update npm」ステップのログで `node --version` / `npm --version` を確認する |
 | OIDCなのに stage publish が拒否される | Trusted Publisher の **Allowed actions** で `npm stage publish` が有効になっているか確認する |
@@ -261,5 +238,5 @@ GitHub の **Actions → Release → Run workflow** から手動実行できま�
 | `npm stage` が unknown command | npm が 11.15.0 未満。ワークフローの「Update npm」ステップのログを確認する |
 | ステージしたのに承認できない | npm アカウントの 2FA が無効。承認・却下には 2FA が必須です |
 | `E402 Payment Required` | スコープ付きパッケージが private 扱いで公開されようとしている。`--access public` が付いているか確認する |
-| `E404 Scope not found` | npm アカウント名が `ryo9ra` でない、またはトークンのスコープ権限が不足している |
+| `E404 Scope not found` | npm アカウント名が `ryo9ra` でない、または Trusted Publisher の設定がスコープに届いていない |
 | `Provenance generation ... public repository` | リポジトリが private の間は provenance を自動的にスキップします。エラーが出る場合はワークフローの visibility 判定を確認する |

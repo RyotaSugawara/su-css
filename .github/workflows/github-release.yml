@@ -1,9 +1,9 @@
 name: GitHub Release
 
-# Creates the GitHub Release for a tag pushed by a person. release-please and
-# version-bump.yml create their own releases, so this only covers the manual
-# path. It lives outside release.yml because a reusable workflow cannot request
-# more permission than its caller grants, and `contents: write` here would force
+# Creates the GitHub Release for a tag pushed by a person. release-please
+# creates its own release, so this only covers the manual path. It lives
+# outside release.yml because a reusable workflow cannot request more
+# permission than its caller grants, and `contents: write` here would force
 # every caller of release.yml to hand over write access it does not need.
 
 on:
@@ -23,6 +23,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          # This job never writes back to git, so don't leave the checkout
+          # token behind in .git/config for later steps to reach.
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Create the release if it does not exist
