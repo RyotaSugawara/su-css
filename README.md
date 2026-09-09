@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A classless CSS framework. Write plain semantic HTML — no class names, no custom
-attributes — and get a frosted-glass design with dark mode and accessibility
+attributes — and get a liquid-glass design with dark mode and accessibility
 built in.
 
 **Demo: https://ryotasugawara.github.io/su-css/**
@@ -21,8 +21,12 @@ built in.
 - **Accessible by default.** WCAG AA/AAA contrast, visible `:focus-visible`
   rings, adequate touch targets, and `prefers-reduced-motion` /
   `prefers-reduced-transparency` support.
-- **Small and dependency-free.** One CSS file, ~4 KB gzipped. No JavaScript, no
-  build step.
+- **Liquid glass surfaces.** Panels behave like a lens rather than a frosted
+  sheet: the backdrop stays legible through them, colour blooms out of them,
+  and every edge carries a specular rim. Controls are capsule-shaped and settle
+  with a short overshoot.
+- **Small and dependency-free.** One CSS file, under 5 KB gzipped. No
+  JavaScript, no build step.
 - **Themeable.** Every color, radius, and shadow is a CSS custom property.
 
 ## Install
@@ -33,8 +37,8 @@ npm install @ryo9ra/su-css
 
 | Import specifier | File | Size |
 | --- | --- | --- |
-| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 29 KB (6 KB gzipped) |
-| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 22 KB (4.3 KB gzipped) |
+| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 33 KB (6.8 KB gzipped) |
+| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 25 KB (4.7 KB gzipped) |
 
 From a bundler (Vite, webpack, Next.js, …):
 
@@ -97,12 +101,20 @@ including the background gradient.
 
 ```css
 :root {
-  --hue: 210;          /* 0-360 */
+  --hue: 210;               /* 0-360 */
   --sat: 80%;
   --radius: 12px;
-  --glass-blur: 24px;
+  --glass-blur: 14px;       /* how far the material blurs what is behind it */
+  --glass-saturate: 200%;   /* how much colour it pushes through */
+  --glass-brightness: 1.04; /* lifts the backdrop in light mode; set below 1 to sink it */
 }
 ```
+
+The material itself is described by `--glass-tint` (the diagonal sheen),
+`--glass-rim` (the specular edge) and `--glass-inset` (the concave inner shadow
+on fields and tracks). `--glass-brightness` is what keeps text on glass readable
+as the surfaces get more transparent, so lower it rather than raising
+`--glass-bg` if a theme reads too washed out.
 
 Dark mode follows the operating system by default. To control it yourself, set
 `data-theme` on `<html>`:
