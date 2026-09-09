@@ -331,6 +331,31 @@ h6 {
   color: var(--text-muted);
 }
 
+/* An hgroup is a heading and its subheading read as one unit, so the gap the
+   heading normally leaves below itself is what breaks it apart. The outer
+   spacing moves to the hgroup, which stands in for the heading it wraps. */
+hgroup {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+hgroup > :is(h1, h2, h3, h4, h5, h6) {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}
+
+/* h2's rule would otherwise draw its section underline between the heading and
+   its own subheading. */
+hgroup > h2 {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+hgroup > p {
+  margin-bottom: 0;
+  color: var(--text-muted);
+}
+
 p {
   margin-bottom: 1rem;
   color: var(--text-main);
@@ -352,6 +377,89 @@ strong, b {
 
 em, i {
   font-style: italic;
+}
+
+/* The browser default `vertical-align: sub / super` grows the line box, so a
+   paragraph carrying a footnote marker gets a taller line than the paragraph
+   next to it. Taking these out of the line box (`line-height: 0`) and offsetting
+   them by hand keeps the leading uniform down the page. */
+sub,
+sup {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup {
+  top: -0.5em;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+/* Text-level semantics. Several of these are drawn by the browser with a plain
+   underline, which is indistinguishable from a SuCSS link - the decoration
+   colour is what tells them apart. */
+abbr[title] {
+  text-decoration: underline dotted var(--text-subtle);
+  text-underline-offset: 0.2em;
+  cursor: help;
+}
+
+ins,
+u {
+  text-decoration: underline;
+  text-decoration-color: var(--text-subtle);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+del,
+s {
+  text-decoration: line-through;
+  text-decoration-color: var(--text-subtle);
+  color: var(--text-muted);
+}
+
+dfn {
+  font-style: italic;
+}
+
+var {
+  font-family: var(--font-mono);
+  font-style: normal;
+}
+
+/* The browser default for `quotes` depends on the document language, so a
+   Japanese-first framework has to say which marks it means. Written as escapes
+   rather than literals so the stylesheet stays pure ASCII and cannot be
+   mis-decoded by a page served in a legacy Japanese encoding.
+   Default: corner brackets U+300C/U+300D, then white corner brackets
+   U+300E/U+300F. :lang(en) keeps English documents on curly quotes. */
+q {
+  quotes: "\300c" "\300d" "\300e" "\300f";
+}
+
+q:lang(en) {
+  quotes: "\201c" "\201d" "\2018" "\2019";
+}
+
+address {
+  font-style: normal;
+  margin-bottom: 1rem;
+}
+
+/* Ruby. The annotation is the part that needs saying: at the browser default it
+   is as dark as the base text, which makes the reading compete with the word it
+   is annotating. rp is deliberately left to the UA stylesheet, which hides it in
+   every browser SuCSS targets - overriding it here could only break the
+   fallback parentheses it exists to provide. */
+rt {
+  font-size: 0.5em;
+  color: var(--text-subtle);
+  text-align: center;
 }
 
 mark,
@@ -660,6 +768,10 @@ input[type="tel"],
 input[type="url"],
 input[type="date"],
 input[type="time"],
+input[type="month"],
+input[type="week"],
+input[type="datetime-local"],
+input[type="file"],
 select,
 textarea {
   width: 100%;
@@ -690,7 +802,8 @@ input:hover, select:hover, textarea:hover {
 /* Only the fields that actually carry a glass fill brighten on hover -
    checkboxes, radios, switches and ranges are drawn by the browser. */
 input:is([type="text"], [type="email"], [type="password"], [type="number"],
-  [type="search"], [type="tel"], [type="url"], [type="date"], [type="time"]):hover,
+  [type="search"], [type="tel"], [type="url"], [type="date"], [type="time"],
+  [type="month"], [type="week"], [type="datetime-local"], [type="file"]):hover,
 select:hover,
 textarea:hover {
   background-color: var(--glass-bg-hover);
@@ -711,6 +824,76 @@ input:disabled, select:disabled, textarea:disabled {
 ::placeholder {
   color: var(--text-subtle);
   opacity: 0.8;
+}
+
+/* The select popup is drawn by the OS, so colour is the only thing worth
+   setting here - matching the surface it drops out of. Anything further needs
+   `appearance: base-select`, which is not broadly available yet, and datalist's
+   suggestion list is not styleable at all, so both are left alone. */
+option,
+optgroup {
+  color: var(--text-main);
+  background-color: var(--bg-input);
+}
+
+optgroup {
+  font-weight: 600;
+}
+
+/* A file input's own button is native OS chrome and is the control that stands
+   out from the theme the most. Giving ::file-selector-button the secondary
+   button's tokens puts it back in the set. */
+input[type="file"] {
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  padding: 0.35rem 1rem;
+  min-height: 0;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  background-color: var(--glass-bg-strong);
+  background-image: var(--glass-tint);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--glass-rim);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: var(--glass-bg-hover);
+}
+
+/* A colour input is a swatch, not a text field, so it keeps its own width
+   instead of stretching across the form. */
+input[type="color"] {
+  width: 4rem;
+  min-height: var(--touch-target);
+  padding: 0.3rem;
+  background-color: var(--glass-bg-strong);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--glass-inset);
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--radius-sm) - 0.3rem);
+}
+
+input[type="color"]::-moz-color-swatch {
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--radius-sm) - 0.3rem);
 }
 
 /* Checkboxes & Radio Buttons */
@@ -1000,7 +1183,55 @@ footer > div {
 }
 
 /* --------------------------------------------------------------------------
-   7. Tables & Data Presentation
+   7. Embedded Media
+   Nothing here is decoration: without a width cap, a single oversized image or
+   a fixed-width embed pushes the whole document into a horizontal scroll.
+   `height: auto` is what keeps the aspect ratio while that cap shrinks the
+   width, and it is required for the recommended `<img width height>` markup.
+   -------------------------------------------------------------------------- */
+img,
+picture,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* An oversized <svg> is capped in width - that is what stops the horizontal
+   scroll - and letterboxes inside its viewBox rather than scaling its box
+   height, because `height: auto` collapses an icon in a shrink-to-fit box. */
+svg {
+  max-width: 100%;
+}
+
+/* An icon lives inside a shrink-to-fit box, whose width is indefinite while it
+   is being measured, so a percentage max-width resolves to zero there and takes
+   the icon's automatic minimum size down with it - the icon disappears. Those
+   boxes hold icons, never a wide illustration, so the cap is lifted. */
+:is(button, a, summary, label, h1, h2, h3, h4, h5, h6, legend, th, caption) svg {
+  max-width: none;
+}
+
+/* Replaced elements with no intrinsic aspect ratio collapse to the CSS default
+   height (150px) under `height: auto`, so they only get the width cap. The
+   border reset saves authors from writing frameborder="0" on every embed. */
+iframe,
+embed,
+object {
+  max-width: 100%;
+}
+
+iframe {
+  border: 0;
+}
+
+audio {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   8. Tables & Data Presentation
    -------------------------------------------------------------------------- */
 table {
   width: 100%;
@@ -1016,6 +1247,19 @@ table {
   backdrop-filter: var(--glass-filter);
   -webkit-backdrop-filter: var(--glass-filter);
   box-shadow: var(--glass-shadow);
+}
+
+/* A caption is the table's title, not a row of it. It lives in the table
+   wrapper box, outside the panel `table` paints, so it reads as a label sitting
+   above the glass rather than a cell inside it. The browser default centres it
+   and gives it body colour and size, which is indistinguishable from prose. */
+caption {
+  caption-side: top;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-subtle);
+  padding-bottom: 0.5rem;
 }
 
 th, td {
@@ -1035,6 +1279,17 @@ tr:nth-child(even) td {
 
 tr:hover td {
   background-color: var(--color-primary-subtle);
+}
+
+/* A tfoot is a summary, so it gets a rule above it and the weight of a header
+   instead of reading as one more data row. thead and tbody need nothing of
+   their own - the th / td rules above already carry them. */
+tfoot td,
+tfoot th {
+  border-top: 1px solid var(--border-color);
+  border-bottom: 0;
+  font-weight: 600;
+  color: var(--text-main);
 }
 
 [data-theme="dark"] th,
@@ -1060,7 +1315,7 @@ figure figcaption {
 }
 
 /* --------------------------------------------------------------------------
-   8. Accordion (<details>) & Modal (<dialog>)
+   9. Accordion (<details>) & Modal (<dialog>)
    -------------------------------------------------------------------------- */
 details {
   border: 1px solid var(--glass-border);
@@ -1131,7 +1386,7 @@ dialog::backdrop {
 }
 
 /* --------------------------------------------------------------------------
-   9. Accessibility fallbacks.
+   10. Accessibility fallbacks.
    Translucent, blurred surfaces easily hurt text contrast and ignore users
    who turn transparency effects off. Both are handled here instead of only
    shipping the visual effect.
@@ -1142,6 +1397,8 @@ dialog::backdrop {
   input[type="text"], input[type="email"], input[type="password"],
   input[type="number"], input[type="search"], input[type="tel"],
   input[type="url"], input[type="date"], input[type="time"],
+  input[type="month"], input[type="week"], input[type="datetime-local"],
+  input[type="file"],
   select, textarea,
   button[type="button"], button[type="reset"],
   input[type="button"], input[type="reset"] {
@@ -1164,6 +1421,8 @@ dialog::backdrop {
   input[type="text"], input[type="email"], input[type="password"],
   input[type="number"], input[type="search"], input[type="tel"],
   input[type="url"], input[type="date"], input[type="time"],
+  input[type="month"], input[type="week"], input[type="datetime-local"],
+  input[type="file"],
   select, textarea,
   button[type="button"], button[type="reset"],
   input[type="button"], input[type="reset"] {
