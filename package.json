@@ -1,6 +1,6 @@
 {
   "name": "@ryo9ra/su-css",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "素のHTMLだけで整ったUIを実現する、クラスレス・依存ゼロのアクセシブルなCSSフレームワーク / A zero-class, zero-dependency, accessible CSS framework for plain semantic HTML.",
   "keywords": [
     "css",
