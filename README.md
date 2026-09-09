@@ -148,6 +148,9 @@ Conventions, the invariants the stylesheet has to hold to, and how to get a
 change released: [CONTRIBUTING.md](CONTRIBUTING.md) and
 [docs/RELEASING.md](docs/RELEASING.md).
 
+To report a security problem, use private vulnerability reporting rather than an
+issue: [SECURITY.md](SECURITY.md).
+
 ## License
 
 [MIT](LICENSE)

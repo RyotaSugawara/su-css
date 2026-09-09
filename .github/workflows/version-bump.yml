@@ -49,10 +49,15 @@ jobs:
 
       - name: Bump, commit and tag
         id: bump
+        env:
+          # Passed as an environment variable rather than spliced into the
+          # script, matching pr-title.yml. `bump` is a choice input so it can
+          # only be patch/minor/major, but the habit is worth keeping uniform.
+          BUMP: ${{ inputs.bump }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          tag="$(npm version "${{ inputs.bump }}" -m 'chore(release): %s')"
+          tag="$(npm version "$BUMP" -m 'chore(release): %s')"
           echo "tag_name=$tag" >> "$GITHUB_OUTPUT"
           echo "Bumped to $tag"
           git push origin main --follow-tags
@@ -60,9 +65,10 @@ jobs:
       - name: Create the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ steps.bump.outputs.tag_name }}
         run: |
-          gh release create "${{ steps.bump.outputs.tag_name }}" \
-            --title "${{ steps.bump.outputs.tag_name }}" \
+          gh release create "$TAG_NAME" \
+            --title "$TAG_NAME" \
             --generate-notes \
             --verify-tag
 
@@ -81,4 +87,8 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    secrets: inherit
+    secrets:
+      # release.yml uses NPM_TOKEN alone, and only as the bootstrap path before
+      # trusted publishing took over. Naming it keeps `inherit` from quietly
+      # handing every future secret to the release job.
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

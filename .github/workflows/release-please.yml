@@ -47,4 +47,8 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    secrets: inherit
+    secrets:
+      # release.yml uses NPM_TOKEN alone, and only as the bootstrap path before
+      # trusted publishing took over. Naming it keeps `inherit` from quietly
+      # handing every future secret to the release job.
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

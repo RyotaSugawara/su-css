@@ -23,6 +23,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          # This job never writes back to git, so don't leave the checkout
+          # token behind in .git/config for later steps to reach.
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Create the release if it does not exist
