@@ -331,6 +331,31 @@ h6 {
   color: var(--text-muted);
 }
 
+/* An hgroup is a heading and its subheading read as one unit, so the gap the
+   heading normally leaves below itself is what breaks it apart. The outer
+   spacing moves to the hgroup, which stands in for the heading it wraps. */
+hgroup {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+hgroup > :is(h1, h2, h3, h4, h5, h6) {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}
+
+/* h2's rule would otherwise draw its section underline between the heading and
+   its own subheading. */
+hgroup > h2 {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+hgroup > p {
+  margin-bottom: 0;
+  color: var(--text-muted);
+}
+
 p {
   margin-bottom: 1rem;
   color: var(--text-main);
