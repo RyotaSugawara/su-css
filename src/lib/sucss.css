@@ -743,6 +743,10 @@ input[type="tel"],
 input[type="url"],
 input[type="date"],
 input[type="time"],
+input[type="month"],
+input[type="week"],
+input[type="datetime-local"],
+input[type="file"],
 select,
 textarea {
   width: 100%;
@@ -773,7 +777,8 @@ input:hover, select:hover, textarea:hover {
 /* Only the fields that actually carry a glass fill brighten on hover -
    checkboxes, radios, switches and ranges are drawn by the browser. */
 input:is([type="text"], [type="email"], [type="password"], [type="number"],
-  [type="search"], [type="tel"], [type="url"], [type="date"], [type="time"]):hover,
+  [type="search"], [type="tel"], [type="url"], [type="date"], [type="time"],
+  [type="month"], [type="week"], [type="datetime-local"], [type="file"]):hover,
 select:hover,
 textarea:hover {
   background-color: var(--glass-bg-hover);
@@ -794,6 +799,76 @@ input:disabled, select:disabled, textarea:disabled {
 ::placeholder {
   color: var(--text-subtle);
   opacity: 0.8;
+}
+
+/* The select popup is drawn by the OS, so colour is the only thing worth
+   setting here - matching the surface it drops out of. Anything further needs
+   `appearance: base-select`, which is not broadly available yet, and datalist's
+   suggestion list is not styleable at all, so both are left alone. */
+option,
+optgroup {
+  color: var(--text-main);
+  background-color: var(--bg-input);
+}
+
+optgroup {
+  font-weight: 600;
+}
+
+/* A file input's own button is native OS chrome and is the control that stands
+   out from the theme the most. Giving ::file-selector-button the secondary
+   button's tokens puts it back in the set. */
+input[type="file"] {
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  padding: 0.35rem 1rem;
+  min-height: 0;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  background-color: var(--glass-bg-strong);
+  background-image: var(--glass-tint);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--glass-rim);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: var(--glass-bg-hover);
+}
+
+/* A colour input is a swatch, not a text field, so it keeps its own width
+   instead of stretching across the form. */
+input[type="color"] {
+  width: 4rem;
+  min-height: var(--touch-target);
+  padding: 0.3rem;
+  background-color: var(--glass-bg-strong);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--glass-inset);
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--radius-sm) - 0.3rem);
+}
+
+input[type="color"]::-moz-color-swatch {
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--radius-sm) - 0.3rem);
 }
 
 /* Checkboxes & Radio Buttons */
@@ -1297,6 +1372,8 @@ dialog::backdrop {
   input[type="text"], input[type="email"], input[type="password"],
   input[type="number"], input[type="search"], input[type="tel"],
   input[type="url"], input[type="date"], input[type="time"],
+  input[type="month"], input[type="week"], input[type="datetime-local"],
+  input[type="file"],
   select, textarea,
   button[type="button"], button[type="reset"],
   input[type="button"], input[type="reset"] {
@@ -1319,6 +1396,8 @@ dialog::backdrop {
   input[type="text"], input[type="email"], input[type="password"],
   input[type="number"], input[type="search"], input[type="tel"],
   input[type="url"], input[type="date"], input[type="time"],
+  input[type="month"], input[type="week"], input[type="datetime-local"],
+  input[type="file"],
   select, textarea,
   button[type="button"], button[type="reset"],
   input[type="button"], input[type="reset"] {
