@@ -1,9 +1,10 @@
 name: Release
 
 on:
-  # A tag pushed by a person. Tags created by release-please or version-bump.yml
-  # carry the GITHUB_TOKEN identity and deliberately do not trigger workflows, so
-  # those two call this workflow directly instead (see workflow_call below).
+  # A tag pushed by a person. A tag created by release-please carries the
+  # GITHUB_TOKEN identity and deliberately does not trigger workflows, so
+  # release-please calls this workflow directly instead (see workflow_call
+  # below).
   push:
     tags: ['v*.*.*']
   workflow_dispatch:
@@ -19,7 +20,7 @@ on:
         type: boolean
         default: false
       ref:
-        description: 'Commit, tag or branch to release. Defaults to the commit that started the run, which is wrong for a caller that creates the version commit itself.'
+        description: 'Commit, tag or branch to release. Defaults to the commit that started the run, which is what the current caller wants; a caller that creates the version commit inside its own run would need to name the new tag here.'
         type: string
         default: ''
 

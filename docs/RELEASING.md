@@ -115,12 +115,11 @@ Trusted Publishing では provenance が自動生成されますが、**private 
 
 ## 2. リリースの流れ
 
-リリースの起点は3つあり、どれも最後は同じ `release.yml`（ステージング）に合流します。
+リリースの起点は2つあり、どちらも最後は同じ `release.yml`（ステージング）に合流します。
 
 | 起点 | 使う場面 | 操作 |
 | --- | --- | --- |
 | **release-please**（既定） | 通常のリリース | 自動で立つ Release PR をマージするだけ |
-| **Version Bump**（手動） | コミット履歴からバージョンを決められないとき | Actions から patch/minor/major を選んで実行 |
 | **タグを直接 push** | 緊急時・手元から | `git tag vX.Y.Z && git push origin vX.Y.Z` |
 
 ### 2-A. release-please（推奨）
@@ -140,15 +139,16 @@ docs: ...  chore: ...  ci: ...            → リリースを起こさない
 > `0.x` の間は `bump-minor-pre-major` により `feat:` でも minor に留め、
 > 破壊的変更（`!` または `BREAKING CHANGE:`）で初めて 1.0.0 に上がる設定にしています。
 
-### 2-B. Version Bump（手動トリガー）
+> **かつてあった Version Bump ワークフローは削除しました。**
+> `npm version` で直接バージョンを上げて main に push する手動ディスパッチでしたが、
+> release-please のマニフェスト（`.release-please-manifest.json`）を更新しないため、
+> これを使うと release-please が最後のリリースを見失います。実際 0.1.0 をこれで切った結果、
+> マニフェストが 0.0.2 のまま取り残され、次のリリース PR が公開済みより低い 0.0.3 を
+> 提案する状態になりました。
+> main への直接 push はブランチ保護とも噛み合わないため、リリースの起点は
+> release-please に一本化しています。
 
-**Actions → Version Bump → Run workflow** で `patch` / `minor` / `major` を選ぶだけです。
-`npm version` → コミット → タグ push → GitHub Release 作成 → ステージングまで自動で進みます。
-コミットメッセージの規約に縛られたくないとき、スマホから完結させたいときに使います。
-
-`dry_run` を `true` にすると、バージョンは上がりますが npm には何も積まれません。
-
-### 2-C. 共通: ステージング後に承認して公開する
+### 2-B. 共通: ステージング後に承認して公開する
 
 いずれの起点でも、`release.yml` が次を順に実行します。
 
@@ -181,12 +181,12 @@ npm stage reject  <stage-id>       # 破棄する場合（2FA必要）
 > タグを手で push した場合の GitHub Release 作成は、別ワークフロー `github-release.yml` が担当します。
 > release.yml から切り出してあるのは、再利用ワークフローは呼び出し元より強い権限を要求できず、
 > `contents: write` を release.yml に残すと**すべての呼び出し元に書き込み権限を要求させてしまう**ためです。
-> （release-please と Version Bump は自分で Release を作るので、この分離で困りません。）
+> （release-please は自分で Release を作るので、この分離で困りません。）
 
 ### なぜ起点ごとにワークフローが分かれているのか
 
 GITHUB_TOKEN が作成したタグは**ワークフローを起動しません**（GitHub の無限ループ防止）。
-そのため release-please と Version Bump は、タグ push による連鎖に頼らず
+そのため release-please は、タグ push による連鎖に頼らず
 `release.yml` を **`workflow_call` で直接呼び出し**ています。
 
 この違いは npm 側の設定に影響します。npm は**実行を開始したワークフロー**を認可するため、
@@ -196,7 +196,9 @@ Trusted Publisher には起点ごとのファイル名を登録する必要が�
 | --- | --- |
 | タグ push / 手動 dry run | `release.yml` |
 | release-please | `release-please.yml` |
-| Version Bump | `version-bump.yml` |
+
+> `version-bump.yml` の登録が npm 側に残っている場合は削除してください。
+> 対応するワークフローが無くなったため、認可される必要のない入口になります。
 
 ### バージョン情報の一元管理
 
