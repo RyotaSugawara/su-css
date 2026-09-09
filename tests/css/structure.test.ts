@@ -22,6 +22,25 @@ function hasRuleMatching(selectorPattern: RegExp, declPattern?: { prop: RegExp; 
   return found;
 }
 
+/**
+ * True when some rule whose selector list contains `element` as a standalone
+ * type selector declares `max-width`. Matching selector-list membership (rather
+ * than a substring) keeps `object` from being satisfied by, say, `object-fit`
+ * appearing in an unrelated selector.
+ */
+function declaresMaxWidth(element: string): boolean {
+  let found = false;
+  root.walkRules((rule) => {
+    if (found) return;
+    const selectors = rule.selector.split(',').map((selector) => selector.trim());
+    if (!selectors.includes(element)) return;
+    rule.walkDecls('max-width', () => {
+      found = true;
+    });
+  });
+  return found;
+}
+
 describe('reduced motion support', () => {
   it('disables animations and transitions under prefers-reduced-motion: reduce', () => {
     let matched = false;
@@ -82,5 +101,22 @@ describe('touch target sizing', () => {
 describe('color scheme declaration', () => {
   it('declares color-scheme: light dark on the document root so native controls adapt', () => {
     expect(hasRuleMatching(/^html$/, { prop: /^color-scheme$/, value: /light\s+dark/ })).toBe(true);
+  });
+});
+
+describe('embedded media containment', () => {
+  // README promises plain semantic HTML renders correctly with no author CSS.
+  // An uncapped image or embed breaks that promise loudly: it pushes the whole
+  // document into a horizontal scroll on narrow viewports.
+  const mediaElements = ['img', 'picture', 'video', 'audio', 'canvas', 'svg', 'iframe', 'embed', 'object'];
+
+  it.each(mediaElements)('caps %s at its container width', (element) => {
+    expect(declaresMaxWidth(element)).toBe(true);
+  });
+
+  it('lets media with an intrinsic aspect ratio scale its height with that cap', () => {
+    // Without `height: auto`, an <img width="864" height="486"> keeps its
+    // attribute height while max-width shrinks the width, distorting it.
+    expect(hasRuleMatching(/(^|,)\s*img/, { prop: /^height$/, value: /^auto$/ })).toBe(true);
   });
 });

@@ -1000,7 +1000,55 @@ footer > div {
 }
 
 /* --------------------------------------------------------------------------
-   7. Tables & Data Presentation
+   7. Embedded Media
+   Nothing here is decoration: without a width cap, a single oversized image or
+   a fixed-width embed pushes the whole document into a horizontal scroll.
+   `height: auto` is what keeps the aspect ratio while that cap shrinks the
+   width, and it is required for the recommended `<img width height>` markup.
+   -------------------------------------------------------------------------- */
+img,
+picture,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* An oversized <svg> is capped in width - that is what stops the horizontal
+   scroll - and letterboxes inside its viewBox rather than scaling its box
+   height, because `height: auto` collapses an icon in a shrink-to-fit box. */
+svg {
+  max-width: 100%;
+}
+
+/* An icon lives inside a shrink-to-fit box, whose width is indefinite while it
+   is being measured, so a percentage max-width resolves to zero there and takes
+   the icon's automatic minimum size down with it - the icon disappears. Those
+   boxes hold icons, never a wide illustration, so the cap is lifted. */
+:is(button, a, summary, label, h1, h2, h3, h4, h5, h6, legend, th, caption) svg {
+  max-width: none;
+}
+
+/* Replaced elements with no intrinsic aspect ratio collapse to the CSS default
+   height (150px) under `height: auto`, so they only get the width cap. The
+   border reset saves authors from writing frameborder="0" on every embed. */
+iframe,
+embed,
+object {
+  max-width: 100%;
+}
+
+iframe {
+  border: 0;
+}
+
+audio {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   8. Tables & Data Presentation
    -------------------------------------------------------------------------- */
 table {
   width: 100%;
@@ -1060,7 +1108,7 @@ figure figcaption {
 }
 
 /* --------------------------------------------------------------------------
-   8. Accordion (<details>) & Modal (<dialog>)
+   9. Accordion (<details>) & Modal (<dialog>)
    -------------------------------------------------------------------------- */
 details {
   border: 1px solid var(--glass-border);
@@ -1131,7 +1179,7 @@ dialog::backdrop {
 }
 
 /* --------------------------------------------------------------------------
-   9. Accessibility fallbacks.
+   10. Accessibility fallbacks.
    Translucent, blurred surfaces easily hurt text contrast and ignore users
    who turn transparency effects off. Both are handled here instead of only
    shipping the visual effect.
