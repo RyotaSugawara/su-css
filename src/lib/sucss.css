@@ -374,6 +374,58 @@ sub {
   bottom: -0.25em;
 }
 
+/* Text-level semantics. Several of these are drawn by the browser with a plain
+   underline, which is indistinguishable from a SuCSS link - the decoration
+   colour is what tells them apart. */
+abbr[title] {
+  text-decoration: underline dotted var(--text-subtle);
+  text-underline-offset: 0.2em;
+  cursor: help;
+}
+
+ins,
+u {
+  text-decoration: underline;
+  text-decoration-color: var(--text-subtle);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+del,
+s {
+  text-decoration: line-through;
+  text-decoration-color: var(--text-subtle);
+  color: var(--text-muted);
+}
+
+dfn {
+  font-style: italic;
+}
+
+var {
+  font-family: var(--font-mono);
+  font-style: normal;
+}
+
+/* The browser default for `quotes` depends on the document language, so a
+   Japanese-first framework has to say which marks it means. Written as escapes
+   rather than literals so the stylesheet stays pure ASCII and cannot be
+   mis-decoded by a page served in a legacy Japanese encoding.
+   Default: corner brackets U+300C/U+300D, then white corner brackets
+   U+300E/U+300F. :lang(en) keeps English documents on curly quotes. */
+q {
+  quotes: "\300c" "\300d" "\300e" "\300f";
+}
+
+q:lang(en) {
+  quotes: "\201c" "\201d" "\2018" "\2019";
+}
+
+address {
+  font-style: normal;
+  margin-bottom: 1rem;
+}
+
 mark,
 samp,
 output,
