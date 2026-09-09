@@ -354,6 +354,26 @@ em, i {
   font-style: italic;
 }
 
+/* The browser default `vertical-align: sub / super` grows the line box, so a
+   paragraph carrying a footnote marker gets a taller line than the paragraph
+   next to it. Taking these out of the line box (`line-height: 0`) and offsetting
+   them by hand keeps the leading uniform down the page. */
+sub,
+sup {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup {
+  top: -0.5em;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
 mark,
 samp,
 output,
