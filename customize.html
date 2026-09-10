@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="customizer.meta.title">Customize SuCSS</title>
+    <meta
+      name="description"
+      data-i18n-content="customizer.meta.description"
+      content="Move the controls and this page restyles itself. Copy the resulting :root block into your own stylesheet."
+    />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#F8F6FF" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171326" media="(prefers-color-scheme: dark)" />
+
+    <link rel="canonical" href="https://ryotasugawara.github.io/su-css/customize.html" />
+    <link
+      rel="alternate"
+      hreflang="en"
+      href="https://ryotasugawara.github.io/su-css/customize.html"
+    />
+    <link
+      rel="alternate"
+      hreflang="ja"
+      href="https://ryotasugawara.github.io/su-css/customize.html?lang=ja"
+    />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href="https://ryotasugawara.github.io/su-css/customize.html"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SuCSS" />
+    <meta property="og:title" content="Customize SuCSS" />
+    <meta property="og:url" content="https://ryotasugawara.github.io/su-css/customize.html" />
+    <meta property="og:image" content="https://ryotasugawara.github.io/su-css/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="stylesheet" href="./src/lib/sucss.css" />
+    <link rel="stylesheet" href="./src/site.css" />
+
+    <script>
+      // Apply the saved theme and custom properties before first paint, so a
+      // reload never flashes the defaults. Kept inline and duplicated across
+      // the two pages on purpose: a separate file would arrive too late.
+      try {
+        const saved = localStorage.getItem('sucss-theme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+
+        const tokens = JSON.parse(localStorage.getItem('sucss-tokens') || '{}');
+        for (const [name, value] of Object.entries(tokens)) {
+          if (/^--[a-z-]+$/.test(name) && typeof value === 'string') {
+            document.documentElement.style.setProperty(name, value);
+          }
+        }
+      } catch {
+        /* Storage can be blocked, or hold nonsense. The defaults are fine. */
+      }
+    </script>
+  </head>
+
+  <body>
+    <header>
+      <div>
+        <nav>
+          <div>
+            <a href="./"><img src="./assets/brand/mark.svg" alt="SuCSS" width="50" height="34" /></a>
+            <strong>SuCSS</strong>
+          </div>
+          <div>
+            <button type="button" data-lang-set="en" aria-current="true">EN</button>
+            <button type="button" data-lang-set="ja" aria-current="false">日本語</button>
+            <button type="button" data-theme-set="light" data-i18n="theme.light">Light</button>
+            <button type="button" data-theme-set="dark" data-i18n="theme.dark">Dark</button>
+            <button type="button" data-theme-set="auto" data-i18n="theme.auto">Auto</button>
+          </div>
+        </nav>
+
+        <nav>
+          <a href="./#install" data-i18n="nav.install">Install</a>
+          <a href="./#features" data-i18n="nav.features">Features</a>
+          <a href="./#elements" data-i18n="nav.elements">Elements</a>
+          <a href="./customize.html" aria-current="page" data-i18n="nav.customize">Customize</a>
+          <a href="https://github.com/RyotaSugawara/su-css">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <hgroup>
+          <h1 data-i18n="customizer.heading">Customize</h1>
+          <p data-i18n="customizer.tagline">Every value below is a CSS custom property.</p>
+        </hgroup>
+
+        <p data-i18n="customizer.lead">
+          Move a control and this page changes with it — it is styled by the same stylesheet you
+          are tuning, so what you see is what your own pages will look like. Nothing here is a
+          setting inside SuCSS: it is plain CSS you paste into <code>:root</code>.
+        </p>
+        <p data-i18n="customizer.storage">
+          <small>
+            Your choices are kept in this browser and follow you to the rest of the site.
+            <em>Reset</em> puts everything back.
+          </small>
+        </p>
+      </section>
+
+      <section>
+        <h2 data-i18n="customizer.controls">Controls</h2>
+
+        <form id="controls">
+          <fieldset>
+            <legend data-i18n="customizer.colour">Colour</legend>
+
+            <label for="hue">
+              <span>
+                <span data-i18n="tokens.hueLabel">Hue</span>
+                <code>--hue</code>
+                <output for="hue" id="out-hue">262</output>
+              </span>
+            </label>
+            <input type="range" id="hue" data-var="--hue" min="0" max="360" step="1" value="262" />
+
+            <label for="sat">
+              <span>
+                <span data-i18n="tokens.satLabel">Saturation</span>
+                <code>--sat</code>
+                <output for="sat" id="out-sat">85%</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="sat"
+              data-var="--sat"
+              data-unit="%"
+              min="0"
+              max="100"
+              step="1"
+              value="85"
+            />
+          </fieldset>
+
+          <fieldset>
+            <legend data-i18n="customizer.type">Type</legend>
+
+            <label for="font" data-i18n="tokens.fontLabel">Typeface</label>
+            <select id="font" data-var="--font-sans">
+              <option
+                value="-apple-system, blinkmacsystemfont, &quot;Segoe UI&quot;, roboto, &quot;Hiragino Sans&quot;, &quot;Hiragino Kaku Gothic ProN&quot;, &quot;Meiryo&quot;, sans-serif"
+                data-i18n="tokens.fontSystem"
+              >
+                System sans
+              </option>
+              <option value="georgia, &quot;Times New Roman&quot;, serif" data-i18n="tokens.fontSerif">
+                Serif
+              </option>
+              <option
+                value="ui-monospace, sfmono-regular, menlo, monaco, consolas, monospace"
+                data-i18n="tokens.fontMono"
+              >
+                Monospace
+              </option>
+            </select>
+
+            <label for="base-size">
+              <span>
+                <span data-i18n="tokens.baseSizeLabel">Base size</span>
+                <code>--base-size</code>
+                <output for="base-size" id="out-base-size">1rem</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="base-size"
+              data-var="--base-size"
+              data-unit="rem"
+              min="0.875"
+              max="1.25"
+              step="0.025"
+              value="1"
+            />
+
+            <label for="line-height">
+              <span>
+                <span data-i18n="tokens.lineHeightLabel">Line height</span>
+                <code>--line-height</code>
+                <output for="line-height" id="out-line-height">1.6</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="line-height"
+              data-var="--line-height"
+              min="1.3"
+              max="2"
+              step="0.05"
+              value="1.6"
+            />
+          </fieldset>
+
+          <fieldset>
+            <legend data-i18n="customizer.layout">Layout and material</legend>
+
+            <label for="max-width">
+              <span>
+                <span data-i18n="tokens.maxWidthLabel">Column width</span>
+                <code>--max-width</code>
+                <output for="max-width" id="out-max-width">860px</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="max-width"
+              data-var="--max-width"
+              data-unit="px"
+              min="600"
+              max="1200"
+              step="20"
+              value="860"
+            />
+
+            <label for="radius">
+              <span>
+                <span data-i18n="tokens.radiusLabel">Corner radius</span>
+                <code>--radius</code>
+                <output for="radius" id="out-radius">1.375rem</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="radius"
+              data-var="--radius"
+              data-unit="rem"
+              min="0"
+              max="2"
+              step="0.125"
+              value="1.375"
+            />
+
+            <label for="glass-blur">
+              <span>
+                <span data-i18n="tokens.blurLabel">Glass blur</span>
+                <code>--glass-blur</code>
+                <output for="glass-blur" id="out-glass-blur">14px</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="glass-blur"
+              data-var="--glass-blur"
+              data-unit="px"
+              min="0"
+              max="28"
+              step="1"
+              value="14"
+            />
+          </fieldset>
+
+          <p>
+            <input type="reset" data-i18n-value="customizer.reset" value="Reset" />
+          </p>
+        </form>
+      </section>
+
+      <section>
+        <h2 data-i18n="customizer.output">Your :root</h2>
+        <p data-i18n="customizer.outputLead">
+          Only the properties you changed are listed. Paste them after the stylesheet link and
+          they win on specificity alone.
+        </p>
+
+        <pre id="output"><code data-i18n="customizer.outputEmpty">/* Nothing changed yet — move a control above. */</code></pre>
+
+        <p>
+          <button type="button" data-copy="#output" data-i18n="customizer.copy">
+            Copy this block
+          </button>
+          <span role="status" data-copy-status></span>
+        </p>
+      </section>
+
+      <section>
+        <h2 data-i18n="customizer.preview">Preview</h2>
+        <p data-i18n="customizer.previewLead">
+          The whole page is the preview, but these are the pieces the accent colour reaches
+          first.
+        </p>
+
+        <p>
+          <button type="button" data-i18n="elements.buttons.button">Button</button>
+          <button type="button" disabled data-i18n="elements.buttons.disabled">Disabled</button>
+          <a href="#" data-i18n="customizer.aLink">A link</a>
+        </p>
+
+        <p>
+          <span role="status" data-i18n="elements.buttons.stable">Stable</span>
+          <span role="status">MIT</span>
+          <span role="status" data-i18n="elements.buttons.zeroDeps">Zero dependencies</span>
+        </p>
+
+        <p>
+          <label for="preview-switch">
+            <input type="checkbox" id="preview-switch" switch checked />
+            <span data-i18n="customizer.switchLabel">A switch</span>
+          </label>
+        </p>
+
+        <p>
+          <label for="preview-input" data-i18n="customizer.fieldLabel">A field</label>
+          <input
+            type="text"
+            id="preview-input"
+            data-i18n-placeholder="customizer.fieldPlaceholder"
+            placeholder="Focus me to see the ring"
+          />
+        </p>
+
+        <blockquote>
+          <p data-i18n="customizer.quote">
+            Type is the loudest thing on a page. Set it first, then the colour.
+          </p>
+        </blockquote>
+
+        <figure>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col" data-i18n="elements.table.property">Property</th>
+                <th scope="col" data-i18n="elements.table.default">Default</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"><code>--radius</code></th>
+                <td>1.375rem</td>
+              </tr>
+              <tr>
+                <th scope="row"><code>--glass-blur</code></th>
+                <td>14px</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+      </section>
+    </main>
+
+    <footer>
+      <div>
+        <div>
+          <img src="./assets/brand/mark.svg" alt="" width="35" height="24" />
+          <strong>SuCSS</strong>
+          <small>— Just HTML, already styled.</small>
+        </div>
+        <div>
+          <small>MIT License</small>
+          <a href="https://github.com/RyotaSugawara/su-css">GitHub</a>
+          <a href="https://www.npmjs.com/package/@ryo9ra/su-css">npm</a>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="./src/customize.js"></script>
+  </body>
+</html>

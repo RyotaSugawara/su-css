@@ -1,7 +1,7 @@
 # Contributing to SuCSS
 
-SuCSS is one hand-written stylesheet, `src/lib/sucss.css`, plus a demo page that
-exercises it. Everything below is about keeping that stylesheet honest and
+SuCSS is one hand-written stylesheet, `src/lib/sucss.css`, plus a two-page demo
+site that exercises it. Everything below is about keeping that stylesheet honest and
 getting changes released without surprises.
 
 ## The rule that matters most
@@ -77,7 +77,7 @@ browser support section in the same PR.
 
 ```bash
 npm install
-npm run dev       # demo page at :3000
+npm run dev       # demo site at :3000
 npm run lint      # tsc --noEmit + stylelint
 npm run test      # unit, contrast and structure tests
 npm run build     # demo site
