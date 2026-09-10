@@ -1112,6 +1112,10 @@ nav:has(> button[aria-current]),
 nav:has(> a[aria-current]) {
   display: flex;
   align-items: center;
+
+  /* header nav's space-between belongs to the brand/actions row above; a tab
+     row reads as tabs only when the tabs sit together at the start. */
+  justify-content: flex-start;
   gap: 0.35rem;
   overflow-x: auto;
   white-space: nowrap;
