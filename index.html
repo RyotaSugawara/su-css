@@ -1,12 +1,13 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SuCSS — 素のHTMLだけで整うクラスレスCSSフレームワーク</title>
+    <title data-i18n="meta.title">SuCSS — a classless CSS framework for plain HTML</title>
     <meta
       name="description"
-      content="クラス名もカスタム属性も書かないCSSフレームワーク。素のセマンティックHTMLを書くだけで、リキッドグラスの見た目・ダークモード・アクセシビリティがついてきます。"
+      data-i18n-content="meta.description"
+      content="A classless CSS framework. Write plain semantic HTML — no class names, no custom attributes — and get liquid-glass surfaces, dark mode and accessibility with it."
     />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -16,12 +17,15 @@
     <meta name="theme-color" content="#171326" media="(prefers-color-scheme: dark)" />
 
     <link rel="canonical" href="https://ryotasugawara.github.io/su-css/" />
+    <link rel="alternate" hreflang="en" href="https://ryotasugawara.github.io/su-css/" />
+    <link rel="alternate" hreflang="ja" href="https://ryotasugawara.github.io/su-css/?lang=ja" />
+    <link rel="alternate" hreflang="x-default" href="https://ryotasugawara.github.io/su-css/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SuCSS" />
     <meta property="og:title" content="SuCSS — Just HTML, already styled." />
     <meta
       property="og:description"
-      content="クラス名もカスタム属性も書かないCSSフレームワーク。素のセマンティックHTMLを書くだけで、リキッドグラスの見た目・ダークモード・アクセシビリティがついてきます。"
+      content="A classless CSS framework. Write plain semantic HTML and get liquid-glass surfaces, dark mode and accessibility with it."
     />
     <meta property="og:url" content="https://ryotasugawara.github.io/su-css/" />
     <!-- Crawlers do not resolve relative URLs, so this one stays absolute. -->
@@ -38,15 +42,23 @@
     <link rel="stylesheet" href="./src/site.css" />
 
     <script>
-      // Apply the saved theme before first paint, so a reload of the dark
-      // theme never flashes white.
+      // Apply the saved theme and custom properties before first paint, so a
+      // reload never flashes the defaults. Kept inline and duplicated across
+      // the two pages on purpose: a separate file would arrive too late.
       try {
         const saved = localStorage.getItem('sucss-theme');
         if (saved === 'light' || saved === 'dark') {
           document.documentElement.setAttribute('data-theme', saved);
         }
+
+        const tokens = JSON.parse(localStorage.getItem('sucss-tokens') || '{}');
+        for (const [name, value] of Object.entries(tokens)) {
+          if (/^--[a-z-]+$/.test(name) && typeof value === 'string') {
+            document.documentElement.style.setProperty(name, value);
+          }
+        }
       } catch {
-        /* Storage can be blocked; the OS setting is a fine fallback. */
+        /* Storage can be blocked, or hold nonsense. The defaults are fine. */
       }
     </script>
   </head>
@@ -60,17 +72,19 @@
             <strong>SuCSS</strong>
           </div>
           <div>
-            <button type="button" data-theme-set="light" aria-current="false">Light</button>
-            <button type="button" data-theme-set="dark" aria-current="false">Dark</button>
-            <button type="button" data-theme-set="auto" aria-current="true">Auto</button>
+            <button type="button" data-lang-set="en" aria-current="true">EN</button>
+            <button type="button" data-lang-set="ja" aria-current="false">日本語</button>
+            <button type="button" data-theme-set="light" data-i18n="theme.light">Light</button>
+            <button type="button" data-theme-set="dark" data-i18n="theme.dark">Dark</button>
+            <button type="button" data-theme-set="auto" data-i18n="theme.auto">Auto</button>
           </div>
         </nav>
 
         <nav>
-          <a href="#install">インストール</a>
-          <a href="#features">特徴</a>
-          <a href="#elements">要素見本</a>
-          <a href="#customize">カスタマイズ</a>
+          <a href="#install" data-i18n="nav.install">Install</a>
+          <a href="#features" data-i18n="nav.features">Features</a>
+          <a href="#elements" data-i18n="nav.elements">Elements</a>
+          <a href="./customize.html" data-i18n="nav.customize">Customize</a>
           <a href="https://github.com/RyotaSugawara/su-css">GitHub</a>
         </nav>
       </div>
@@ -83,234 +97,258 @@
           <p>Just HTML, already styled.</p>
         </hgroup>
 
-        <p>
-          SuCSSはクラスレスのCSSフレームワークです。<code>&lt;header&gt;</code>、<code>&lt;table&gt;</code>、<code>&lt;button&gt;</code>
-          のような素のHTMLを書くだけで、リキッドグラスの見た目とダークモードとアクセシビリティがついてきます。クラス名も、カスタム属性も、ビルドも要りません。
+        <p data-i18n="hero.lead">
+          SuCSS is a classless CSS framework. Write plain HTML —
+          <code>&lt;header&gt;</code>, <code>&lt;table&gt;</code>,
+          <code>&lt;button&gt;</code> — and liquid-glass surfaces, dark mode and accessibility
+          come with it. No class names, no custom attributes, no build step.
         </p>
-        <p>
-          <strong>このページ自体が見本です。</strong>
-          <code>class</code> 属性は1つも使っていません。次の1行を <code>&lt;head&gt;</code>
-          に貼れば、同じ見た目になります。
+        <p data-i18n="hero.claim">
+          <strong>This page is the demo.</strong> It carries no <code>class</code> attribute
+          anywhere. Paste the line below into your <code>&lt;head&gt;</code> and your own HTML
+          looks like this.
         </p>
 
         <pre id="snippet-cdn"><code>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css/dist-lib/sucss.min.css"&gt;</code></pre>
 
         <p>
-          <button type="button" data-copy="#snippet-cdn">この1行をコピー</button>
+          <button type="button" data-copy="#snippet-cdn" data-i18n="hero.copy">
+            Copy this line
+          </button>
           <span role="status" data-copy-status></span>
         </p>
-        <p><small><em>su</em>（素）は「飾りのない、そのままの」という意味です。</small></p>
+        <p data-i18n="hero.name">
+          <small><em>Su</em> (素) is Japanese for plain, or unadorned.</small>
+        </p>
       </section>
 
-      <h2 id="features">特徴</h2>
+      <h2 id="features" data-i18n="features.heading">Features</h2>
 
       <section>
         <article>
-          <h3>クラス名を書かない</h3>
-          <p>
-            スタイルは要素そのものから決まります。命名規則も、ユーティリティクラスの暗記も要りません。
+          <h3 data-i18n="features.classless.title">No class names</h3>
+          <p data-i18n="features.classless.body">
+            Styling comes from the elements themselves. There is no naming convention to agree
+            on and no utility classes to memorise.
           </p>
         </article>
         <article>
-          <h3>ダークモード標準</h3>
-          <p>
-            <code>prefers-color-scheme</code> に追従します。<code>data-theme</code>
-            を付ければ固定もできます。
+          <h3 data-i18n="features.dark.title">Dark mode included</h3>
+          <p data-i18n="features.dark.body">
+            Follows <code>prefers-color-scheme</code>, and <code>data-theme</code> pins it
+            either way.
           </p>
         </article>
         <article>
-          <h3>アクセシブル</h3>
-          <p>
-            WCAG AA/AAA のコントラスト、見える <code>:focus-visible</code>
-            リング、十分なタップ領域。<code>prefers-reduced-motion</code> と
-            <code>prefers-reduced-transparency</code> にも従います。
+          <h3 data-i18n="features.a11y.title">Accessible by default</h3>
+          <p data-i18n="features.a11y.body">
+            WCAG AA/AAA contrast, visible <code>:focus-visible</code> rings, adequate touch
+            targets. It honours <code>prefers-reduced-motion</code> and
+            <code>prefers-reduced-transparency</code> too.
           </p>
         </article>
         <article>
-          <h3>リキッドグラス</h3>
-          <p>
-            面はすりガラスではなくレンズです。背景が透けたまま色がにじみ、縁にはハイライトが乗ります。
+          <h3 data-i18n="features.glass.title">Liquid glass</h3>
+          <p data-i18n="features.glass.body">
+            Surfaces behave like a lens rather than a frosted sheet: the backdrop stays legible
+            through them, colour blooms out of them, and every edge carries a rim of light.
           </p>
         </article>
         <article>
-          <h3>1ファイル・依存ゼロ</h3>
-          <p>
-            CSSが1枚だけ。minify + gzip で 4.7 KB。JavaScriptもビルドステップもありません。
+          <h3 data-i18n="features.small.title">One file, no dependencies</h3>
+          <p data-i18n="features.small.body">
+            A single stylesheet, 4.7 KB minified and gzipped. No JavaScript, no build step.
           </p>
         </article>
         <article>
-          <h3>変数で調整</h3>
-          <p>
-            色も角丸も余白もCSSカスタムプロパティです。<code>--hue</code>
-            を1行変えれば全体の色が動きます。
+          <h3 data-i18n="features.tokens.title">Tuned with variables</h3>
+          <p data-i18n="features.tokens.body">
+            Every colour, radius and rhythm is a custom property. Change <code>--hue</code> and
+            the whole page moves — <a href="./customize.html">try it in the customizer</a>.
           </p>
         </article>
       </section>
 
       <section id="install">
-        <h2>インストール</h2>
-        <p>
-          CDNから読み込むなら、上の1行をそのまま <code>&lt;head&gt;</code>
-          に貼ります。バンドラを使うならnpmから入れられます。
+        <h2 data-i18n="install.heading">Install</h2>
+        <p data-i18n="install.lead">
+          For the CDN, paste the line above into your <code>&lt;head&gt;</code>. With a bundler,
+          install it from npm.
         </p>
 
         <pre id="snippet-npm"><code>npm install @ryo9ra/su-css</code></pre>
         <pre id="snippet-import"><code>import '@ryo9ra/su-css/sucss.min.css';</code></pre>
 
         <p>
-          <button type="button" data-copy="#snippet-npm">npmコマンドをコピー</button>
+          <button type="button" data-copy="#snippet-npm" data-i18n="install.copy">
+            Copy the npm command
+          </button>
           <span role="status" data-copy-status></span>
         </p>
 
         <figure>
           <table>
-            <caption>
-              配布ファイル
+            <caption data-i18n="install.table.caption">
+              What ships
             </caption>
             <thead>
               <tr>
-                <th scope="col">読み込み指定</th>
-                <th scope="col">ファイル</th>
-                <th scope="col">サイズ</th>
+                <th scope="col" data-i18n="install.table.specifier">Import specifier</th>
+                <th scope="col" data-i18n="install.table.file">File</th>
+                <th scope="col" data-i18n="install.table.size">Size</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><code>@ryo9ra/su-css</code></td>
                 <td><code>dist-lib/sucss.css</code></td>
-                <td>33 KB（gzip 6.8 KB）</td>
+                <td>33 KB (gzip 6.8 KB)</td>
               </tr>
               <tr>
                 <td><code>@ryo9ra/su-css/sucss.min.css</code></td>
                 <td><code>dist-lib/sucss.min.css</code></td>
-                <td>25 KB（gzip 4.7 KB）</td>
+                <td>25 KB (gzip 4.7 KB)</td>
               </tr>
             </tbody>
           </table>
         </figure>
 
-        <p>
+        <p data-i18n="install.support">
           <small>
-            対象ブラウザは Chrome/Edge 111+、Safari 16.4+、Firefox 128+
-            です。<code>backdrop-filter</code> のないブラウザでは、面が半透明ではなくベタ塗りになります。
+            Supported browsers are Chrome/Edge 111+, Safari 16.4+ and Firefox 128+. Without
+            <code>backdrop-filter</code>, surfaces fall back to solid fills.
           </small>
         </p>
       </section>
 
-      <h2 id="elements">要素見本</h2>
+      <h2 id="elements" data-i18n="elements.heading">Elements</h2>
 
-      <p>
-        ここから下も、<code>class</code> を1つも使わない素のHTMLです。ブラウザのソース表示で見比べてみてください。
+      <p data-i18n="elements.lead">
+        Everything below is plain HTML with no <code>class</code> attribute. Open the page
+        source and compare.
       </p>
 
       <section>
-        <h3>テキスト</h3>
-        <p>
-          段落は <code>--line-height</code> と <code>--max-width</code>
-          にしたがって組まれます。<strong>強調</strong>、<em>強調（斜体）</em>、<b>太字</b>、<i>イタリック</i>、<u>下線</u>、<s>取り消し線</s>、<code>インラインコード</code>、<kbd>Ctrl</kbd>
-          +
-          <kbd>C</kbd>、<abbr title="Cascading Style Sheets">CSS</abbr>、<var>x</var>、<samp>出力</samp>、<dfn>定義語</dfn>、<sub>下付き</sub>、<sup>上付き</sup>、そして
-          <a href="#elements">リンク</a> がそのまま揃います。
+        <h3 data-i18n="elements.text.heading">Text</h3>
+        <p data-i18n="elements.text.body">
+          Paragraphs are set from <code>--line-height</code> and <code>--max-width</code>.
+          <strong>Strong</strong>, <em>emphasis</em>, <b>bold</b>, <i>italic</i>,
+          <u>underline</u>, <s>strikethrough</s>, <code>inline code</code>, <kbd>Ctrl</kbd> +
+          <kbd>C</kbd>, <abbr title="Cascading Style Sheets">CSS</abbr>, <var>x</var>,
+          <samp>output</samp>, <dfn>a defined term</dfn>, <sub>subscript</sub>,
+          <sup>superscript</sup> and <a href="#elements">a link</a> all come styled.
         </p>
 
         <blockquote>
-          <p>クラス名の設計に費やす時間は、そのままセマンティクスの設計に回せる。</p>
-          <cite>— <q>素のHTMLに戻る</q>という発想</cite>
+          <p data-i18n="elements.quote.body">
+            The hours you would spend designing class names go into designing the semantics
+            instead.
+          </p>
+          <cite data-i18n="elements.quote.cite">— on going back to plain HTML</cite>
         </blockquote>
 
         <aside>
-          <h4>補足</h4>
-          <p>
-            <code>&lt;aside&gt;</code> は本文から一段引いた補足として表示されます。
+          <h4 data-i18n="elements.aside.heading">Aside</h4>
+          <p data-i18n="elements.aside.body">
+            <code>&lt;aside&gt;</code> reads as a note set apart from the body text.
           </p>
         </aside>
 
         <hr />
 
-        <h4>見出しレベル4</h4>
-        <h5>見出しレベル5</h5>
-        <h6>見出しレベル6</h6>
+        <h4 data-i18n="elements.h4">Heading level 4</h4>
+        <h5 data-i18n="elements.h5">Heading level 5</h5>
+        <h6 data-i18n="elements.h6">Heading level 6</h6>
       </section>
 
       <section>
-        <h3>リスト</h3>
+        <h3 data-i18n="elements.lists.heading">Lists</h3>
 
         <ul>
-          <li>順不同リスト</li>
+          <li data-i18n="elements.lists.ul1">An unordered list</li>
           <li>
-            入れ子も効きます
+            <span data-i18n="elements.lists.ul2">Nesting works</span>
             <ul>
-              <li>2階層目</li>
+              <li data-i18n="elements.lists.ul2a">Second level</li>
               <li>
-                3階層目へ
+                <span data-i18n="elements.lists.ul2b">On to the third</span>
                 <ol>
-                  <li>番号付きに切り替わっても崩れません</li>
+                  <li data-i18n="elements.lists.ul2c">
+                    Switching to numbers changes nothing else
+                  </li>
                 </ol>
               </li>
             </ul>
           </li>
-          <li>要素そのものがスタイルの単位です</li>
+          <li data-i18n="elements.lists.ul3">The element is the unit of style</li>
         </ul>
 
         <ol>
-          <li>CSSを1行読み込む</li>
-          <li>素のHTMLを書く</li>
-          <li>おわり</li>
+          <li data-i18n="elements.lists.ol1">Load one line of CSS</li>
+          <li data-i18n="elements.lists.ol2">Write plain HTML</li>
+          <li data-i18n="elements.lists.ol3">That is the whole method</li>
         </ol>
 
         <dl>
-          <dt>クラスレス</dt>
-          <dd>class属性を使わず、要素セレクタだけでスタイルを当てる方式。</dd>
-          <dt>リキッドグラス</dt>
-          <dd>背景を透かしつつ色をにじませ、縁に光を乗せる面の表現。</dd>
+          <dt data-i18n="elements.lists.dt1">Classless</dt>
+          <dd data-i18n="elements.lists.dd1">
+            Styling a page through element selectors alone, with no class attributes.
+          </dd>
+          <dt data-i18n="elements.lists.dt2">Liquid glass</dt>
+          <dd data-i18n="elements.lists.dd2">
+            A surface that lets the backdrop through, blooms its colour, and carries light on
+            its edges.
+          </dd>
         </dl>
       </section>
 
       <section>
-        <h3>表</h3>
+        <h3 data-i18n="elements.table.heading">Tables</h3>
         <figure>
           <table>
-            <caption>
-              主要なCSS変数の既定値
+            <caption data-i18n="elements.table.caption">
+              The main custom properties and their defaults
             </caption>
             <thead>
               <tr>
-                <th scope="col">変数</th>
-                <th scope="col">既定値</th>
-                <th scope="col">効くところ</th>
+                <th scope="col" data-i18n="elements.table.property">Property</th>
+                <th scope="col" data-i18n="elements.table.default">Default</th>
+                <th scope="col" data-i18n="elements.table.effect">What it moves</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <th scope="row"><code>--hue</code></th>
                 <td>262</td>
-                <td>アクセント色と背景メッシュの色相</td>
+                <td data-i18n="tokens.hue">The accent colour and the background mesh</td>
               </tr>
               <tr>
                 <th scope="row"><code>--sat</code></th>
                 <td>85%</td>
-                <td>アクセント色の彩度</td>
+                <td data-i18n="tokens.sat">Saturation of the accent colour</td>
               </tr>
               <tr>
                 <th scope="row"><code>--max-width</code></th>
                 <td>860px</td>
-                <td>本文カラムの幅</td>
+                <td data-i18n="tokens.maxWidth">Width of the body column</td>
               </tr>
               <tr>
                 <th scope="row"><code>--radius</code></th>
                 <td>1.375rem</td>
-                <td>面の角丸</td>
+                <td data-i18n="tokens.radius">Corner radius of surfaces</td>
               </tr>
               <tr>
                 <th scope="row"><code>--glass-blur</code></th>
                 <td>14px</td>
-                <td>ガラスのぼかし量</td>
+                <td data-i18n="tokens.blur">How far the glass blurs its backdrop</td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td colspan="3">
-                  <small>すべて <code>:root</code> で上書きできます。</small>
+                  <small data-i18n="elements.table.foot">
+                    All of them can be overridden in <code>:root</code>.
+                  </small>
                 </td>
               </tr>
             </tfoot>
@@ -319,163 +357,203 @@
       </section>
 
       <section>
-        <h3>フォーム</h3>
+        <h3 data-i18n="elements.form.heading">Forms</h3>
         <form>
           <fieldset>
-            <legend>アカウント</legend>
+            <legend data-i18n="elements.form.account">Account</legend>
 
-            <label for="name">名前</label>
-            <input type="text" id="name" name="name" placeholder="菅原 良太" />
+            <label for="name" data-i18n="elements.form.name">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              data-i18n-placeholder="elements.form.namePlaceholder"
+              placeholder="Ada Lovelace"
+            />
 
-            <label for="email">メールアドレス</label>
+            <label for="email" data-i18n="elements.form.email">Email</label>
             <input type="email" id="email" name="email" placeholder="you@example.com" required />
 
-            <label for="readonly">ユーザーID（読み取り専用）</label>
+            <label for="readonly" data-i18n="elements.form.readonly">User ID (read only)</label>
             <input type="text" id="readonly" name="readonly" value="su-0042" readonly />
 
-            <label for="disabled">無効な入力欄</label>
-            <input type="text" id="disabled" name="disabled" placeholder="編集できません" disabled />
+            <label for="disabled" data-i18n="elements.form.disabled">A disabled field</label>
+            <input
+              type="text"
+              id="disabled"
+              name="disabled"
+              data-i18n-placeholder="elements.form.disabledPlaceholder"
+              placeholder="Not editable"
+              disabled
+            />
 
-            <label for="plan">プラン</label>
+            <label for="plan" data-i18n="elements.form.plan">Plan</label>
             <select id="plan" name="plan">
-              <optgroup label="個人">
+              <optgroup data-i18n-label="elements.form.personal" label="Personal">
                 <option>Free</option>
                 <option>Personal</option>
               </optgroup>
-              <optgroup label="チーム">
+              <optgroup data-i18n-label="elements.form.team" label="Team">
                 <option>Team</option>
               </optgroup>
             </select>
 
-            <label for="bio">自己紹介</label>
-            <textarea id="bio" name="bio" rows="3" placeholder="素のHTMLが好きです。"></textarea>
+            <label for="bio" data-i18n="elements.form.bio">About you</label>
+            <textarea
+              id="bio"
+              name="bio"
+              rows="3"
+              data-i18n-placeholder="elements.form.bioPlaceholder"
+              placeholder="I like plain HTML."
+            ></textarea>
           </fieldset>
 
           <fieldset>
-            <legend>設定</legend>
+            <legend data-i18n="elements.form.settings">Settings</legend>
 
             <label for="notify">
               <input type="checkbox" id="notify" name="notify" switch checked />
-              リリースを通知する
+              <span data-i18n="elements.form.notify">Tell me about releases</span>
             </label>
 
             <label for="terms">
               <input type="checkbox" id="terms" name="terms" checked />
-              利用規約に同意する
+              <span data-i18n="elements.form.terms">I accept the terms</span>
             </label>
 
             <label for="light">
               <input type="radio" id="light" name="mode" value="light" checked />
-              ライト
+              <span data-i18n="elements.form.lightMode">Light</span>
             </label>
             <label for="dark">
               <input type="radio" id="dark" name="mode" value="dark" />
-              ダーク
+              <span data-i18n="elements.form.darkMode">Dark</span>
             </label>
 
-            <label for="hue">色相</label>
+            <label for="hue" data-i18n="elements.form.hue">Hue</label>
             <input type="range" id="hue" name="hue" min="0" max="360" value="262" />
 
-            <label for="accent">アクセント色</label>
+            <label for="accent" data-i18n="elements.form.accent">Accent colour</label>
             <input type="color" id="accent" name="accent" value="#7c5cff" />
 
-            <label for="logo">ロゴ画像</label>
+            <label for="logo" data-i18n="elements.form.logo">Logo image</label>
             <input type="file" id="logo" name="logo" />
           </fieldset>
 
           <p>
-            <input type="submit" value="送信" />
-            <input type="reset" value="リセット" />
+            <input type="submit" data-i18n-value="elements.form.submit" value="Submit" />
+            <input type="reset" data-i18n-value="elements.form.reset" value="Reset" />
           </p>
         </form>
       </section>
 
       <section>
-        <h3>ボタンと状態</h3>
+        <h3 data-i18n="elements.buttons.heading">Buttons and states</h3>
         <p>
-          <button type="button">ボタン</button>
-          <button type="button" disabled>無効</button>
-          <button type="button" data-dialog="#demo-dialog">ダイアログを開く</button>
+          <button type="button" data-i18n="elements.buttons.button">Button</button>
+          <button type="button" disabled data-i18n="elements.buttons.disabled">Disabled</button>
+          <button type="button" data-dialog="#demo-dialog" data-i18n="elements.buttons.dialog">
+            Open the dialog
+          </button>
         </p>
 
         <p>
-          <span role="status">安定版</span>
+          <span role="status" data-i18n="elements.buttons.stable">Stable</span>
           <span role="status">MIT</span>
-          <span role="status">依存ゼロ</span>
+          <span role="status" data-i18n="elements.buttons.zeroDeps">Zero dependencies</span>
         </p>
 
         <p>
-          <label for="progress">ダウンロード</label>
+          <label for="progress" data-i18n="elements.buttons.download">Download</label>
           <progress id="progress" value="0.7">70%</progress>
         </p>
 
         <p>
-          <label for="meter">ディスク使用量</label>
+          <label for="meter" data-i18n="elements.buttons.disk">Disk in use</label>
           <meter id="meter" value="0.42">42%</meter>
         </p>
 
         <details>
-          <summary>折りたたみ（details / summary）</summary>
-          <p>開閉する領域も、要素だけで組めます。</p>
+          <summary data-i18n="elements.buttons.summary">
+            A disclosure (details / summary)
+          </summary>
+          <p data-i18n="elements.buttons.details">
+            Regions that open and close are elements too.
+          </p>
         </details>
 
         <dialog id="demo-dialog">
-          <h4>ダイアログ</h4>
-          <p><code>&lt;dialog&gt;</code> と背面のバックドロップにもスタイルが当たっています。</p>
+          <h4 data-i18n="elements.dialog.heading">Dialog</h4>
+          <p data-i18n="elements.dialog.body">
+            <code>&lt;dialog&gt;</code> and the backdrop behind it are both styled.
+          </p>
           <form method="dialog">
-            <button type="submit">閉じる</button>
+            <button type="submit" data-i18n="elements.dialog.close">Close</button>
           </form>
         </dialog>
       </section>
 
       <section>
-        <h3>コードとメディア</h3>
-        <p>
-          コードブロックは横スクロールします。<code>&lt;figure&gt;</code>
-          と <code>&lt;figcaption&gt;</code> の組み合わせにも対応しています。
+        <h3 data-i18n="elements.media.heading">Code and media</h3>
+        <p data-i18n="elements.media.body">
+          Code blocks scroll sideways rather than pushing the page. <code>&lt;figure&gt;</code>
+          with a <code>&lt;figcaption&gt;</code> is handled too.
         </p>
 
         <pre><code>&lt;article&gt;
-  &lt;h2&gt;クラスは要らない&lt;/h2&gt;
-  &lt;p&gt;要素を書くだけで整います。&lt;/p&gt;
+  &lt;h2&gt;No classes needed&lt;/h2&gt;
+  &lt;p&gt;Write the element and it is styled.&lt;/p&gt;
 &lt;/article&gt;</code></pre>
 
         <figure>
-          <img src="./assets/brand/cover.png" alt="SuCSSのカバーアート" width="1600" height="400" />
-          <figcaption>ブランドアセットは <code>assets/brand/</code> にあります。</figcaption>
+          <img
+            src="./assets/brand/cover.png"
+            data-i18n-alt="elements.media.alt"
+            alt="The SuCSS cover artwork"
+            width="1600"
+            height="400"
+          />
+          <figcaption data-i18n="elements.media.caption">
+            The brand assets live in <code>assets/brand/</code>.
+          </figcaption>
         </figure>
       </section>
 
-      <section id="customize">
-        <h2>カスタマイズ</h2>
-        <p>
-          色・角丸・余白・フォントはすべてCSSカスタムプロパティです。<code>:root</code>
-          に数行足すだけで全体が変わります。
+      <section id="customizing">
+        <h2 data-i18n="customizing.heading">Customizing</h2>
+        <p data-i18n="customizing.lead">
+          Colours, radii, spacing and type are all custom properties. A few lines in
+          <code>:root</code> move the whole page — or
+          <a href="./customize.html">open the customizer</a> and drag the controls until it
+          looks right.
         </p>
 
         <pre id="snippet-tokens"><code>:root {
-  --hue: 158;          /* アクセントと背景メッシュの色相 */
+  --hue: 158;          /* accent colour and background mesh */
   --sat: 70%;
-  --radius: 0.5rem;    /* 角丸を落ち着かせる */
-  --max-width: 72ch;   /* 本文カラムの幅 */
+  --radius: 0.5rem;    /* calmer corners */
+  --max-width: 72ch;   /* width of the body column */
   --base-size: 1rem;
-  --font-sans: "Zen Kaku Gothic New", sans-serif;
+  --font-sans: "Inter", sans-serif;
 }</code></pre>
 
         <p>
-          <button type="button" data-copy="#snippet-tokens">この設定をコピー</button>
+          <button type="button" data-copy="#snippet-tokens" data-i18n="customizing.copy">
+            Copy these settings
+          </button>
           <span role="status" data-copy-status></span>
         </p>
 
-        <h3>ダークモードを固定する</h3>
-        <p>
-          既定ではOSの設定に追従します。<code>&lt;html&gt;</code> の
-          <code>data-theme</code> を切り替えると固定できます。ページ右上のボタンがやっているのもこれです。
+        <h3 data-i18n="customizing.pin.heading">Pinning a theme</h3>
+        <p data-i18n="customizing.pin.body">
+          By default the theme follows the operating system.
+          <code>data-theme</code> on <code>&lt;html&gt;</code> pins it — which is all the
+          buttons at the top of this page do.
         </p>
 
-        <pre id="snippet-theme"><code>&lt;html data-theme="dark"&gt;   &lt;!-- ダークに固定 --&gt;
-&lt;html data-theme="light"&gt;  &lt;!-- ライトに固定 --&gt;
-&lt;html&gt;                     &lt;!-- OSの設定に追従（既定） --&gt;</code></pre>
+        <pre id="snippet-theme"><code>&lt;html data-theme="dark"&gt;   &lt;!-- always dark --&gt;
+&lt;html data-theme="light"&gt;  &lt;!-- always light --&gt;
+&lt;html&gt;                     &lt;!-- follow the OS (default) --&gt;</code></pre>
       </section>
     </main>
 

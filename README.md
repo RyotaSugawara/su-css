@@ -138,9 +138,11 @@ Browsers without `backdrop-filter` fall back to solid surfaces.
 
 ## Development
 
-This repository also contains the demo site: a single hand-written HTML page
-(`index.html`) with no class attributes, styled entirely by the framework. It
-doubles as the element reference.
+This repository also contains the demo site: two hand-written HTML pages with no
+class attributes, styled entirely by the framework. `index.html` doubles as the
+element reference; `customize.html` is a live editor for the custom properties.
+The pages are written in English and translated at runtime from
+`src/locales/` — add a language by dropping a dictionary in beside `ja.js`.
 
 ```bash
 npm install

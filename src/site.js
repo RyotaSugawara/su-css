@@ -1,12 +1,16 @@
 /**
- * The demo page's only JavaScript: a theme switch, the copy buttons, the
- * dialog demo, and the current-section marker in the nav.
+ * The demo site's only JavaScript: the language and theme switches, the copy
+ * buttons, the dialog demo, and the current-section marker in the nav.
  *
  * SuCSS itself ships no JavaScript. Everything here belongs to the page.
  */
 
+import {initI18n, t} from './i18n.js';
+
 const root = document.documentElement;
 const THEME_KEY = 'sucss-theme';
+
+initI18n();
 
 /* -- Theme switch --------------------------------------------------------
    'auto' means "no data-theme attribute", which is how the stylesheet falls
@@ -69,9 +73,9 @@ for (const button of document.querySelectorAll('[data-copy]')) {
 
     try {
       await navigator.clipboard.writeText(source.textContent.trim());
-      say('コピーしました');
+      say(t('status.copied', 'Copied'));
     } catch {
-      say('コピーできませんでした');
+      say(t('status.copyFailed', 'Could not copy'));
     }
   });
 }
