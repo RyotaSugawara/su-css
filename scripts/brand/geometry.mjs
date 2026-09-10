@@ -205,7 +205,7 @@ export const PROPORTIONS = {
     flatness: 0.3534, // ry ÷ rx
     innerScaleX: 0.8962, // the hole's width, as a fraction of the outer ellipse
     frontBand: 0.409, // thickness of the band across the front, ÷ ry
-    backOpening: 0.2, // how far the hole clears the outer edge at the back, ÷ ry
+    backOpening: 0.06, // how far the hole clears the outer edge at the back, ÷ ry
     centerOffset: -0.01, // plate cx offset, as a fraction of the wordmark width
     plateDrop: 0.028, // plate centre below the wordmark bottom, ÷ 100
     tilt: 0,
@@ -219,7 +219,7 @@ export const PROPORTIONS = {
     flatness: 0.2513,
     innerScaleX: 0.8838,
     frontBand: 0.4698,
-    backOpening: 0.2,
+    backOpening: 0.06,
     centerOffset: 0,
     plateDrop: 0.028,
     tilt: 0,
@@ -230,7 +230,7 @@ export const PROPORTIONS = {
     flatness: 0.0934,
     innerScaleX: 0.915,
     frontBand: 0.4625,
-    backOpening: 0.2,
+    backOpening: 0.06,
     centerOffset: -0.002,
     plateDrop: 0.331,
     tilt: 0,
