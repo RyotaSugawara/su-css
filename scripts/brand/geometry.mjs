@@ -310,6 +310,9 @@ export function buildMark({word, variant, ids, colors, withShadow = true, ringBo
   return {
     body,
     box: {x: left, y: 0, width: right - left, height: Math.max(100, bottom)},
+    // The mark on its own, with the soft shadow left out. Centring a tile on
+    // the full box would sit the mark high by the height of that shadow.
+    inkHeight: Math.max(100, ink),
     blurStdDeviation: round(m.shadow.blur),
   };
 }

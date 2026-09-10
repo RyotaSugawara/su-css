@@ -92,13 +92,18 @@ function doc({width, height, defs = '', body, title}) {
 
 /**
  * Places a mark inside a canvas so that it covers `coverage` of the width and
- * sits on the optical centre — nudged up, because the drop shadow adds weight
- * at the bottom that the eye does not read as part of the mark.
+ * its centre lands on the tile's.
+ *
+ * The centring is on the mark alone, not on the box that also contains the
+ * soft shadow — that shadow hangs well below the disc, so centring the box
+ * would leave the mark visibly high. `drop` is the last touch: the brand sheet
+ * sets its marks a hair below centre, which is what stops the shadow reading
+ * as an accident of alignment.
  */
-function place(mark, {width, height, coverage, opticalLift = 0.02}) {
+function place(mark, {width, height, coverage, drop = 0.017}) {
   const scale = (width * coverage) / mark.box.width;
   const x = (width - mark.box.width * scale) / 2 - mark.box.x * scale;
-  const y = (height - mark.box.height * scale) / 2 - height * opticalLift;
+  const y = height * (0.5 + drop) - (mark.inkHeight * scale) / 2;
   return `<g transform="translate(${round(x)} ${round(y)}) scale(${round(scale)})">${mark.body}</g>`;
 }
 
@@ -155,6 +160,9 @@ export function lockupGroup({wordmark, tagline, colors, parts = {}}) {
   // the tagline hangs off the plate itself rather than off the blur.
   let bottom = withWordmark ? 100 : 0;
   let inkBottom = bottom;
+  // The lockup without its soft shadow. The plate's shadow reaches below the
+  // tagline, so centring artwork on the full box would sit the lockup high.
+  let inkHeight = bottom;
 
   if (withPlate) {
     layers.push(
@@ -172,6 +180,7 @@ export function lockupGroup({wordmark, tagline, colors, parts = {}}) {
       }),
     );
     inkBottom = m.bottom + m.swing;
+    inkHeight = inkBottom;
     bottom = Math.max(inkBottom, m.shadowBottom);
   }
 
@@ -189,6 +198,7 @@ export function lockupGroup({wordmark, tagline, colors, parts = {}}) {
         `<path d="${tagline.d}" fill="${colors.tagline}"/></g>`,
     );
     bottom = Math.max(bottom, top + 100 * taglineScale);
+    inkHeight = top + 100 * taglineScale;
   }
 
   const edges = [];
@@ -201,6 +211,7 @@ export function lockupGroup({wordmark, tagline, colors, parts = {}}) {
   return {
     body: layers.join(''),
     box: {x: left, y: 0, width: right - left, height: bottom},
+    inkHeight,
     blurStdDeviation: round(m.shadow.blur),
     hasPlate: withPlate,
   };
@@ -327,10 +338,10 @@ export function coverSvg({
   const group = lockupGroup({wordmark, tagline, colors: THEMES.light});
   const scale = Math.min(
     (width * coverage) / group.box.width,
-    (height * heightCoverage) / group.box.height,
+    (height * heightCoverage) / group.inkHeight,
   );
   const x = (width - group.box.width * scale) / 2 - group.box.x * scale;
-  const y = (height - group.box.height * scale) / 2;
+  const y = (height - group.inkHeight * scale) / 2;
 
   const tile = patternTile({word, tile: {width: tileSize, height: round(tileSize * 0.82)}});
 
@@ -351,7 +362,7 @@ export function coverSvg({
       `<rect width="${width}" height="${height}" fill="${PALETTE.canvas}"/>` +
       `<rect width="${width}" height="${height}" fill="url(#su-pattern)"/>` +
       `<ellipse cx="${round(width / 2)}" cy="${round(height / 2)}" ` +
-      `rx="${round(group.box.width * scale * 0.85)}" ry="${round(group.box.height * scale * 0.95)}" ` +
+      `rx="${round(group.box.width * scale * 0.85)}" ry="${round(group.inkHeight * scale * 1.05)}" ` +
       `fill="url(#clearing)"/>` +
       `<g transform="translate(${round(x)} ${round(y)}) scale(${round(scale)})">${group.body}</g>`,
     title: 'SuCSS — Just HTML, already styled.',
