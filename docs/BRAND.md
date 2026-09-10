@@ -14,10 +14,10 @@ computed and the boundary traced through them, so every plate is a single
 closed path with the hole genuinely gone — no mask, no even-odd, and no
 surprises in a vector editor.
 
-Everything in [`assets/brand/`](../assets/brand) is generated from one source of
-truth, [`scripts/build-brand-assets.mjs`](../scripts/build-brand-assets.mjs).
-The letterforms are outlined, so the SVGs render identically whether or not
-Montserrat is installed.
+The SVGs in [`assets/brand/`](../assets/brand) are the source of the whole kit;
+the PNGs beside them are exports for the places that cannot take an SVG. The
+letterforms are outlined into paths, so every file renders identically whether
+or not Montserrat is installed, and nothing here needs a build step.
 
 ## Files
 
@@ -35,7 +35,7 @@ Montserrat is installed.
 
 | File | Use it for |
 | --- | --- |
-| `mark.svg`, `mark-inverse.svg` | Placing the mark on artwork of your own. |
+| `mark.svg`, `mark-inverse.svg` | Placing the mark on artwork of your own. The demo site's header and footer use `mark.svg`. |
 | `plate.svg` | The plate alone, as a divider or a spot illustration. |
 
 ### Logos — the wordmark lockups
@@ -58,8 +58,8 @@ Montserrat is installed.
 
 ### Site icons
 
-`public/` holds what the demo site serves; they are written by the same script
-and referenced from [`index.html`](../index.html).
+`public/` holds what the demo site serves, referenced from
+[`index.html`](../index.html).
 
 | File | Referenced as |
 | --- | --- |
@@ -104,39 +104,32 @@ it is uploaded by hand. In **Settings → General → Social preview**, choose *
 [`assets/brand/social-preview.png`](../assets/brand/social-preview.png)
 (1280×640).
 
-## Regenerating
+## Editing the artwork
 
-The SVGs and PNGs are committed, so this only needs to run when the brand itself
-changes. The script has three dependencies the project does not otherwise need,
-so install them without writing them to `package.json`:
+There is no generator to run. Open the SVG you want in a vector editor, change
+it, and save — the files are plain paths with no masks, no clipping and no
+even-odd compound shapes, so what you see in the editor is what ships.
 
-```bash
-npm install --no-save opentype.js playwright @expo-google-fonts/montserrat
-node scripts/build-brand-assets.mjs
-```
+Two things are worth knowing before you move a point:
 
-- `opentype.js` outlines the Montserrat letterforms into paths.
-- `@expo-google-fonts/montserrat` ships the Montserrat TTFs — ExtraBold for the
-  mark and the wordmark, Medium for the tagline. Montserrat is licensed under
-  the SIL Open Font License 1.1; the outlines it contributes carry that licence
-  with them.
-- `playwright` drives headless Chromium to rasterise the PNGs that GitHub, npm
-  and the OG crawlers need, none of which accept SVG. If Chromium is already on
-  the machine at `/opt/pw-browsers/chromium`, the script uses it and skips
-  Playwright's own download.
+- **The plate is one closed path.** An outer ellipse with a raised inner one
+  subtracted, already resolved into two arcs. Editing the arcs directly is
+  fine; there is no boolean operation left to preserve.
+- **The type is outlines, not text.** Retyping means setting the words again in
+  Montserrat — ExtraBold for the mark and the wordmark, Medium for the tagline
+  — and converting to outlines. Montserrat is licensed under the SIL Open Font
+  License 1.1, which the outlines carry with them.
 
-The proportions of the mark are the constants in
-[`scripts/brand/geometry.mjs`](../scripts/brand/geometry.mjs). Most are not
-eyeballed: the outer ellipse is solved against the brand sheet by fitting it to
-the mark's contour, which lands within about a pixel, and the tracking of each
-string is solved so its width-to-height ratio matches the sheet's.
+When an SVG changes, re-export the PNGs that depend on it so the two stay in
+step:
 
-The two that are design decisions rather than measurements are named for what
-they do, so the disc can be redrawn without solving for ellipses:
-
-| Constant | What it sets |
-| --- | --- |
-| `frontBand` | How thick the band across the front is, as a fraction of the ellipse's half-height. |
-| `backOpening` | How far the hole clears the outer edge at the back. The larger it is, the further the crescent's points retreat; at zero the ring closes into a hairline instead. |
-
-Change a constant there and every icon, logo and cover follows.
+| PNG | Exported from | At |
+| --- | --- | --- |
+| `assets/brand/cover.png` | `cover.svg` | 1600×400 |
+| `assets/brand/social-preview.png` | `social-preview.svg` | 1280×640 |
+| `assets/brand/icon-512.png` | `icon.svg` | 512×512 |
+| `assets/brand/icon-inverse-512.png` | `icon-inverse.svg` | 512×512 |
+| `public/og-image.png` | `og.svg` | 1200×630 |
+| `public/favicon-96.png` | `icon-small.svg` | 96×96 |
+| `public/apple-touch-icon.png` | `icon-small.svg`, square corners | 180×180 |
+| `public/favicon.svg` | copy of `icon-small.svg` | — |

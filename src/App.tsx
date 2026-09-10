@@ -5,6 +5,7 @@ import { Playground } from './components/Playground';
 import { ThemeCustomizer, DEFAULT_THEME_CONFIG, ThemeConfig } from './components/ThemeCustomizer';
 import { AccessibilityChecker } from './components/AccessibilityChecker';
 import { DocsSection } from './components/DocsSection';
+import markUrl from '@/assets/brand/mark.svg';
 import rawCssText from './lib/sucss.css?raw';
 import './lib/sucss.css';
 
@@ -106,6 +107,7 @@ export default function App() {
       <footer>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <img src={markUrl} alt="" style={{ height: '24px', width: 'auto', flexShrink: 0 }} />
             <strong>SuCSS</strong>
             <small>— 素のHTMLを使った高アクセシブル軽量クラスレスCSS</small>
           </div>
