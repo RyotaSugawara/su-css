@@ -8,7 +8,7 @@ const ROOT = path.resolve(import.meta.dirname, '../..');
 /** Keys under this prefix belong to the page's script, not its markup. */
 const RUNTIME_PREFIX = 'ui.';
 
-function read(name: string): string {
+function readTemplate(name: string): string {
   return fs.readFileSync(path.join(ROOT, name), 'utf8');
 }
 
@@ -16,23 +16,28 @@ function keysIn(html: string): string[] {
   return [...html.matchAll(/data-i18n(?:-[a-z]+)?="([^"]+)"/g)].map((match) => match[1]);
 }
 
-const templateKeys = new Set(PAGES.flatMap((page) => keysIn(read(page.template))));
+const templateKeys = new Set(PAGES.flatMap((page) => keysIn(readTemplate(page.template))));
 
 describe('the rendered pages', () => {
-  it.each(TARGETS)('$output is up to date', (target) => {
-    // Rendered pages are committed so the site needs no build step to serve
-    // them. Run `npm run build:pages` when this fails.
-    expect(read(target.output)).toBe(renderPage(target));
-  });
-
   it.each(TARGETS)('$output carries no class attribute', (target) => {
     // The pages claim to be classless in their own copy. Keep them honest.
-    expect(read(target.output)).not.toMatch(/\sclass=/);
+    expect(renderPage(target)).not.toMatch(/\sclass=/);
   });
 
   it.each(TARGETS)('$output has no keys left in it', (target) => {
     // A rendered page is plain HTML: the keys did their work at build time.
-    expect(read(target.output)).not.toMatch(/data-i18n/);
+    expect(renderPage(target)).not.toMatch(/data-i18n/);
+  });
+
+  it.each(TARGETS)('$output has no tokens left in it', (target) => {
+    expect(renderPage(target)).not.toMatch(/\{\{|\}\}/);
+  });
+
+  it.each(TARGETS)('$output declares its language and its own canonical URL', (target) => {
+    const html = renderPage(target);
+
+    expect(html).toContain(`<html lang="${target.locale}">`);
+    expect(html).toContain(`<link rel="canonical" href="${target.url}" />`);
   });
 });
 

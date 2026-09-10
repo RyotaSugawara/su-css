@@ -143,9 +143,10 @@ class attributes, styled entirely by the framework. `index.html` doubles as the
 element reference; `customize.html` is a live editor for the custom properties.
 
 A page is a template plus a dictionary: `src/pages/*.html` holds the structure,
-`src/locales/*.json` holds every string on the site, one file per language.
-`npm run build:pages` renders `/` and `/ja/` from them, and the results are
-committed, so each language is a real static page with no JavaScript involved.
+`src/locales/*.json` holds every string on the site, one file per language. The
+build renders `/` and `/ja/` from them, so each language ships as a real static
+page with the text in the markup and no JavaScript involved. The rendered pages
+are build output, not source — `npm run dev` and `npm run build` produce them.
 
 ```bash
 npm install
@@ -153,7 +154,7 @@ npm run dev      # start the dev server
 npm run build    # build the demo site
 npm run lint     # TypeScript + Stylelint
 npm run test     # unit, contrast, CSS structure and page tests
-npm run build:pages  # re-render the pages after editing a template or a string
+npm run build:pages  # render the pages on their own (dev and build do it first)
 ```
 
 The framework itself is a single hand-written file: [`src/lib/sucss.css`](src/lib/sucss.css).

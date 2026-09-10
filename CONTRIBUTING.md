@@ -82,19 +82,21 @@ npm run lint      # tsc --noEmit + stylelint
 npm run test      # unit, contrast and structure tests
 npm run build     # demo site
 npm run build:lib # dist-lib/sucss.css and dist-lib/sucss.min.css
-npm run build:pages # re-render the site's pages from templates and strings
+npm run build:pages # render the site's pages (dev and build run this first)
 ```
 
-**No page is edited directly.** `index.html`, `customize.html` and everything
-under `ja/` is rendered from `src/pages/*.html` — the structure, with a
-`data-i18n` key wherever text goes — and `src/locales/<language>.json`, which
-holds the text. Every string on the site is in those JSON files, including the
-handful the pages' script writes (the `ui.` keys), which ship with each page.
+**The site's pages are build output, not source.** `index.html`,
+`customize.html` and everything under `ja/` is rendered — and git-ignored. The
+sources are `src/pages/*.html`, the structure with a `data-i18n` key wherever
+text goes, and `src/locales/<language>.json`, which holds the text. Every string
+on the site is in those JSON files, including the handful the pages' script
+writes (the `ui.` keys), which ship inside each page.
 
-After changing a template or a string, run `npm run build:pages` and commit the
-re-rendered pages. Tests fail if they are stale, if a key has no text in some
-language, if a language has text no key claims, or if the languages describe
-different key sets.
+Edit a template or a string and the pages follow on the next `npm run dev` or
+`npm run build`. Tests render the pages in memory and check them: no page may
+carry a class attribute, a leftover key or an unresolved token; every key the
+templates use needs text in every language; and the languages must describe the
+same keys in the same order.
 
 Adding a language means a new `src/locales/<language>.json` and an entry in
 `scripts/build-pages.mjs` saying where its pages go.

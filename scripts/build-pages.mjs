@@ -9,8 +9,8 @@
  *
  * Rendering fills the keys, resolves the handful of per-page tokens (paths,
  * canonical URL, the language links), and strips the keys, so what ships is
- * plain HTML with nothing left to interpret. Output is committed, so the site
- * needs no build step to serve it.
+ * plain HTML with nothing left to interpret. The rendered pages are build
+ * output and git-ignored; `npm run dev` and `npm run build` run this first.
  *
  *   node scripts/build-pages.mjs
  */
