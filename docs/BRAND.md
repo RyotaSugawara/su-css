@@ -3,10 +3,16 @@
 The mark is the word **su** resting on a purple disc — the plate. The plate is
 the same lens the framework's surfaces are made of, seen edge-on, and it is
 drawn in one move: an ellipse with a second, smaller ellipse subtracted from
-it, the inner one raised. The hole is lifted far enough to clear the outer edge
-at the back, so the ring never closes — it breaks open across the top, tapers
-to a horn at either end, and thickens into a band across the front. A soft
-lavender shadow sits underneath.
+it, the inner one raised. The hole is lifted clear of the outer edge at the
+back, so the ring does not close — the back is knocked out completely, leaving
+a crescent that tapers to a point at either end and thickens into a band across
+the front, with the wordmark sitting in the opening. A soft lavender shadow
+sits underneath.
+
+The subtraction is solved rather than masked: the two crossing points are
+computed and the boundary traced through them, so every plate is a single
+closed path with the hole genuinely gone — no mask, no even-odd, and no
+surprises in a vector editor.
 
 Everything in [`assets/brand/`](../assets/brand) is generated from one source of
 truth, [`scripts/build-brand-assets.mjs`](../scripts/build-brand-assets.mjs).
@@ -131,6 +137,6 @@ they do, so the disc can be redrawn without solving for ellipses:
 | Constant | What it sets |
 | --- | --- |
 | `frontBand` | How thick the band across the front is, as a fraction of the ellipse's half-height. |
-| `backOpening` | How far the hole clears the outer edge at the back. Above zero the ring breaks open; at zero it would close to a hairline. |
+| `backOpening` | How far the hole clears the outer edge at the back. The larger it is, the further the crescent's points retreat; at zero the ring closes into a hairline instead. |
 
 Change a constant there and every icon, logo and cover follows.

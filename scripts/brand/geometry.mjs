@@ -112,14 +112,9 @@ export function plate({
   shadow = null,
 }) {
   const r = round;
-  const ellipse = (x, y, ax, ay) =>
-    `M${r(x - ax)} ${r(y)}` +
-    `A${r(ax)} ${r(ay)} 0 1 0 ${r(x + ax)} ${r(y)}` +
-    `A${r(ax)} ${r(ay)} 0 1 0 ${r(x - ax)} ${r(y)}Z`;
-
-  const ring =
-    ellipse(cx, cy, rx, ry) +
-    ellipse(cx, cy - ry * innerRise, rx * innerScaleX, ry * innerScaleY);
+  const rise = ry * innerRise;
+  const rxi = rx * innerScaleX;
+  const ryi = ry * innerScaleY;
 
   const parts = [];
   if (shadow) {
@@ -128,10 +123,66 @@ export function plate({
         `fill="${shadow.fill}" opacity="${shadow.opacity}" filter="url(#${shadow.blurId})"/>`,
     );
   }
-  parts.push(`<path d="${ring}" fill="${fill}" fill-rule="evenodd"/>`);
+  parts.push(`<path d="${crescent({cx, cy, rx, ry, rxi, ryi, rise})}" fill="${fill}" fill-rule="evenodd"/>`);
 
   const body = parts.join('');
   return tilt ? `<g transform="rotate(${tilt} ${r(cx)} ${r(cy)})">${body}</g>` : body;
+}
+
+/**
+ * The outline of the outer ellipse minus the raised inner one, as a single
+ * closed path.
+ *
+ * Two subpaths under `fill-rule="evenodd"` would be wrong: even-odd is a
+ * symmetric difference, so the moment the raised hole clears the outer edge the
+ * part that pokes out gets *filled* — leaving exactly the hairline across the
+ * back that this shape must not have. So the two crossing points are solved for
+ * instead, and the boundary is traced through them: the outer edge round the
+ * bottom, then the inner edge back. The result is one shape with the hole
+ * genuinely gone, which also survives a trip through a vector editor.
+ *
+ * When the hole does not clear the outer edge there are no crossings and the
+ * ring is closed; that case falls back to a two-subpath annulus, where even-odd
+ * is correct.
+ */
+function crescent({cx, cy, rx, ry, rxi, ryi, rise}) {
+  const r = round;
+  const ellipse = (x, y, ax, ay) =>
+    `M${r(x - ax)} ${r(y)}` +
+    `A${r(ax)} ${r(ay)} 0 1 0 ${r(x + ax)} ${r(y)}` +
+    `A${r(ax)} ${r(ay)} 0 1 0 ${r(x - ax)} ${r(y)}Z`;
+
+  // Both ellipses share a vertical axis, so substituting one into the other
+  // leaves a quadratic in t, the crossing's offset from the outer centre.
+  const A = (rx * rx) / (ry * ry);
+  const B = (rxi * rxi) / (ryi * ryi);
+  const qa = A - B;
+  const qb = -2 * B * rise;
+  const qc = rxi * rxi - B * rise * rise - rx * rx;
+  const disc = qb * qb - 4 * qa * qc;
+
+  let t = null;
+  if (Math.abs(qa) > 1e-9 && disc > 0) {
+    const root = Math.sqrt(disc);
+    t = [(-qb + root) / (2 * qa), (-qb - root) / (2 * qa)]
+      .filter((v) => Math.abs(v) <= ry + 1e-9 && Math.abs(v + rise) <= ryi + 1e-9)
+      .sort((p, q) => p - q)[0];
+  }
+  if (t === undefined || t === null) {
+    return ellipse(cx, cy, rx, ry) + ellipse(cx, cy - rise, rxi, ryi);
+  }
+
+  const half = rx * Math.sqrt(Math.max(0, 1 - (t * t) / (ry * ry)));
+  const y = cy + t;
+  // Both arcs run round the bottom: the outer one right-to-left is the long way
+  // when the crossings sit above its centre, and likewise for the inner one.
+  const outerLarge = t < 0 ? 1 : 0;
+  const innerLarge = t + rise < 0 ? 1 : 0;
+  return (
+    `M${r(cx - half)} ${r(y)}` +
+    `A${r(rx)} ${r(ry)} 0 ${outerLarge} 0 ${r(cx + half)} ${r(y)}` +
+    `A${r(rxi)} ${r(ryi)} 0 ${innerLarge} 1 ${r(cx - half)} ${r(y)}Z`
+  );
 }
 
 /**
@@ -154,7 +205,7 @@ export const PROPORTIONS = {
     flatness: 0.3534, // ry ÷ rx
     innerScaleX: 0.8962, // the hole's width, as a fraction of the outer ellipse
     frontBand: 0.409, // thickness of the band across the front, ÷ ry
-    backOpening: 0.045, // how far the hole clears the outer edge at the back, ÷ ry
+    backOpening: 0.2, // how far the hole clears the outer edge at the back, ÷ ry
     centerOffset: -0.01, // plate cx offset, as a fraction of the wordmark width
     plateDrop: 0.028, // plate centre below the wordmark bottom, ÷ 100
     tilt: 0,
@@ -168,7 +219,7 @@ export const PROPORTIONS = {
     flatness: 0.2513,
     innerScaleX: 0.8838,
     frontBand: 0.4698,
-    backOpening: 0.045,
+    backOpening: 0.2,
     centerOffset: 0,
     plateDrop: 0.028,
     tilt: 0,
@@ -179,7 +230,7 @@ export const PROPORTIONS = {
     flatness: 0.0934,
     innerScaleX: 0.915,
     frontBand: 0.4625,
-    backOpening: 0.045,
+    backOpening: 0.2,
     centerOffset: -0.002,
     plateDrop: 0.331,
     tilt: 0,
