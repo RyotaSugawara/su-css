@@ -3,10 +3,10 @@
 The mark is the word **su** resting on a purple disc — the plate. The plate is
 the same lens the framework's surfaces are made of, seen edge-on, and it is
 drawn in one move: an ellipse with a second, smaller ellipse subtracted from
-it, the inner one raised. That single offset is what gives the disc its whole
-character — the ring closes to a hairline across the back, where the two edges
-nearly meet, and opens into a thick band across the front. A soft lavender
-shadow sits underneath.
+it, the inner one raised. The hole is lifted far enough to clear the outer edge
+at the back, so the ring never closes — it breaks open across the top, tapers
+to a horn at either end, and thickens into a band across the front. A soft
+lavender shadow sits underneath.
 
 Everything in [`assets/brand/`](../assets/brand) is generated from one source of
 truth, [`scripts/build-brand-assets.mjs`](../scripts/build-brand-assets.mjs).
@@ -119,10 +119,18 @@ node scripts/build-brand-assets.mjs
   the machine at `/opt/pw-browsers/chromium`, the script uses it and skips
   Playwright's own download.
 
-The proportions of the mark — how wide the plate is against the wordmark, how
-flat it sits, how big its hole is and how far that hole is raised — are the
-constants in [`scripts/brand/geometry.mjs`](../scripts/brand/geometry.mjs).
-They are not eyeballed: each one is solved against the brand sheet by fitting
-the two ellipses to the mark's contour, which lands within about a pixel, and
-the tracking of each string is solved so its width-to-height ratio matches the
-sheet's. Change a constant there and every icon, logo and cover follows.
+The proportions of the mark are the constants in
+[`scripts/brand/geometry.mjs`](../scripts/brand/geometry.mjs). Most are not
+eyeballed: the outer ellipse is solved against the brand sheet by fitting it to
+the mark's contour, which lands within about a pixel, and the tracking of each
+string is solved so its width-to-height ratio matches the sheet's.
+
+The two that are design decisions rather than measurements are named for what
+they do, so the disc can be redrawn without solving for ellipses:
+
+| Constant | What it sets |
+| --- | --- |
+| `frontBand` | How thick the band across the front is, as a fraction of the ellipse's half-height. |
+| `backOpening` | How far the hole clears the outer edge at the back. Above zero the ring breaks open; at zero it would close to a hairline. |
+
+Change a constant there and every icon, logo and cover follows.

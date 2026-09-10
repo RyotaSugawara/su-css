@@ -90,11 +90,12 @@ export function outlineText(opentype, font, text, {tracking = 0} = {}) {
  * The disc the wordmark rests on.
  *
  * It is not a cylinder: it is one ellipse with a second, smaller ellipse
- * subtracted from it, the inner one raised. That single move is what gives the
- * disc its whole character — the ring is a hairline across the back, where the
- * two edges nearly meet, and a thick band across the front, where the raised
- * hole pulls away from the outer edge. Fitted against the brand sheet, this
- * model lands within about a pixel over the mark's entire contour.
+ * subtracted from it, the inner one raised. The hole is lifted far enough to
+ * clear the outer edge at the back, so the ring does not close — it breaks
+ * open across the top and tapers to a horn at either end, leaving a thick band
+ * across the front. The outer ellipse is fitted against the brand sheet and
+ * lands within about a pixel; how far the hole is raised is a design choice,
+ * set by `backOpening`.
  *
  * Drawn as one path with `evenodd`, so the inner ellipse punches the hole.
  */
@@ -151,9 +152,9 @@ export const PROPORTIONS = {
   icon: {
     plateWidthRatio: 1.84, // outer ellipse width ÷ wordmark width
     flatness: 0.3534, // ry ÷ rx
-    innerScaleX: 0.8962, // the hole, as a fraction of the outer ellipse
-    innerScaleY: 0.7842,
-    innerRise: 0.1934, // how far the hole is raised, ÷ ry
+    innerScaleX: 0.8962, // the hole's width, as a fraction of the outer ellipse
+    frontBand: 0.409, // thickness of the band across the front, ÷ ry
+    backOpening: 0.045, // how far the hole clears the outer edge at the back, ÷ ry
     centerOffset: -0.01, // plate cx offset, as a fraction of the wordmark width
     plateDrop: 0.028, // plate centre below the wordmark bottom, ÷ 100
     tilt: 0,
@@ -166,8 +167,8 @@ export const PROPORTIONS = {
     plateWidthRatio: 1.84,
     flatness: 0.2513,
     innerScaleX: 0.8838,
-    innerScaleY: 0.7582,
-    innerRise: 0.228,
+    frontBand: 0.4698,
+    backOpening: 0.045,
     centerOffset: 0,
     plateDrop: 0.028,
     tilt: 0,
@@ -177,8 +178,8 @@ export const PROPORTIONS = {
     plateWidthRatio: 1.177,
     flatness: 0.0934,
     innerScaleX: 0.915,
-    innerScaleY: 0.7388,
-    innerRise: 0.2013,
+    frontBand: 0.4625,
+    backOpening: 0.045,
     centerOffset: -0.002,
     plateDrop: 0.331,
     tilt: 0,
@@ -191,6 +192,12 @@ export function plateMetrics(word, variant, {ringBoost = 1} = {}) {
   const p = PROPORTIONS[variant];
   const rx = (word.width * p.plateWidthRatio) / 2;
   const ry = rx * p.flatness;
+  // The two things a designer actually sets — how thick the front band is and
+  // how far the ring breaks open at the back — fix where the hole sits and how
+  // tall it is. Raising the hole thickens the front and opens the back by the
+  // same amount, so solving the pair keeps them independent.
+  const innerRise = (p.frontBand + p.backOpening) / 2;
+  const innerScaleY = 1 - (p.frontBand - p.backOpening) / 2;
   const cx = word.width / 2 + word.width * p.centerOffset;
   const cy = 100 + 100 * p.plateDrop;
   const shadow = {
@@ -206,10 +213,11 @@ export function plateMetrics(word, variant, {ringBoost = 1} = {}) {
     ry,
     cx,
     cy,
+    innerRise,
     // A boost shrinks the hole, which fattens the whole ring — the only way to
     // keep the disc legible once it is down at favicon sizes.
     innerScaleX: p.innerScaleX / ringBoost,
-    innerScaleY: p.innerScaleY / ringBoost,
+    innerScaleY: innerScaleY / ringBoost,
     shadow,
     // The tilt swings the tips down by rx·sin(tilt); allow for it when sizing
     // a canvas so nothing clips.
