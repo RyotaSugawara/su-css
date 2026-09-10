@@ -1,4 +1,12 @@
+<p align="center">
+  <a href="https://ryotasugawara.github.io/su-css/">
+    <img src="assets/brand/cover.png" alt="SuCSS — Just HTML, already styled." width="880">
+  </a>
+</p>
+
 # SuCSS
+
+**Just HTML, already styled.**
 
 [![CI](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml/badge.svg)](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/@ryo9ra/su-css.svg)](https://www.npmjs.com/package/@ryo9ra/su-css)
@@ -130,15 +138,23 @@ Browsers without `backdrop-filter` fall back to solid surfaces.
 
 ## Development
 
-This repository also contains the demo app — a showcase, a live playground, a
-theme customizer, and a contrast checker.
+This repository also contains the demo site: hand-written HTML pages with no
+class attributes, styled entirely by the framework. `index.html` doubles as the
+element reference; `customize.html` is a live editor for the custom properties.
+
+A page is a template plus a dictionary: `src/pages/*.html` holds the structure,
+`src/locales/*.json` holds every string on the site, one file per language. The
+build renders `/` and `/ja/` from them, so each language ships as a real static
+page with the text in the markup and no JavaScript involved. The rendered pages
+are build output, not source — `npm run dev` and `npm run build` produce them.
 
 ```bash
 npm install
 npm run dev      # start the dev server
 npm run build    # build the demo site
 npm run lint     # TypeScript + Stylelint
-npm run test     # unit, contrast, and CSS structure tests
+npm run test     # unit, contrast, CSS structure and page tests
+npm run build:pages  # render the pages on their own (dev and build do it first)
 ```
 
 The framework itself is a single hand-written file: [`src/lib/sucss.css`](src/lib/sucss.css).
@@ -162,6 +178,12 @@ change released: [CONTRIBUTING.md](CONTRIBUTING.md) and
 
 To report a security problem, use private vulnerability reporting rather than an
 issue: [SECURITY.md](SECURITY.md).
+
+## Brand
+
+Icons, logos, the cover artwork and the palette live in
+[`assets/brand/`](assets/brand), and how to use them is written down in
+[docs/BRAND.md](docs/BRAND.md).
 
 ## License
 

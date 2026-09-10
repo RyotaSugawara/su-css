@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/RyotaSugawara/su-css/compare/v0.2.0...v0.3.0) (2026-09-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* cap embedded media at the container width ([#34](https://github.com/RyotaSugawara/su-css/issues/34))
+
+### Bug Fixes
+
+* cap embedded media at the container width ([#34](https://github.com/RyotaSugawara/su-css/issues/34)) ([8489e86](https://github.com/RyotaSugawara/su-css/commit/8489e862386dce77233bdb9d8a7b7a08bc70575f))
+* keep a header tab row left-aligned ([#38](https://github.com/RyotaSugawara/su-css/issues/38)) ([82d86cb](https://github.com/RyotaSugawara/su-css/commit/82d86cb380673464f7fab36d398ce9bf7dfbb958))
+
 ## [0.2.0](https://github.com/RyotaSugawara/su-css/compare/v0.1.0...v0.2.0) (2026-09-09)
 
 

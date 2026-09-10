@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="{{lang}}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="customizer.meta.title"></title>
+    <meta
+      name="description"
+      data-i18n-content="customizer.meta.description"
+      content=""
+    />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#F8F6FF" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171326" media="(prefers-color-scheme: dark)" />
+
+    <link rel="canonical" href="{{canonical}}" />
+    <link
+      rel="alternate"
+      hreflang="en"
+      href="https://ryotasugawara.github.io/su-css/customize.html"
+    />
+    <link
+      rel="alternate"
+      hreflang="ja"
+      href="https://ryotasugawara.github.io/su-css/ja/customize.html"
+    />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href="https://ryotasugawara.github.io/su-css/customize.html"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SuCSS" />
+    <meta property="og:title" data-i18n-content="customizer.meta.title" content="" />
+    <meta
+      property="og:description"
+      data-i18n-content="customizer.meta.description"
+      content=""
+    />
+    <meta property="og:url" content="{{ogUrl}}" />
+    <meta property="og:image" content="https://ryotasugawara.github.io/su-css/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="stylesheet" href="{{root}}src/lib/sucss.css" />
+    <link rel="stylesheet" href="{{root}}src/site.css" />
+
+    <script>
+      // Apply the saved theme and custom properties before first paint, so a
+      // reload never flashes the defaults. Kept inline and duplicated across
+      // the two pages on purpose: a separate file would arrive too late.
+      try {
+        const saved = localStorage.getItem('sucss-theme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+
+        const tokens = JSON.parse(localStorage.getItem('sucss-tokens') || '{}');
+        for (const [name, value] of Object.entries(tokens)) {
+          if (/^--[a-z-]+$/.test(name) && typeof value === 'string') {
+            document.documentElement.style.setProperty(name, value);
+          }
+        }
+      } catch {
+        /* Storage can be blocked, or hold nonsense. The defaults are fine. */
+      }
+    </script>
+    <script type="application/json" data-strings>{{strings}}</script>
+  </head>
+
+  <body>
+    <header>
+      <div>
+        <nav>
+          <div>
+            <a href="./"><img src="{{root}}assets/brand/mark.svg" alt="SuCSS" width="50" height="34" /></a>
+            <strong>SuCSS</strong>
+          </div>
+          <div>
+            <a href="{{enHref}}" hreflang="en"{{enCurrent}}>EN</a>
+            <a href="{{jaHref}}" hreflang="ja"{{jaCurrent}}>日本語</a>
+            <button type="button" data-theme-set="light" data-i18n="theme.light"></button>
+            <button type="button" data-theme-set="dark" data-i18n="theme.dark"></button>
+            <button type="button" data-theme-set="auto" data-i18n="theme.auto"></button>
+          </div>
+        </nav>
+
+        <nav>
+          <a href="./#install" data-i18n="nav.install"></a>
+          <a href="./#features" data-i18n="nav.features"></a>
+          <a href="./#elements" data-i18n="nav.elements"></a>
+          <a href="./customize.html" aria-current="page" data-i18n="nav.customize"></a>
+          <a href="https://github.com/RyotaSugawara/su-css">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <hgroup>
+          <h1 data-i18n="customizer.heading"></h1>
+          <p data-i18n="customizer.tagline"></p>
+        </hgroup>
+
+        <p data-i18n="customizer.lead"></p>
+        <p data-i18n="customizer.storage"></p>
+      </section>
+
+      <section>
+        <h2 data-i18n="customizer.controls"></h2>
+
+        <form id="controls">
+          <fieldset>
+            <legend data-i18n="customizer.colour"></legend>
+
+            <label for="hue">
+              <span>
+                <span data-i18n="tokens.hueLabel"></span>
+                <code>--hue</code>
+                <output for="hue" id="out-hue">262</output>
+              </span>
+            </label>
+            <input type="range" id="hue" data-var="--hue" min="0" max="360" step="1" value="262" />
+
+            <label for="sat">
+              <span>
+                <span data-i18n="tokens.satLabel"></span>
+                <code>--sat</code>
+                <output for="sat" id="out-sat">85%</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="sat"
+              data-var="--sat"
+              data-unit="%"
+              min="0"
+              max="100"
+              step="1"
+              value="85"
+            />
+          </fieldset>
+
+          <fieldset>
+            <legend data-i18n="customizer.type"></legend>
+
+            <label for="font" data-i18n="tokens.fontLabel"></label>
+            <select id="font" data-var="--font-sans">
+              <option
+                value="-apple-system, blinkmacsystemfont, &quot;Segoe UI&quot;, roboto, &quot;Hiragino Sans&quot;, &quot;Hiragino Kaku Gothic ProN&quot;, &quot;Meiryo&quot;, sans-serif"
+                data-i18n="tokens.fontSystem"
+              ></option>
+              <option value="georgia, &quot;Times New Roman&quot;, serif" data-i18n="tokens.fontSerif"></option>
+              <option
+                value="ui-monospace, sfmono-regular, menlo, monaco, consolas, monospace"
+                data-i18n="tokens.fontMono"
+              ></option>
+            </select>
+
+            <label for="base-size">
+              <span>
+                <span data-i18n="tokens.baseSizeLabel"></span>
+                <code>--base-size</code>
+                <output for="base-size" id="out-base-size">1rem</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="base-size"
+              data-var="--base-size"
+              data-unit="rem"
+              min="0.875"
+              max="1.25"
+              step="0.025"
+              value="1"
+            />
+
+            <label for="line-height">
+              <span>
+                <span data-i18n="tokens.lineHeightLabel"></span>
+                <code>--line-height</code>
+                <output for="line-height" id="out-line-height">1.6</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="line-height"
+              data-var="--line-height"
+              min="1.3"
+              max="2"
+              step="0.05"
+              value="1.6"
+            />
+          </fieldset>
+
+          <fieldset>
+            <legend data-i18n="customizer.layout"></legend>
+
+            <label for="max-width">
+              <span>
+                <span data-i18n="tokens.maxWidthLabel"></span>
+                <code>--max-width</code>
+                <output for="max-width" id="out-max-width">860px</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="max-width"
+              data-var="--max-width"
+              data-unit="px"
+              min="600"
+              max="1200"
+              step="20"
+              value="860"
+            />
+
+            <label for="radius">
+              <span>
+                <span data-i18n="tokens.radiusLabel"></span>
+                <code>--radius</code>
+                <output for="radius" id="out-radius">1.375rem</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="radius"
+              data-var="--radius"
+              data-unit="rem"
+              min="0"
+              max="2"
+              step="0.125"
+              value="1.375"
+            />
+
+            <label for="glass-blur">
+              <span>
+                <span data-i18n="tokens.blurLabel"></span>
+                <code>--glass-blur</code>
+                <output for="glass-blur" id="out-glass-blur">14px</output>
+              </span>
+            </label>
+            <input
+              type="range"
+              id="glass-blur"
+              data-var="--glass-blur"
+              data-unit="px"
+              min="0"
+              max="28"
+              step="1"
+              value="14"
+            />
+          </fieldset>
+
+          <p>
+            <input type="reset" data-i18n-value="customizer.reset" value="" />
+          </p>
+        </form>
+      </section>
+
+      <section>
+        <h2 data-i18n="customizer.output"></h2>
+        <p data-i18n="customizer.outputLead"></p>
+
+        <pre id="output"><code data-i18n="customizer.outputEmpty"></code></pre>
+
+        <p>
+          <button type="button" data-copy="#output" data-i18n="customizer.copy"></button>
+          <span role="status" data-copy-status></span>
+        </p>
+      </section>
+
+      <section>
+        <h2 data-i18n="customizer.preview"></h2>
+        <p data-i18n="customizer.previewLead"></p>
+
+        <p>
+          <button type="button" data-i18n="elements.buttons.button"></button>
+          <button type="button" disabled data-i18n="elements.buttons.disabled"></button>
+          <a href="#" data-i18n="customizer.aLink"></a>
+        </p>
+
+        <p>
+          <span role="status" data-i18n="elements.buttons.stable"></span>
+          <span role="status">MIT</span>
+          <span role="status" data-i18n="elements.buttons.zeroDeps"></span>
+        </p>
+
+        <p>
+          <label for="preview-switch">
+            <input type="checkbox" id="preview-switch" switch checked />
+            <span data-i18n="customizer.switchLabel"></span>
+          </label>
+        </p>
+
+        <p>
+          <label for="preview-input" data-i18n="customizer.fieldLabel"></label>
+          <input
+            type="text"
+            id="preview-input"
+            data-i18n-placeholder="customizer.fieldPlaceholder"
+            placeholder=""
+          />
+        </p>
+
+        <blockquote>
+          <p data-i18n="customizer.quote"></p>
+        </blockquote>
+
+        <figure>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col" data-i18n="elements.table.property"></th>
+                <th scope="col" data-i18n="elements.table.default"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"><code>--radius</code></th>
+                <td>1.375rem</td>
+              </tr>
+              <tr>
+                <th scope="row"><code>--glass-blur</code></th>
+                <td>14px</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+      </section>
+    </main>
+
+    <footer>
+      <div>
+        <div>
+          <img src="{{root}}assets/brand/mark.svg" alt="" width="35" height="24" />
+          <strong>SuCSS</strong>
+          <small>— Just HTML, already styled.</small>
+        </div>
+        <div>
+          <small>MIT License</small>
+          <a href="https://github.com/RyotaSugawara/su-css">GitHub</a>
+          <a href="https://www.npmjs.com/package/@ryo9ra/su-css">npm</a>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="{{root}}src/customize.js"></script>
+  </body>
+</html>

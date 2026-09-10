@@ -1,7 +1,7 @@
 # Contributing to SuCSS
 
-SuCSS is one hand-written stylesheet, `src/lib/sucss.css`, plus a demo app that
-exercises it. Everything below is about keeping that stylesheet honest and
+SuCSS is one hand-written stylesheet, `src/lib/sucss.css`, plus a two-page demo
+site that exercises it. Everything below is about keeping that stylesheet honest and
 getting changes released without surprises.
 
 ## The rule that matters most
@@ -77,12 +77,29 @@ browser support section in the same PR.
 
 ```bash
 npm install
-npm run dev       # demo app at :3000
+npm run dev       # demo site at :3000
 npm run lint      # tsc --noEmit + stylelint
 npm run test      # unit, contrast and structure tests
 npm run build     # demo site
 npm run build:lib # dist-lib/sucss.css and dist-lib/sucss.min.css
+npm run build:pages # render the site's pages (dev and build run this first)
 ```
+
+**The site's pages are build output, not source.** `index.html`,
+`customize.html` and everything under `ja/` is rendered — and git-ignored. The
+sources are `src/pages/*.html`, the structure with a `data-i18n` key wherever
+text goes, and `src/locales/<language>.json`, which holds the text. Every string
+on the site is in those JSON files, including the handful the pages' script
+writes (the `ui.` keys), which ship inside each page.
+
+Edit a template or a string and the pages follow on the next `npm run dev` or
+`npm run build`. Tests render the pages in memory and check them: no page may
+carry a class attribute, a leftover key or an unresolved token; every key the
+templates use needs text in every language; and the languages must describe the
+same keys in the same order.
+
+Adding a language means a new `src/locales/<language>.json` and an entry in
+`scripts/build-pages.mjs` saying where its pages go.
 
 Run `npm run lint && npm run test` before opening a PR; CI runs the same checks
 plus `npm pack --dry-run` to catch anything that would break the published
