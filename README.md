@@ -6,6 +6,8 @@
 
 # SuCSS
 
+**Just HTML, already styled.**
+
 [![CI](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml/badge.svg)](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/@ryo9ra/su-css.svg)](https://www.npmjs.com/package/@ryo9ra/su-css)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
