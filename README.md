@@ -142,9 +142,10 @@ This repository also contains the demo site: hand-written HTML pages with no
 class attributes, styled entirely by the framework. `index.html` doubles as the
 element reference; `customize.html` is a live editor for the custom properties.
 
-The English pages are the source. `npm run build:pages` renders the translated
-copies into `ja/` from `src/locales/ja.js` and they are committed, so every
-language is a real static page — `/ja/`, no JavaScript involved.
+A page is a template plus a dictionary: `src/pages/*.html` holds the structure,
+`src/locales/*.json` holds every string on the site, one file per language.
+`npm run build:pages` renders `/` and `/ja/` from them, and the results are
+committed, so each language is a real static page with no JavaScript involved.
 
 ```bash
 npm install
@@ -152,7 +153,7 @@ npm run dev      # start the dev server
 npm run build    # build the demo site
 npm run lint     # TypeScript + Stylelint
 npm run test     # unit, contrast, CSS structure and page tests
-npm run build:pages  # re-render ja/ after editing a page or a translation
+npm run build:pages  # re-render the pages after editing a template or a string
 ```
 
 The framework itself is a single hand-written file: [`src/lib/sucss.css`](src/lib/sucss.css).

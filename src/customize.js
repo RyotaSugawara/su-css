@@ -8,16 +8,10 @@
  * inline script in the page head applies them before first paint.
  */
 
-import './site.js';
+import {strings} from './site.js';
 
 const root = document.documentElement;
 const TOKENS_KEY = 'sucss-tokens';
-
-/* The one line this file writes that the build-time translation cannot reach. */
-const EMPTY_OUTPUT = {
-  en: '/* Nothing changed yet — move a control above. */',
-  ja: '/* まだ何も変えていません — 上のつまみを動かしてください。 */',
-};
 
 const form = document.querySelector('#controls');
 const output = document.querySelector('#output code');
@@ -74,7 +68,7 @@ function render() {
   const entries = Object.entries(tokens);
 
   if (entries.length === 0) {
-    output.textContent = EMPTY_OUTPUT[root.lang] ?? EMPTY_OUTPUT.en;
+    output.textContent = strings.emptyOutput;
     return;
   }
 

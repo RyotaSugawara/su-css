@@ -82,15 +82,22 @@ npm run lint      # tsc --noEmit + stylelint
 npm run test      # unit, contrast and structure tests
 npm run build     # demo site
 npm run build:lib # dist-lib/sucss.css and dist-lib/sucss.min.css
-npm run build:pages # re-render the translated pages into ja/
+npm run build:pages # re-render the site's pages from templates and strings
 ```
 
-**The English pages are the source of every other language.** `index.html` and
-`customize.html` carry the English text plus a `data-i18n` key beside it;
-`src/locales/ja.js` holds the Japanese for those keys. After changing either,
-run `npm run build:pages` and commit the regenerated `ja/` pages — a test fails
-if they are stale, if a key has no translation, or if a translation has no key
-left to attach to.
+**No page is edited directly.** `index.html`, `customize.html` and everything
+under `ja/` is rendered from `src/pages/*.html` — the structure, with a
+`data-i18n` key wherever text goes — and `src/locales/<language>.json`, which
+holds the text. Every string on the site is in those JSON files, including the
+handful the pages' script writes (the `ui.` keys), which ship with each page.
+
+After changing a template or a string, run `npm run build:pages` and commit the
+re-rendered pages. Tests fail if they are stale, if a key has no text in some
+language, if a language has text no key claims, or if the languages describe
+different key sets.
+
+Adding a language means a new `src/locales/<language>.json` and an entry in
+`scripts/build-pages.mjs` saying where its pages go.
 
 Run `npm run lint && npm run test` before opening a PR; CI runs the same checks
 plus `npm pack --dry-run` to catch anything that would break the published

@@ -4,20 +4,18 @@
  *
  * SuCSS itself ships no JavaScript. Everything here belongs to the page.
  *
- * The pages themselves are translated at build time, so nothing here needs to
- * be — apart from the handful of strings this file puts on screen, which are
- * picked by the document's own language.
+ * The pages are rendered per language at build time, so nothing here has to
+ * translate anything: the few strings this file writes arrive with the page.
  */
 
 const root = document.documentElement;
 const THEME_KEY = 'sucss-theme';
 
-const MESSAGES = {
-  en: {copied: 'Copied', copyFailed: 'Could not copy'},
-  ja: {copied: 'コピーしました', copyFailed: 'コピーできませんでした'},
-};
-
-const messages = MESSAGES[root.lang] ?? MESSAGES.en;
+/* The strings this script writes on screen. They are part of the page's
+   dictionary like any other text, and the build ships them with the page. */
+export const strings = JSON.parse(
+  document.querySelector('script[data-strings]')?.textContent ?? '{}',
+);
 
 /* -- Theme switch --------------------------------------------------------
    'auto' means "no data-theme attribute", which is how the stylesheet falls
@@ -80,9 +78,9 @@ for (const button of document.querySelectorAll('[data-copy]')) {
 
     try {
       await navigator.clipboard.writeText(source.textContent.trim());
-      say(messages.copied);
+      say(strings.copied);
     } catch {
-      say(messages.copyFailed);
+      say(strings.copyFailed);
     }
   });
 }

@@ -1,12 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{lang}}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SuCSS — a classless CSS framework for plain HTML</title>
+    <title data-i18n="meta.title"></title>
     <meta
       name="description"
-      content="A classless CSS framework. Write plain semantic HTML — no class names, no custom attributes — and get liquid-glass surfaces, dark mode and accessibility with it."
+      data-i18n-content="meta.description"
+      content=""
     />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -15,7 +16,7 @@
     <meta name="theme-color" content="#F8F6FF" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#171326" media="(prefers-color-scheme: dark)" />
 
-    <link rel="canonical" href="https://ryotasugawara.github.io/su-css/" />
+    <link rel="canonical" href="{{canonical}}" />
     <link rel="alternate" hreflang="en" href="https://ryotasugawara.github.io/su-css/" />
     <link rel="alternate" hreflang="ja" href="https://ryotasugawara.github.io/su-css/ja/" />
     <link rel="alternate" hreflang="x-default" href="https://ryotasugawara.github.io/su-css/" />
@@ -24,9 +25,10 @@
     <meta property="og:title" content="SuCSS — Just HTML, already styled." />
     <meta
       property="og:description"
-      content="A classless CSS framework. Write plain semantic HTML — no class names, no custom attributes — and get liquid-glass surfaces, dark mode and accessibility with it."
+      data-i18n-content="meta.description"
+      content=""
     />
-    <meta property="og:url" content="https://ryotasugawara.github.io/su-css/" />
+    <meta property="og:url" content="{{ogUrl}}" />
     <!-- Crawlers do not resolve relative URLs, so this one stays absolute. -->
     <meta property="og:image" content="https://ryotasugawara.github.io/su-css/og-image.png" />
     <meta property="og:image:width" content="1200" />
@@ -35,10 +37,10 @@
     <meta name="twitter:card" content="summary_large_image" />
 
     <!-- The framework itself. Everything below is styled by this one file. -->
-    <link rel="stylesheet" href="./src/lib/sucss.css" />
+    <link rel="stylesheet" href="{{root}}src/lib/sucss.css" />
     <!-- Page-only styles: the handful of things a demo page needs and a
          framework should not have an opinion about. -->
-    <link rel="stylesheet" href="./src/site.css" />
+    <link rel="stylesheet" href="{{root}}src/site.css" />
 
     <script>
       // Apply the saved theme and custom properties before first paint, so a
@@ -60,7 +62,7 @@
         /* Storage can be blocked, or hold nonsense. The defaults are fine. */
       }
     </script>
-    <script type="application/json" data-strings>{"copied":"Copied","copyFailed":"Could not copy","emptyOutput":"/* Nothing changed yet — move a control above. */"}</script>
+    <script type="application/json" data-strings>{{strings}}</script>
   </head>
 
   <body>
@@ -68,23 +70,23 @@
       <div>
         <nav>
           <div>
-            <img src="./assets/brand/mark.svg" alt="" width="50" height="34" />
+            <img src="{{root}}assets/brand/mark.svg" alt="" width="50" height="34" />
             <strong>SuCSS</strong>
           </div>
           <div>
-            <a href="./" hreflang="en" aria-current="true">EN</a>
-            <a href="./ja/" hreflang="ja">日本語</a>
-            <button type="button" data-theme-set="light">Light</button>
-            <button type="button" data-theme-set="dark">Dark</button>
-            <button type="button" data-theme-set="auto">Auto</button>
+            <a href="{{enHref}}" hreflang="en"{{enCurrent}}>EN</a>
+            <a href="{{jaHref}}" hreflang="ja"{{jaCurrent}}>日本語</a>
+            <button type="button" data-theme-set="light" data-i18n="theme.light"></button>
+            <button type="button" data-theme-set="dark" data-i18n="theme.dark"></button>
+            <button type="button" data-theme-set="auto" data-i18n="theme.auto"></button>
           </div>
         </nav>
 
         <nav>
-          <a href="#install">Install</a>
-          <a href="#features">Features</a>
-          <a href="#elements">Elements</a>
-          <a href="./customize.html">Customize</a>
+          <a href="#install" data-i18n="nav.install"></a>
+          <a href="#features" data-i18n="nav.features"></a>
+          <a href="#elements" data-i18n="nav.elements"></a>
+          <a href="./customize.html" data-i18n="nav.customize"></a>
           <a href="https://github.com/RyotaSugawara/su-css">GitHub</a>
         </nav>
       </div>
@@ -97,67 +99,67 @@
           <p>Just HTML, already styled.</p>
         </hgroup>
 
-        <p>SuCSS is a classless CSS framework. Write plain HTML — <code>&lt;header&gt;</code>, <code>&lt;table&gt;</code>, <code>&lt;button&gt;</code> — and liquid-glass surfaces, dark mode and accessibility come with it. No class names, no custom attributes, no build step.</p>
-        <p><strong>This page is the demo.</strong> It carries no <code>class</code> attribute anywhere. Paste the line below into your <code>&lt;head&gt;</code> and your own HTML looks like this.</p>
+        <p data-i18n="hero.lead"></p>
+        <p data-i18n="hero.claim"></p>
 
         <pre id="snippet-cdn"><code>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css/dist-lib/sucss.min.css"&gt;</code></pre>
 
         <p>
-          <button type="button" data-copy="#snippet-cdn">Copy this line</button>
+          <button type="button" data-copy="#snippet-cdn" data-i18n="hero.copy"></button>
           <span role="status" data-copy-status></span>
         </p>
-        <p><small><em>Su</em> (素) is Japanese for plain, or unadorned.</small></p>
+        <p data-i18n="hero.name"></p>
       </section>
 
-      <h2 id="features">Features</h2>
+      <h2 id="features" data-i18n="features.heading"></h2>
 
       <section>
         <article>
-          <h3>No class names</h3>
-          <p>Styling comes from the elements themselves. There is no naming convention to agree on and no utility classes to memorise.</p>
+          <h3 data-i18n="features.classless.title"></h3>
+          <p data-i18n="features.classless.body"></p>
         </article>
         <article>
-          <h3>Dark mode included</h3>
-          <p>Follows <code>prefers-color-scheme</code>, and <code>data-theme</code> pins it either way.</p>
+          <h3 data-i18n="features.dark.title"></h3>
+          <p data-i18n="features.dark.body"></p>
         </article>
         <article>
-          <h3>Accessible by default</h3>
-          <p>WCAG AA/AAA contrast, visible <code>:focus-visible</code> rings, adequate touch targets. It honours <code>prefers-reduced-motion</code> and <code>prefers-reduced-transparency</code> too.</p>
+          <h3 data-i18n="features.a11y.title"></h3>
+          <p data-i18n="features.a11y.body"></p>
         </article>
         <article>
-          <h3>Liquid glass</h3>
-          <p>Surfaces behave like a lens rather than a frosted sheet: the backdrop stays legible through them, colour blooms out of them, and every edge carries a rim of light.</p>
+          <h3 data-i18n="features.glass.title"></h3>
+          <p data-i18n="features.glass.body"></p>
         </article>
         <article>
-          <h3>One file, no dependencies</h3>
-          <p>A single stylesheet, 4.7 KB minified and gzipped. No JavaScript, no build step.</p>
+          <h3 data-i18n="features.small.title"></h3>
+          <p data-i18n="features.small.body"></p>
         </article>
         <article>
-          <h3>Tuned with variables</h3>
-          <p>Every colour, radius and rhythm is a custom property. Change <code>--hue</code> and the whole page moves — <a href="./customize.html">try it in the customizer</a>.</p>
+          <h3 data-i18n="features.tokens.title"></h3>
+          <p data-i18n="features.tokens.body"></p>
         </article>
       </section>
 
       <section id="install">
-        <h2>Install</h2>
-        <p>For the CDN, paste the line above into your <code>&lt;head&gt;</code>. With a bundler, install it from npm.</p>
+        <h2 data-i18n="install.heading"></h2>
+        <p data-i18n="install.lead"></p>
 
         <pre id="snippet-npm"><code>npm install @ryo9ra/su-css</code></pre>
         <pre id="snippet-import"><code>import '@ryo9ra/su-css/sucss.min.css';</code></pre>
 
         <p>
-          <button type="button" data-copy="#snippet-npm">Copy the npm command</button>
+          <button type="button" data-copy="#snippet-npm" data-i18n="install.copy"></button>
           <span role="status" data-copy-status></span>
         </p>
 
         <figure>
           <table>
-            <caption>What ships</caption>
+            <caption data-i18n="install.table.caption"></caption>
             <thead>
               <tr>
-                <th scope="col">Import specifier</th>
-                <th scope="col">File</th>
-                <th scope="col">Size</th>
+                <th scope="col" data-i18n="install.table.specifier"></th>
+                <th scope="col" data-i18n="install.table.file"></th>
+                <th scope="col" data-i18n="install.table.size"></th>
               </tr>
             </thead>
             <tbody>
@@ -175,111 +177,111 @@
           </table>
         </figure>
 
-        <p><small> Supported browsers are Chrome/Edge 111+, Safari 16.4+ and Firefox 128+. Without <code>backdrop-filter</code>, surfaces fall back to solid fills. </small></p>
+        <p data-i18n="install.support"></p>
       </section>
 
-      <h2 id="elements">Elements</h2>
+      <h2 id="elements" data-i18n="elements.heading"></h2>
 
-      <p>Everything below is plain HTML with no <code>class</code> attribute. Open the page source and compare.</p>
+      <p data-i18n="elements.lead"></p>
 
       <section>
-        <h3>Text</h3>
-        <p>Paragraphs are set from <code>--line-height</code> and <code>--max-width</code>. <strong>Strong</strong>, <em>emphasis</em>, <b>bold</b>, <i>italic</i>, <u>underline</u>, <s>strikethrough</s>, <code>inline code</code>, <kbd>Ctrl</kbd> + <kbd>C</kbd>, <abbr title="Cascading Style Sheets">CSS</abbr>, <var>x</var>, <samp>output</samp>, <dfn>a defined term</dfn>, <sub>subscript</sub>, <sup>superscript</sup> and <a href="#elements">a link</a> all come styled.</p>
+        <h3 data-i18n="elements.text.heading"></h3>
+        <p data-i18n="elements.text.body"></p>
 
         <blockquote>
-          <p>The hours you would spend designing class names go into designing the semantics instead.</p>
-          <cite>— on going back to plain HTML</cite>
+          <p data-i18n="elements.quote.body"></p>
+          <cite data-i18n="elements.quote.cite"></cite>
         </blockquote>
 
         <aside>
-          <h4>Aside</h4>
-          <p><code>&lt;aside&gt;</code> reads as a note set apart from the body text.</p>
+          <h4 data-i18n="elements.aside.heading"></h4>
+          <p data-i18n="elements.aside.body"></p>
         </aside>
 
         <hr />
 
-        <h4>Heading level 4</h4>
-        <h5>Heading level 5</h5>
-        <h6>Heading level 6</h6>
+        <h4 data-i18n="elements.h4"></h4>
+        <h5 data-i18n="elements.h5"></h5>
+        <h6 data-i18n="elements.h6"></h6>
       </section>
 
       <section>
-        <h3>Lists</h3>
+        <h3 data-i18n="elements.lists.heading"></h3>
 
         <ul>
-          <li>An unordered list</li>
+          <li data-i18n="elements.lists.ul1"></li>
           <li>
-            <span>Nesting works</span>
+            <span data-i18n="elements.lists.ul2"></span>
             <ul>
-              <li>Second level</li>
+              <li data-i18n="elements.lists.ul2a"></li>
               <li>
-                <span>On to the third</span>
+                <span data-i18n="elements.lists.ul2b"></span>
                 <ol>
-                  <li>Switching to numbers changes nothing else</li>
+                  <li data-i18n="elements.lists.ul2c"></li>
                 </ol>
               </li>
             </ul>
           </li>
-          <li>The element is the unit of style</li>
+          <li data-i18n="elements.lists.ul3"></li>
         </ul>
 
         <ol>
-          <li>Load one line of CSS</li>
-          <li>Write plain HTML</li>
-          <li>That is the whole method</li>
+          <li data-i18n="elements.lists.ol1"></li>
+          <li data-i18n="elements.lists.ol2"></li>
+          <li data-i18n="elements.lists.ol3"></li>
         </ol>
 
         <dl>
-          <dt>Classless</dt>
-          <dd>Styling a page through element selectors alone, with no class attributes.</dd>
-          <dt>Liquid glass</dt>
-          <dd>A surface that lets the backdrop through, blooms its colour, and carries light on its edges.</dd>
+          <dt data-i18n="elements.lists.dt1"></dt>
+          <dd data-i18n="elements.lists.dd1"></dd>
+          <dt data-i18n="elements.lists.dt2"></dt>
+          <dd data-i18n="elements.lists.dd2"></dd>
         </dl>
       </section>
 
       <section>
-        <h3>Tables</h3>
+        <h3 data-i18n="elements.table.heading"></h3>
         <figure>
           <table>
-            <caption>The main custom properties and their defaults</caption>
+            <caption data-i18n="elements.table.caption"></caption>
             <thead>
               <tr>
-                <th scope="col">Property</th>
-                <th scope="col">Default</th>
-                <th scope="col">What it moves</th>
+                <th scope="col" data-i18n="elements.table.property"></th>
+                <th scope="col" data-i18n="elements.table.default"></th>
+                <th scope="col" data-i18n="elements.table.effect"></th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <th scope="row"><code>--hue</code></th>
                 <td>262</td>
-                <td>The accent colour and the background mesh</td>
+                <td data-i18n="tokens.hue"></td>
               </tr>
               <tr>
                 <th scope="row"><code>--sat</code></th>
                 <td>85%</td>
-                <td>Saturation of the accent colour</td>
+                <td data-i18n="tokens.sat"></td>
               </tr>
               <tr>
                 <th scope="row"><code>--max-width</code></th>
                 <td>860px</td>
-                <td>Width of the body column</td>
+                <td data-i18n="tokens.maxWidth"></td>
               </tr>
               <tr>
                 <th scope="row"><code>--radius</code></th>
                 <td>1.375rem</td>
-                <td>Corner radius of surfaces</td>
+                <td data-i18n="tokens.radius"></td>
               </tr>
               <tr>
                 <th scope="row"><code>--glass-blur</code></th>
                 <td>14px</td>
-                <td>How far the glass blurs its backdrop</td>
+                <td data-i18n="tokens.blur"></td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td colspan="3">
-                  <small>All of them can be overridden in <code>:root</code>.</small>
+                  <small data-i18n="elements.table.foot"></small>
                 </td>
               </tr>
             </tfoot>
@@ -288,134 +290,137 @@
       </section>
 
       <section>
-        <h3>Forms</h3>
+        <h3 data-i18n="elements.form.heading"></h3>
         <form>
           <fieldset>
-            <legend>Account</legend>
+            <legend data-i18n="elements.form.account"></legend>
 
-            <label for="name">Name</label>
+            <label for="name" data-i18n="elements.form.name"></label>
             <input
               type="text"
               id="name"
               name="name"
-              placeholder="Ada Lovelace"
+              data-i18n-placeholder="elements.form.namePlaceholder"
+              placeholder=""
             />
 
-            <label for="email">Email</label>
+            <label for="email" data-i18n="elements.form.email"></label>
             <input type="email" id="email" name="email" placeholder="you@example.com" required />
 
-            <label for="readonly">User ID (read only)</label>
+            <label for="readonly" data-i18n="elements.form.readonly"></label>
             <input type="text" id="readonly" name="readonly" value="su-0042" readonly />
 
-            <label for="disabled">A disabled field</label>
+            <label for="disabled" data-i18n="elements.form.disabled"></label>
             <input
               type="text"
               id="disabled"
               name="disabled"
-              placeholder="Not editable"
+              data-i18n-placeholder="elements.form.disabledPlaceholder"
+              placeholder=""
               disabled
             />
 
-            <label for="plan">Plan</label>
+            <label for="plan" data-i18n="elements.form.plan"></label>
             <select id="plan" name="plan">
-              <optgroup label="Personal">
+              <optgroup data-i18n-label="elements.form.personal" label="">
                 <option>Free</option>
                 <option>Personal</option>
               </optgroup>
-              <optgroup label="Team">
+              <optgroup data-i18n-label="elements.form.team" label="">
                 <option>Team</option>
               </optgroup>
             </select>
 
-            <label for="bio">About you</label>
+            <label for="bio" data-i18n="elements.form.bio"></label>
             <textarea
               id="bio"
               name="bio"
               rows="3"
-              placeholder="I like plain HTML."
+              data-i18n-placeholder="elements.form.bioPlaceholder"
+              placeholder=""
             ></textarea>
           </fieldset>
 
           <fieldset>
-            <legend>Settings</legend>
+            <legend data-i18n="elements.form.settings"></legend>
 
             <label for="notify">
               <input type="checkbox" id="notify" name="notify" switch checked />
-              <span>Tell me about releases</span>
+              <span data-i18n="elements.form.notify"></span>
             </label>
 
             <label for="terms">
               <input type="checkbox" id="terms" name="terms" checked />
-              <span>I accept the terms</span>
+              <span data-i18n="elements.form.terms"></span>
             </label>
 
             <label for="light">
               <input type="radio" id="light" name="mode" value="light" checked />
-              <span>Light</span>
+              <span data-i18n="elements.form.lightMode"></span>
             </label>
             <label for="dark">
               <input type="radio" id="dark" name="mode" value="dark" />
-              <span>Dark</span>
+              <span data-i18n="elements.form.darkMode"></span>
             </label>
 
-            <label for="hue">Hue</label>
+            <label for="hue" data-i18n="elements.form.hue"></label>
             <input type="range" id="hue" name="hue" min="0" max="360" value="262" />
 
-            <label for="accent">Accent colour</label>
+            <label for="accent" data-i18n="elements.form.accent"></label>
             <input type="color" id="accent" name="accent" value="#7c5cff" />
 
-            <label for="logo">Logo image</label>
+            <label for="logo" data-i18n="elements.form.logo"></label>
             <input type="file" id="logo" name="logo" />
           </fieldset>
 
           <p>
-            <input type="submit" value="Submit" />
-            <input type="reset" value="Reset" />
+            <input type="submit" data-i18n-value="elements.form.submit" value="" />
+            <input type="reset" data-i18n-value="elements.form.reset" value="" />
           </p>
         </form>
       </section>
 
       <section>
-        <h3>Buttons and states</h3>
+        <h3 data-i18n="elements.buttons.heading"></h3>
         <p>
-          <button type="button">Button</button>
-          <button type="button" disabled>Disabled</button>
-          <button type="button" data-dialog="#demo-dialog">Open the dialog</button>
+          <button type="button" data-i18n="elements.buttons.button"></button>
+          <button type="button" disabled data-i18n="elements.buttons.disabled"></button>
+          <button type="button" data-dialog="#demo-dialog" data-i18n="elements.buttons.dialog"></button>
         </p>
 
         <p>
-          <span role="status">Stable</span>
+          <span role="status" data-i18n="elements.buttons.stable"></span>
           <span role="status">MIT</span>
-          <span role="status">Zero dependencies</span>
+          <span role="status" data-i18n="elements.buttons.zeroDeps"></span>
         </p>
 
         <p>
-          <label for="progress">Download</label>
+          <label for="progress" data-i18n="elements.buttons.download"></label>
           <progress id="progress" value="0.7">70%</progress>
         </p>
 
         <p>
-          <label for="meter">Disk in use</label>
+          <label for="meter" data-i18n="elements.buttons.disk"></label>
           <meter id="meter" value="0.42">42%</meter>
         </p>
 
         <details>
-          <summary>A disclosure (details / summary)</summary>
-          <p>Regions that open and close are elements too.</p>
+          <summary data-i18n="elements.buttons.summary"></summary>
+          <p data-i18n="elements.buttons.details"></p>
         </details>
 
         <dialog id="demo-dialog">
-          <h4>Dialog</h4>
-          <p><code>&lt;dialog&gt;</code> and the backdrop behind it are both styled.</p>
+          <h4 data-i18n="elements.dialog.heading"></h4>
+          <p data-i18n="elements.dialog.body"></p>
           <form method="dialog">
-            <button type="submit">Close</button>
+            <button type="submit" data-i18n="elements.dialog.close"></button>
           </form>
         </dialog>
       </section>
 
       <section>
-        <h3>Code and media</h3>
-        <p>Code blocks scroll sideways rather than pushing the page. <code>&lt;figure&gt;</code> with a <code>&lt;figcaption&gt;</code> is handled too.</p>
+        <h3 data-i18n="elements.media.heading"></h3>
+        <p data-i18n="elements.media.body"></p>
 
         <pre><code>&lt;article&gt;
   &lt;h2&gt;No classes needed&lt;/h2&gt;
@@ -424,18 +429,19 @@
 
         <figure>
           <img
-            src="./assets/brand/cover.png"
-            alt="The SuCSS cover artwork"
+            src="{{root}}assets/brand/cover.png"
+            data-i18n-alt="elements.media.alt"
+            alt=""
             width="1600"
             height="400"
           />
-          <figcaption>The brand assets live in <code>assets/brand/</code>.</figcaption>
+          <figcaption data-i18n="elements.media.caption"></figcaption>
         </figure>
       </section>
 
       <section id="customizing">
-        <h2>Customizing</h2>
-        <p>Colours, radii, spacing and type are all custom properties. A few lines in <code>:root</code> move the whole page — or <a href="./customize.html">open the customizer</a> and drag the controls until it looks right.</p>
+        <h2 data-i18n="customizing.heading"></h2>
+        <p data-i18n="customizing.lead"></p>
 
         <pre id="snippet-tokens"><code>:root {
   --hue: 158;          /* accent colour and background mesh */
@@ -447,12 +453,12 @@
 }</code></pre>
 
         <p>
-          <button type="button" data-copy="#snippet-tokens">Copy these settings</button>
+          <button type="button" data-copy="#snippet-tokens" data-i18n="customizing.copy"></button>
           <span role="status" data-copy-status></span>
         </p>
 
-        <h3>Pinning a theme</h3>
-        <p>By default the theme follows the operating system. <code>data-theme</code> on <code>&lt;html&gt;</code> pins it — which is all the buttons at the top of this page do.</p>
+        <h3 data-i18n="customizing.pin.heading"></h3>
+        <p data-i18n="customizing.pin.body"></p>
 
         <pre id="snippet-theme"><code>&lt;html data-theme="dark"&gt;   &lt;!-- always dark --&gt;
 &lt;html data-theme="light"&gt;  &lt;!-- always light --&gt;
@@ -463,7 +469,7 @@
     <footer>
       <div>
         <div>
-          <img src="./assets/brand/mark.svg" alt="" width="35" height="24" />
+          <img src="{{root}}assets/brand/mark.svg" alt="" width="35" height="24" />
           <strong>SuCSS</strong>
           <small>— Just HTML, already styled.</small>
         </div>
@@ -475,6 +481,6 @@
       </div>
     </footer>
 
-    <script type="module" src="./src/site.js"></script>
+    <script type="module" src="{{root}}src/site.js"></script>
   </body>
 </html>

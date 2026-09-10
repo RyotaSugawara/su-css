@@ -51,7 +51,7 @@
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "build:lib": "node scripts/build-lib.mjs",
-    "build:pages": "node scripts/build-i18n-pages.mjs",
+    "build:pages": "node scripts/build-pages.mjs",
     "preview": "vite preview",
     "clean": "rm -rf dist dist-lib",
     "lint": "npm run lint:ts && npm run lint:css",
