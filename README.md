@@ -138,18 +138,21 @@ Browsers without `backdrop-filter` fall back to solid surfaces.
 
 ## Development
 
-This repository also contains the demo site: two hand-written HTML pages with no
+This repository also contains the demo site: hand-written HTML pages with no
 class attributes, styled entirely by the framework. `index.html` doubles as the
 element reference; `customize.html` is a live editor for the custom properties.
-The pages are written in English and translated at runtime from
-`src/locales/` — add a language by dropping a dictionary in beside `ja.js`.
+
+The English pages are the source. `npm run build:pages` renders the translated
+copies into `ja/` from `src/locales/ja.js` and they are committed, so every
+language is a real static page — `/ja/`, no JavaScript involved.
 
 ```bash
 npm install
 npm run dev      # start the dev server
 npm run build    # build the demo site
 npm run lint     # TypeScript + Stylelint
-npm run test     # unit, contrast, and CSS structure tests
+npm run test     # unit, contrast, CSS structure and page tests
+npm run build:pages  # re-render ja/ after editing a page or a translation
 ```
 
 The framework itself is a single hand-written file: [`src/lib/sucss.css`](src/lib/sucss.css).

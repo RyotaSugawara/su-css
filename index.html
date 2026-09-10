@@ -18,14 +18,15 @@
 
     <link rel="canonical" href="https://ryotasugawara.github.io/su-css/" />
     <link rel="alternate" hreflang="en" href="https://ryotasugawara.github.io/su-css/" />
-    <link rel="alternate" hreflang="ja" href="https://ryotasugawara.github.io/su-css/?lang=ja" />
+    <link rel="alternate" hreflang="ja" href="https://ryotasugawara.github.io/su-css/ja/" />
     <link rel="alternate" hreflang="x-default" href="https://ryotasugawara.github.io/su-css/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SuCSS" />
     <meta property="og:title" content="SuCSS — Just HTML, already styled." />
     <meta
       property="og:description"
-      content="A classless CSS framework. Write plain semantic HTML and get liquid-glass surfaces, dark mode and accessibility with it."
+      data-i18n-content="meta.description"
+      content="A classless CSS framework. Write plain semantic HTML — no class names, no custom attributes — and get liquid-glass surfaces, dark mode and accessibility with it."
     />
     <meta property="og:url" content="https://ryotasugawara.github.io/su-css/" />
     <!-- Crawlers do not resolve relative URLs, so this one stays absolute. -->
@@ -72,8 +73,8 @@
             <strong>SuCSS</strong>
           </div>
           <div>
-            <button type="button" data-lang-set="en" aria-current="true">EN</button>
-            <button type="button" data-lang-set="ja" aria-current="false">日本語</button>
+            <a href="./" hreflang="en" data-lang-link="en" aria-current="true">EN</a>
+            <a href="./ja/" hreflang="ja" data-lang-link="ja">日本語</a>
             <button type="button" data-theme-set="light" data-i18n="theme.light">Light</button>
             <button type="button" data-theme-set="dark" data-i18n="theme.dark">Dark</button>
             <button type="button" data-theme-set="auto" data-i18n="theme.auto">Auto</button>

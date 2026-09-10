@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en">
+<!-- Generated from customize.html by scripts/build-i18n-pages.mjs. Edit that page and src/locales/ja.js, then run `npm run build:pages`. -->
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title data-i18n="customizer.meta.title">Customize SuCSS</title>
+    <title>SuCSSをカスタマイズする</title>
     <meta
       name="description"
-      data-i18n-content="customizer.meta.description"
-      content="Move the controls and this page restyles itself. Copy the resulting :root block into your own stylesheet."
+      content="つまみを動かすとこのページ自体が変わります。できあがった :root ブロックをそのまま自分のCSSに貼ってください。"
     />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -16,7 +16,7 @@
     <meta name="theme-color" content="#F8F6FF" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#171326" media="(prefers-color-scheme: dark)" />
 
-    <link rel="canonical" href="https://ryotasugawara.github.io/su-css/customize.html" />
+    <link rel="canonical" href="https://ryotasugawara.github.io/su-css/ja/customize.html" />
     <link
       rel="alternate"
       hreflang="en"
@@ -34,18 +34,17 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SuCSS" />
-    <meta property="og:title" data-i18n-content="customizer.meta.title" content="Customize SuCSS" />
+    <meta property="og:title" content="SuCSSをカスタマイズする" />
     <meta
       property="og:description"
-      data-i18n-content="customizer.meta.description"
-      content="Move the controls and this page restyles itself. Copy the resulting :root block into your own stylesheet."
+      content="つまみを動かすとこのページ自体が変わります。できあがった :root ブロックをそのまま自分のCSSに貼ってください。"
     />
-    <meta property="og:url" content="https://ryotasugawara.github.io/su-css/customize.html" />
+    <meta property="og:url" content="https://ryotasugawara.github.io/su-css/ja/customize.html" />
     <meta property="og:image" content="https://ryotasugawara.github.io/su-css/og-image.png" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="stylesheet" href="./src/lib/sucss.css" />
-    <link rel="stylesheet" href="./src/site.css" />
+    <link rel="stylesheet" href="../src/lib/sucss.css" />
+    <link rel="stylesheet" href="../src/site.css" />
 
     <script>
       // Apply the saved theme and custom properties before first paint, so a
@@ -74,23 +73,23 @@
       <div>
         <nav>
           <div>
-            <a href="./"><img src="./assets/brand/mark.svg" alt="SuCSS" width="50" height="34" /></a>
+            <a href="./"><img src="../assets/brand/mark.svg" alt="SuCSS" width="50" height="34" /></a>
             <strong>SuCSS</strong>
           </div>
           <div>
-            <a href="./customize.html" hreflang="en" data-lang-link="en" aria-current="true">EN</a>
-            <a href="./ja/customize.html" hreflang="ja" data-lang-link="ja">日本語</a>
-            <button type="button" data-theme-set="light" data-i18n="theme.light">Light</button>
-            <button type="button" data-theme-set="dark" data-i18n="theme.dark">Dark</button>
-            <button type="button" data-theme-set="auto" data-i18n="theme.auto">Auto</button>
+            <a href="../customize.html" hreflang="en" data-lang-link="en">EN</a>
+            <a href="./customize.html" hreflang="ja" data-lang-link="ja" aria-current="true">日本語</a>
+            <button type="button" data-theme-set="light">ライト</button>
+            <button type="button" data-theme-set="dark">ダーク</button>
+            <button type="button" data-theme-set="auto">自動</button>
           </div>
         </nav>
 
         <nav>
-          <a href="./#install" data-i18n="nav.install">Install</a>
-          <a href="./#features" data-i18n="nav.features">Features</a>
-          <a href="./#elements" data-i18n="nav.elements">Elements</a>
-          <a href="./customize.html" aria-current="page" data-i18n="nav.customize">Customize</a>
+          <a href="./#install">インストール</a>
+          <a href="./#features">特徴</a>
+          <a href="./#elements">要素見本</a>
+          <a href="./customize.html" aria-current="page">カスタマイズ</a>
           <a href="https://github.com/RyotaSugawara/su-css">GitHub</a>
         </nav>
       </div>
@@ -99,33 +98,24 @@
     <main>
       <section>
         <hgroup>
-          <h1 data-i18n="customizer.heading">Customize</h1>
-          <p data-i18n="customizer.tagline">Every value below is a CSS custom property.</p>
+          <h1>カスタマイズ</h1>
+          <p>ここにある値はすべてCSSカスタムプロパティです。</p>
         </hgroup>
 
-        <p data-i18n="customizer.lead">
-          Move a control and this page changes with it — it is styled by the same stylesheet you
-          are tuning, so what you see is what your own pages will look like. Nothing here is a
-          setting inside SuCSS: it is plain CSS you paste into <code>:root</code>.
-        </p>
-        <p data-i18n="customizer.storage">
-          <small>
-            Your choices are kept in this browser and follow you to the rest of the site.
-            <em>Reset</em> puts everything back.
-          </small>
-        </p>
+        <p>つまみを動かすと、このページがそのまま変わります。調整している当のスタイルシートでこのページ自身が描かれているので、見えているものがそのままあなたのページの見た目です。SuCSSの内部設定ではなく、<code>:root</code> に貼るだけの素のCSSです。</p>
+        <p><small>選んだ値はこのブラウザに保存され、サイトの他のページにも引き継がれます。<em>リセット</em>で元に戻ります。</small></p>
       </section>
 
       <section>
-        <h2 data-i18n="customizer.controls">Controls</h2>
+        <h2>つまみ</h2>
 
         <form id="controls">
           <fieldset>
-            <legend data-i18n="customizer.colour">Colour</legend>
+            <legend>色</legend>
 
             <label for="hue">
               <span>
-                <span data-i18n="tokens.hueLabel">Hue</span>
+                <span>色相</span>
                 <code>--hue</code>
                 <output for="hue" id="out-hue">262</output>
               </span>
@@ -134,7 +124,7 @@
 
             <label for="sat">
               <span>
-                <span data-i18n="tokens.satLabel">Saturation</span>
+                <span>彩度</span>
                 <code>--sat</code>
                 <output for="sat" id="out-sat">85%</output>
               </span>
@@ -152,30 +142,22 @@
           </fieldset>
 
           <fieldset>
-            <legend data-i18n="customizer.type">Type</legend>
+            <legend>文字</legend>
 
-            <label for="font" data-i18n="tokens.fontLabel">Typeface</label>
+            <label for="font">書体</label>
             <select id="font" data-var="--font-sans">
               <option
                 value="-apple-system, blinkmacsystemfont, &quot;Segoe UI&quot;, roboto, &quot;Hiragino Sans&quot;, &quot;Hiragino Kaku Gothic ProN&quot;, &quot;Meiryo&quot;, sans-serif"
-                data-i18n="tokens.fontSystem"
-              >
-                System sans
-              </option>
-              <option value="georgia, &quot;Times New Roman&quot;, serif" data-i18n="tokens.fontSerif">
-                Serif
-              </option>
+              >システムのゴシック</option>
+              <option value="georgia, &quot;Times New Roman&quot;, serif">明朝・セリフ</option>
               <option
                 value="ui-monospace, sfmono-regular, menlo, monaco, consolas, monospace"
-                data-i18n="tokens.fontMono"
-              >
-                Monospace
-              </option>
+              >等幅</option>
             </select>
 
             <label for="base-size">
               <span>
-                <span data-i18n="tokens.baseSizeLabel">Base size</span>
+                <span>基準サイズ</span>
                 <code>--base-size</code>
                 <output for="base-size" id="out-base-size">1rem</output>
               </span>
@@ -193,7 +175,7 @@
 
             <label for="line-height">
               <span>
-                <span data-i18n="tokens.lineHeightLabel">Line height</span>
+                <span>行送り</span>
                 <code>--line-height</code>
                 <output for="line-height" id="out-line-height">1.6</output>
               </span>
@@ -210,11 +192,11 @@
           </fieldset>
 
           <fieldset>
-            <legend data-i18n="customizer.layout">Layout and material</legend>
+            <legend>レイアウトと素材</legend>
 
             <label for="max-width">
               <span>
-                <span data-i18n="tokens.maxWidthLabel">Column width</span>
+                <span>カラム幅</span>
                 <code>--max-width</code>
                 <output for="max-width" id="out-max-width">860px</output>
               </span>
@@ -232,7 +214,7 @@
 
             <label for="radius">
               <span>
-                <span data-i18n="tokens.radiusLabel">Corner radius</span>
+                <span>角丸</span>
                 <code>--radius</code>
                 <output for="radius" id="out-radius">1.375rem</output>
               </span>
@@ -250,7 +232,7 @@
 
             <label for="glass-blur">
               <span>
-                <span data-i18n="tokens.blurLabel">Glass blur</span>
+                <span>ガラスのぼかし</span>
                 <code>--glass-blur</code>
                 <output for="glass-blur" id="out-glass-blur">14px</output>
               </span>
@@ -268,76 +250,65 @@
           </fieldset>
 
           <p>
-            <input type="reset" data-i18n-value="customizer.reset" value="Reset" />
+            <input type="reset" value="リセット" />
           </p>
         </form>
       </section>
 
       <section>
-        <h2 data-i18n="customizer.output">Your :root</h2>
-        <p data-i18n="customizer.outputLead">
-          Only the properties you changed are listed. Paste them after the stylesheet link and
-          they win on specificity alone.
-        </p>
+        <h2>あなたの :root</h2>
+        <p>変更したプロパティだけが並びます。スタイルシートの読み込みより後ろに置けば、詳細度だけで勝ちます。</p>
 
-        <pre id="output"><code data-i18n="customizer.outputEmpty">/* Nothing changed yet — move a control above. */</code></pre>
+        <pre id="output"><code>/* まだ何も変えていません — 上のつまみを動かしてください。 */</code></pre>
 
         <p>
-          <button type="button" data-copy="#output" data-i18n="customizer.copy">
-            Copy this block
-          </button>
+          <button type="button" data-copy="#output">このブロックをコピー</button>
           <span role="status" data-copy-status></span>
         </p>
       </section>
 
       <section>
-        <h2 data-i18n="customizer.preview">Preview</h2>
-        <p data-i18n="customizer.previewLead">
-          The whole page is the preview, but these are the pieces the accent colour reaches
-          first.
+        <h2>プレビュー</h2>
+        <p>ページ全体がプレビューですが、アクセント色が最初に届くのはこのあたりです。</p>
+
+        <p>
+          <button type="button">ボタン</button>
+          <button type="button" disabled>無効</button>
+          <a href="#">リンク</a>
         </p>
 
         <p>
-          <button type="button" data-i18n="elements.buttons.button">Button</button>
-          <button type="button" disabled data-i18n="elements.buttons.disabled">Disabled</button>
-          <a href="#" data-i18n="customizer.aLink">A link</a>
-        </p>
-
-        <p>
-          <span role="status" data-i18n="elements.buttons.stable">Stable</span>
+          <span role="status">安定版</span>
           <span role="status">MIT</span>
-          <span role="status" data-i18n="elements.buttons.zeroDeps">Zero dependencies</span>
+          <span role="status">依存ゼロ</span>
         </p>
 
         <p>
           <label for="preview-switch">
             <input type="checkbox" id="preview-switch" switch checked />
-            <span data-i18n="customizer.switchLabel">A switch</span>
+            <span>スイッチ</span>
           </label>
         </p>
 
         <p>
-          <label for="preview-input" data-i18n="customizer.fieldLabel">A field</label>
+          <label for="preview-input">入力欄</label>
           <input
             type="text"
             id="preview-input"
-            data-i18n-placeholder="customizer.fieldPlaceholder"
-            placeholder="Focus me to see the ring"
+            placeholder="フォーカスするとリングが出ます"
           />
         </p>
 
         <blockquote>
-          <p data-i18n="customizer.quote">
-            Type is the loudest thing on a page. Set it first, then the colour.
-          </p>
+          <p>文字はページでいちばん大きな声です。色より先に決めてください。</p>
         </blockquote>
 
         <figure>
           <table>
             <thead>
               <tr>
-                <th scope="col" data-i18n="elements.table.property">Property</th>
-                <th scope="col" data-i18n="elements.table.default">Default</th>
+                <th scope="col">プロパティ</th>
+                <th scope="col">既定値</th>
               </tr>
             </thead>
             <tbody>
@@ -358,7 +329,7 @@
     <footer>
       <div>
         <div>
-          <img src="./assets/brand/mark.svg" alt="" width="35" height="24" />
+          <img src="../assets/brand/mark.svg" alt="" width="35" height="24" />
           <strong>SuCSS</strong>
           <small>— Just HTML, already styled.</small>
         </div>
@@ -370,6 +341,6 @@
       </div>
     </footer>
 
-    <script type="module" src="./src/customize.js"></script>
+    <script type="module" src="../src/customize.js"></script>
   </body>
 </html>

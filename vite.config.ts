@@ -8,10 +8,13 @@ export default defineConfig(({command}) => {
     base: command === 'build' ? '/su-css/' : '/',
     build: {
       rollupOptions: {
-        // The site is two hand-written pages, not one entry with a router.
+        // The site is hand-written pages, not one entry with a router: two in
+        // English, and the translated copies generated into ja/.
         input: {
           index: path.resolve(import.meta.dirname, 'index.html'),
           customize: path.resolve(import.meta.dirname, 'customize.html'),
+          'ja/index': path.resolve(import.meta.dirname, 'ja/index.html'),
+          'ja/customize': path.resolve(import.meta.dirname, 'ja/customize.html'),
         },
       },
     },
