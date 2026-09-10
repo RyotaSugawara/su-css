@@ -109,7 +109,7 @@ export default function App() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <img src={markUrl} alt="" style={{ height: '24px', width: 'auto', flexShrink: 0 }} />
             <strong>SuCSS</strong>
-            <small>— 素のHTMLを使った高アクセシブル軽量クラスレスCSS</small>
+            <small>— Just HTML, already styled.</small>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <small>ライセンス: MIT</small>
