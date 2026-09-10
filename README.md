@@ -138,8 +138,9 @@ Browsers without `backdrop-filter` fall back to solid surfaces.
 
 ## Development
 
-This repository also contains the demo app — a showcase, a live playground, a
-theme customizer, and a contrast checker.
+This repository also contains the demo site: a single hand-written HTML page
+(`index.html`) with no class attributes, styled entirely by the framework. It
+doubles as the element reference.
 
 ```bash
 npm install

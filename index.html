@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SuCSS - 素のHTMLを使ったクラスレスCSSフレームワーク</title>
+    <title>SuCSS — 素のHTMLだけで整うクラスレスCSSフレームワーク</title>
     <meta
       name="description"
-      content="A classless CSS framework. Write plain semantic HTML and get a liquid-glass design with dark mode and accessibility built in."
+      content="クラス名もカスタム属性も書かないCSSフレームワーク。素のセマンティックHTMLを書くだけで、リキッドグラスの見た目・ダークモード・アクセシビリティがついてきます。"
     />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -21,7 +21,7 @@
     <meta property="og:title" content="SuCSS — Just HTML, already styled." />
     <meta
       property="og:description"
-      content="A classless CSS framework. Write plain semantic HTML and get a liquid-glass design with dark mode and accessibility built in."
+      content="クラス名もカスタム属性も書かないCSSフレームワーク。素のセマンティックHTMLを書くだけで、リキッドグラスの見た目・ダークモード・アクセシビリティがついてきます。"
     />
     <meta property="og:url" content="https://ryotasugawara.github.io/su-css/" />
     <!-- Crawlers do not resolve relative URLs, so this one stays absolute. -->
@@ -30,9 +30,470 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="SuCSS — Just HTML, already styled." />
     <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- The framework itself. Everything below is styled by this one file. -->
+    <link rel="stylesheet" href="./src/lib/sucss.css" />
+    <!-- Page-only styles: the handful of things a demo page needs and a
+         framework should not have an opinion about. -->
+    <link rel="stylesheet" href="./src/site.css" />
+
+    <script>
+      // Apply the saved theme before first paint, so a reload of the dark
+      // theme never flashes white.
+      try {
+        const saved = localStorage.getItem('sucss-theme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+      } catch {
+        /* Storage can be blocked; the OS setting is a fine fallback. */
+      }
+    </script>
   </head>
+
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <header>
+      <div>
+        <nav>
+          <div>
+            <img src="./assets/brand/mark.svg" alt="" width="50" height="34" />
+            <strong>SuCSS</strong>
+          </div>
+          <div>
+            <button type="button" data-theme-set="light" aria-current="false">Light</button>
+            <button type="button" data-theme-set="dark" aria-current="false">Dark</button>
+            <button type="button" data-theme-set="auto" aria-current="true">Auto</button>
+          </div>
+        </nav>
+
+        <nav>
+          <a href="#install">インストール</a>
+          <a href="#features">特徴</a>
+          <a href="#elements">要素見本</a>
+          <a href="#customize">カスタマイズ</a>
+          <a href="https://github.com/RyotaSugawara/su-css">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <hgroup>
+          <h1>SuCSS</h1>
+          <p>Just HTML, already styled.</p>
+        </hgroup>
+
+        <p>
+          SuCSSはクラスレスのCSSフレームワークです。<code>&lt;header&gt;</code>、<code>&lt;table&gt;</code>、<code>&lt;button&gt;</code>
+          のような素のHTMLを書くだけで、リキッドグラスの見た目とダークモードとアクセシビリティがついてきます。クラス名も、カスタム属性も、ビルドも要りません。
+        </p>
+        <p>
+          <strong>このページ自体が見本です。</strong>
+          <code>class</code> 属性は1つも使っていません。次の1行を <code>&lt;head&gt;</code>
+          に貼れば、同じ見た目になります。
+        </p>
+
+        <pre id="snippet-cdn"><code>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css/dist-lib/sucss.min.css"&gt;</code></pre>
+
+        <p>
+          <button type="button" data-copy="#snippet-cdn">この1行をコピー</button>
+          <span role="status" data-copy-status></span>
+        </p>
+        <p><small><em>su</em>（素）は「飾りのない、そのままの」という意味です。</small></p>
+      </section>
+
+      <h2 id="features">特徴</h2>
+
+      <section>
+        <article>
+          <h3>クラス名を書かない</h3>
+          <p>
+            スタイルは要素そのものから決まります。命名規則も、ユーティリティクラスの暗記も要りません。
+          </p>
+        </article>
+        <article>
+          <h3>ダークモード標準</h3>
+          <p>
+            <code>prefers-color-scheme</code> に追従します。<code>data-theme</code>
+            を付ければ固定もできます。
+          </p>
+        </article>
+        <article>
+          <h3>アクセシブル</h3>
+          <p>
+            WCAG AA/AAA のコントラスト、見える <code>:focus-visible</code>
+            リング、十分なタップ領域。<code>prefers-reduced-motion</code> と
+            <code>prefers-reduced-transparency</code> にも従います。
+          </p>
+        </article>
+        <article>
+          <h3>リキッドグラス</h3>
+          <p>
+            面はすりガラスではなくレンズです。背景が透けたまま色がにじみ、縁にはハイライトが乗ります。
+          </p>
+        </article>
+        <article>
+          <h3>1ファイル・依存ゼロ</h3>
+          <p>
+            CSSが1枚だけ。minify + gzip で 4.7 KB。JavaScriptもビルドステップもありません。
+          </p>
+        </article>
+        <article>
+          <h3>変数で調整</h3>
+          <p>
+            色も角丸も余白もCSSカスタムプロパティです。<code>--hue</code>
+            を1行変えれば全体の色が動きます。
+          </p>
+        </article>
+      </section>
+
+      <section id="install">
+        <h2>インストール</h2>
+        <p>
+          CDNから読み込むなら、上の1行をそのまま <code>&lt;head&gt;</code>
+          に貼ります。バンドラを使うならnpmから入れられます。
+        </p>
+
+        <pre id="snippet-npm"><code>npm install @ryo9ra/su-css</code></pre>
+        <pre id="snippet-import"><code>import '@ryo9ra/su-css/sucss.min.css';</code></pre>
+
+        <p>
+          <button type="button" data-copy="#snippet-npm">npmコマンドをコピー</button>
+          <span role="status" data-copy-status></span>
+        </p>
+
+        <figure>
+          <table>
+            <caption>
+              配布ファイル
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">読み込み指定</th>
+                <th scope="col">ファイル</th>
+                <th scope="col">サイズ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>@ryo9ra/su-css</code></td>
+                <td><code>dist-lib/sucss.css</code></td>
+                <td>33 KB（gzip 6.8 KB）</td>
+              </tr>
+              <tr>
+                <td><code>@ryo9ra/su-css/sucss.min.css</code></td>
+                <td><code>dist-lib/sucss.min.css</code></td>
+                <td>25 KB（gzip 4.7 KB）</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+
+        <p>
+          <small>
+            対象ブラウザは Chrome/Edge 111+、Safari 16.4+、Firefox 128+
+            です。<code>backdrop-filter</code> のないブラウザでは、面が半透明ではなくベタ塗りになります。
+          </small>
+        </p>
+      </section>
+
+      <h2 id="elements">要素見本</h2>
+
+      <p>
+        ここから下も、<code>class</code> を1つも使わない素のHTMLです。ブラウザのソース表示で見比べてみてください。
+      </p>
+
+      <section>
+        <h3>テキスト</h3>
+        <p>
+          段落は <code>--line-height</code> と <code>--max-width</code>
+          にしたがって組まれます。<strong>強調</strong>、<em>強調（斜体）</em>、<b>太字</b>、<i>イタリック</i>、<u>下線</u>、<s>取り消し線</s>、<code>インラインコード</code>、<kbd>Ctrl</kbd>
+          +
+          <kbd>C</kbd>、<abbr title="Cascading Style Sheets">CSS</abbr>、<var>x</var>、<samp>出力</samp>、<dfn>定義語</dfn>、<sub>下付き</sub>、<sup>上付き</sup>、そして
+          <a href="#elements">リンク</a> がそのまま揃います。
+        </p>
+
+        <blockquote>
+          <p>クラス名の設計に費やす時間は、そのままセマンティクスの設計に回せる。</p>
+          <cite>— <q>素のHTMLに戻る</q>という発想</cite>
+        </blockquote>
+
+        <aside>
+          <h4>補足</h4>
+          <p>
+            <code>&lt;aside&gt;</code> は本文から一段引いた補足として表示されます。
+          </p>
+        </aside>
+
+        <hr />
+
+        <h4>見出しレベル4</h4>
+        <h5>見出しレベル5</h5>
+        <h6>見出しレベル6</h6>
+      </section>
+
+      <section>
+        <h3>リスト</h3>
+
+        <ul>
+          <li>順不同リスト</li>
+          <li>
+            入れ子も効きます
+            <ul>
+              <li>2階層目</li>
+              <li>
+                3階層目へ
+                <ol>
+                  <li>番号付きに切り替わっても崩れません</li>
+                </ol>
+              </li>
+            </ul>
+          </li>
+          <li>要素そのものがスタイルの単位です</li>
+        </ul>
+
+        <ol>
+          <li>CSSを1行読み込む</li>
+          <li>素のHTMLを書く</li>
+          <li>おわり</li>
+        </ol>
+
+        <dl>
+          <dt>クラスレス</dt>
+          <dd>class属性を使わず、要素セレクタだけでスタイルを当てる方式。</dd>
+          <dt>リキッドグラス</dt>
+          <dd>背景を透かしつつ色をにじませ、縁に光を乗せる面の表現。</dd>
+        </dl>
+      </section>
+
+      <section>
+        <h3>表</h3>
+        <figure>
+          <table>
+            <caption>
+              主要なCSS変数の既定値
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">変数</th>
+                <th scope="col">既定値</th>
+                <th scope="col">効くところ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"><code>--hue</code></th>
+                <td>262</td>
+                <td>アクセント色と背景メッシュの色相</td>
+              </tr>
+              <tr>
+                <th scope="row"><code>--sat</code></th>
+                <td>85%</td>
+                <td>アクセント色の彩度</td>
+              </tr>
+              <tr>
+                <th scope="row"><code>--max-width</code></th>
+                <td>860px</td>
+                <td>本文カラムの幅</td>
+              </tr>
+              <tr>
+                <th scope="row"><code>--radius</code></th>
+                <td>1.375rem</td>
+                <td>面の角丸</td>
+              </tr>
+              <tr>
+                <th scope="row"><code>--glass-blur</code></th>
+                <td>14px</td>
+                <td>ガラスのぼかし量</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3">
+                  <small>すべて <code>:root</code> で上書きできます。</small>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </figure>
+      </section>
+
+      <section>
+        <h3>フォーム</h3>
+        <form>
+          <fieldset>
+            <legend>アカウント</legend>
+
+            <label for="name">名前</label>
+            <input type="text" id="name" name="name" placeholder="菅原 良太" />
+
+            <label for="email">メールアドレス</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required />
+
+            <label for="readonly">ユーザーID（読み取り専用）</label>
+            <input type="text" id="readonly" name="readonly" value="su-0042" readonly />
+
+            <label for="disabled">無効な入力欄</label>
+            <input type="text" id="disabled" name="disabled" placeholder="編集できません" disabled />
+
+            <label for="plan">プラン</label>
+            <select id="plan" name="plan">
+              <optgroup label="個人">
+                <option>Free</option>
+                <option>Personal</option>
+              </optgroup>
+              <optgroup label="チーム">
+                <option>Team</option>
+              </optgroup>
+            </select>
+
+            <label for="bio">自己紹介</label>
+            <textarea id="bio" name="bio" rows="3" placeholder="素のHTMLが好きです。"></textarea>
+          </fieldset>
+
+          <fieldset>
+            <legend>設定</legend>
+
+            <label for="notify">
+              <input type="checkbox" id="notify" name="notify" switch checked />
+              リリースを通知する
+            </label>
+
+            <label for="terms">
+              <input type="checkbox" id="terms" name="terms" checked />
+              利用規約に同意する
+            </label>
+
+            <label for="light">
+              <input type="radio" id="light" name="mode" value="light" checked />
+              ライト
+            </label>
+            <label for="dark">
+              <input type="radio" id="dark" name="mode" value="dark" />
+              ダーク
+            </label>
+
+            <label for="hue">色相</label>
+            <input type="range" id="hue" name="hue" min="0" max="360" value="262" />
+
+            <label for="accent">アクセント色</label>
+            <input type="color" id="accent" name="accent" value="#7c5cff" />
+
+            <label for="logo">ロゴ画像</label>
+            <input type="file" id="logo" name="logo" />
+          </fieldset>
+
+          <p>
+            <input type="submit" value="送信" />
+            <input type="reset" value="リセット" />
+          </p>
+        </form>
+      </section>
+
+      <section>
+        <h3>ボタンと状態</h3>
+        <p>
+          <button type="button">ボタン</button>
+          <button type="button" disabled>無効</button>
+          <button type="button" data-dialog="#demo-dialog">ダイアログを開く</button>
+        </p>
+
+        <p>
+          <span role="status">安定版</span>
+          <span role="status">MIT</span>
+          <span role="status">依存ゼロ</span>
+        </p>
+
+        <p>
+          <label for="progress">ダウンロード</label>
+          <progress id="progress" value="0.7">70%</progress>
+        </p>
+
+        <p>
+          <label for="meter">ディスク使用量</label>
+          <meter id="meter" value="0.42">42%</meter>
+        </p>
+
+        <details>
+          <summary>折りたたみ（details / summary）</summary>
+          <p>開閉する領域も、要素だけで組めます。</p>
+        </details>
+
+        <dialog id="demo-dialog">
+          <h4>ダイアログ</h4>
+          <p><code>&lt;dialog&gt;</code> と背面のバックドロップにもスタイルが当たっています。</p>
+          <form method="dialog">
+            <button type="submit">閉じる</button>
+          </form>
+        </dialog>
+      </section>
+
+      <section>
+        <h3>コードとメディア</h3>
+        <p>
+          コードブロックは横スクロールします。<code>&lt;figure&gt;</code>
+          と <code>&lt;figcaption&gt;</code> の組み合わせにも対応しています。
+        </p>
+
+        <pre><code>&lt;article&gt;
+  &lt;h2&gt;クラスは要らない&lt;/h2&gt;
+  &lt;p&gt;要素を書くだけで整います。&lt;/p&gt;
+&lt;/article&gt;</code></pre>
+
+        <figure>
+          <img src="./assets/brand/cover.png" alt="SuCSSのカバーアート" width="1600" height="400" />
+          <figcaption>ブランドアセットは <code>assets/brand/</code> にあります。</figcaption>
+        </figure>
+      </section>
+
+      <section id="customize">
+        <h2>カスタマイズ</h2>
+        <p>
+          色・角丸・余白・フォントはすべてCSSカスタムプロパティです。<code>:root</code>
+          に数行足すだけで全体が変わります。
+        </p>
+
+        <pre id="snippet-tokens"><code>:root {
+  --hue: 158;          /* アクセントと背景メッシュの色相 */
+  --sat: 70%;
+  --radius: 0.5rem;    /* 角丸を落ち着かせる */
+  --max-width: 72ch;   /* 本文カラムの幅 */
+  --base-size: 1rem;
+  --font-sans: "Zen Kaku Gothic New", sans-serif;
+}</code></pre>
+
+        <p>
+          <button type="button" data-copy="#snippet-tokens">この設定をコピー</button>
+          <span role="status" data-copy-status></span>
+        </p>
+
+        <h3>ダークモードを固定する</h3>
+        <p>
+          既定ではOSの設定に追従します。<code>&lt;html&gt;</code> の
+          <code>data-theme</code> を切り替えると固定できます。ページ右上のボタンがやっているのもこれです。
+        </p>
+
+        <pre id="snippet-theme"><code>&lt;html data-theme="dark"&gt;   &lt;!-- ダークに固定 --&gt;
+&lt;html data-theme="light"&gt;  &lt;!-- ライトに固定 --&gt;
+&lt;html&gt;                     &lt;!-- OSの設定に追従（既定） --&gt;</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      <div>
+        <div>
+          <img src="./assets/brand/mark.svg" alt="" width="35" height="24" />
+          <strong>SuCSS</strong>
+          <small>— Just HTML, already styled.</small>
+        </div>
+        <div>
+          <small>MIT License</small>
+          <a href="https://github.com/RyotaSugawara/su-css">GitHub</a>
+          <a href="https://www.npmjs.com/package/@ryo9ra/su-css">npm</a>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="./src/site.js"></script>
   </body>
 </html>

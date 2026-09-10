@@ -1,0 +1,19 @@
+/* Styles for the demo page itself — not part of the framework.
+   Element and attribute selectors only: the page carries no class attributes,
+   which is the thing it exists to demonstrate. */
+
+/* The copy buttons announce their result into an empty [role="status"].
+   Empty, it would still paint as a pill, so keep it out of the flow until
+   there is something to say. */
+[role="status"]:empty {
+  display: none;
+}
+
+/* The framework makes the header sticky from 768px up, and this page's header
+   is two rows tall. Without this, an in-page anchor lands its heading behind
+   the header. */
+@media (min-width: 768px) {
+  html {
+    scroll-padding-top: 7.5rem;
+  }
+}
