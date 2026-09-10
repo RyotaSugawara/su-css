@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://ryotasugawara.github.io/su-css/">
+    <img src="assets/brand/cover.png" alt="SuCSS — Just HTML, already styled." width="880">
+  </a>
+</p>
+
 # SuCSS
 
 [![CI](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml/badge.svg)](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml)
@@ -162,6 +168,12 @@ change released: [CONTRIBUTING.md](CONTRIBUTING.md) and
 
 To report a security problem, use private vulnerability reporting rather than an
 issue: [SECURITY.md](SECURITY.md).
+
+## Brand
+
+Icons, logos, the cover artwork and the palette live in
+[`assets/brand/`](assets/brand), and how to use them is written down in
+[docs/BRAND.md](docs/BRAND.md).
 
 ## License
 
