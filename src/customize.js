@@ -9,10 +9,15 @@
  */
 
 import './site.js';
-import {t} from './i18n.js';
 
 const root = document.documentElement;
 const TOKENS_KEY = 'sucss-tokens';
+
+/* The one line this file writes that the build-time translation cannot reach. */
+const EMPTY_OUTPUT = {
+  en: '/* Nothing changed yet — move a control above. */',
+  ja: '/* まだ何も変えていません — 上のつまみを動かしてください。 */',
+};
 
 const form = document.querySelector('#controls');
 const output = document.querySelector('#output code');
@@ -69,10 +74,7 @@ function render() {
   const entries = Object.entries(tokens);
 
   if (entries.length === 0) {
-    output.textContent = t(
-      'customizer.outputEmpty',
-      '/* Nothing changed yet — move a control above. */',
-    );
+    output.textContent = EMPTY_OUTPUT[root.lang] ?? EMPTY_OUTPUT.en;
     return;
   }
 
@@ -128,6 +130,3 @@ form?.addEventListener('reset', () => {
   applyAll();
   store({});
 });
-
-/* The empty-state line is translated; re-render when the language changes. */
-document.addEventListener('sucss:languagechange', render);

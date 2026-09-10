@@ -15,9 +15,6 @@ export const ja = {
   'theme.dark': 'ダーク',
   'theme.auto': '自動',
 
-  'status.copied': 'コピーしました',
-  'status.copyFailed': 'コピーできませんでした',
-
   'nav.install': 'インストール',
   'nav.features': '特徴',
   'nav.elements': '要素見本',

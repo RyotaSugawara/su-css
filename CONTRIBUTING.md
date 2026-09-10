@@ -82,7 +82,15 @@ npm run lint      # tsc --noEmit + stylelint
 npm run test      # unit, contrast and structure tests
 npm run build     # demo site
 npm run build:lib # dist-lib/sucss.css and dist-lib/sucss.min.css
+npm run build:pages # re-render the translated pages into ja/
 ```
+
+**The English pages are the source of every other language.** `index.html` and
+`customize.html` carry the English text plus a `data-i18n` key beside it;
+`src/locales/ja.js` holds the Japanese for those keys. After changing either,
+run `npm run build:pages` and commit the regenerated `ja/` pages — a test fails
+if they are stale, if a key has no translation, or if a translation has no key
+left to attach to.
 
 Run `npm run lint && npm run test` before opening a PR; CI runs the same checks
 plus `npm pack --dry-run` to catch anything that would break the published
