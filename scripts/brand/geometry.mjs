@@ -3,9 +3,10 @@
  *
  * Everything is drawn from two primitives:
  *
- *   - the wordmark, outlined from Poppins so the SVGs carry no font dependency
- *   - the plate, a shallow disc seen from just above its rim: a hairline
- *     ellipse for the top face, and a crescent below it for the wall
+ *   - the wordmark, outlined from Montserrat so the SVGs carry no font
+ *     dependency
+ *   - the plate, an ellipse with a second, smaller ellipse subtracted from it,
+ *     the inner one raised
  *
  * All coordinates are in "mark units", where the wordmark is exactly 100 units
  * tall and its bounding box starts at the origin. Callers scale the finished
@@ -88,21 +89,36 @@ export function outlineText(opentype, font, text, {tracking = 0} = {}) {
 /**
  * The disc the wordmark rests on.
  *
- * `thickness` is how far the bottom of the wall sits below the top face, so
- * the wall reads as a band that is widest at the front and vanishes at the
- * left and right tips — the silhouette a coin has when you look at it from
- * slightly above. The rim is stroked over the whole ellipse, which leaves a
- * hairline across the back and merges into the wall at the front.
+ * It is not a cylinder: it is one ellipse with a second, smaller ellipse
+ * subtracted from it, the inner one raised. That single move is what gives the
+ * disc its whole character — the ring is a hairline across the back, where the
+ * two edges nearly meet, and a thick band across the front, where the raised
+ * hole pulls away from the outer edge. Fitted against the brand sheet, this
+ * model lands within about a pixel over the mark's entire contour.
+ *
+ * Drawn as one path with `evenodd`, so the inner ellipse punches the hole.
  */
-export function plate({cx, cy, rx, ry, thickness, rim, tilt = 0, fill, rimFill, shadow = null}) {
+export function plate({
+  cx,
+  cy,
+  rx,
+  ry,
+  innerScaleX,
+  innerScaleY,
+  innerRise,
+  tilt = 0,
+  fill,
+  shadow = null,
+}) {
   const r = round;
-  const wall = [
-    `M${r(cx - rx)} ${r(cy)}`,
-    `A${r(rx)} ${r(ry)} 0 0 0 ${r(cx + rx)} ${r(cy)}`,
-    `L${r(cx + rx)} ${r(cy + thickness)}`,
-    `A${r(rx)} ${r(ry)} 0 0 1 ${r(cx - rx)} ${r(cy + thickness)}`,
-    'Z',
-  ].join('');
+  const ellipse = (x, y, ax, ay) =>
+    `M${r(x - ax)} ${r(y)}` +
+    `A${r(ax)} ${r(ay)} 0 1 0 ${r(x + ax)} ${r(y)}` +
+    `A${r(ax)} ${r(ay)} 0 1 0 ${r(x - ax)} ${r(y)}Z`;
+
+  const ring =
+    ellipse(cx, cy, rx, ry) +
+    ellipse(cx, cy - ry * innerRise, rx * innerScaleX, ry * innerScaleY);
 
   const parts = [];
   if (shadow) {
@@ -111,59 +127,74 @@ export function plate({cx, cy, rx, ry, thickness, rim, tilt = 0, fill, rimFill, 
         `fill="${shadow.fill}" opacity="${shadow.opacity}" filter="url(#${shadow.blurId})"/>`,
     );
   }
-  parts.push(`<path d="${wall}" fill="${fill}"/>`);
-  parts.push(
-    `<ellipse cx="${r(cx)}" cy="${r(cy)}" rx="${r(rx)}" ry="${r(ry)}" ` +
-      `fill="none" stroke="${rimFill}" stroke-width="${r(rim)}"/>`,
-  );
+  parts.push(`<path d="${ring}" fill="${fill}" fill-rule="evenodd"/>`);
 
   const body = parts.join('');
   return tilt ? `<g transform="rotate(${tilt} ${r(cx)} ${r(cy)})">${body}</g>` : body;
 }
 
 /**
- * Proportions measured off the brand sheet, pixel by pixel.
+ * Proportions fitted to the brand sheet.
  *
- * `icon` is the tight lockup: a wide plate whose tips show either side of the
+ * These are not eyeballed: `scripts/brand/README.md` describes the fit, which
+ * maximises the pixel overlap between the rendered mark and the sheet by
+ * coordinate descent, aligning the two by their ink bounding boxes so only
+ * shape is ever being compared.
+ *
+ * `icon` is the tight lockup: a wide disc whose tips show either side of the
  * wordmark and whose top face hides behind the letters. `lockup` is the same
- * disc seen from a shallower angle, so it flattens into an underline and
- * clears the wordmark entirely — note that the wall does not flatten with it,
- * which is why `wallRatio` is so much larger there.
+ * disc seen from a much shallower angle, so it flattens into an underline —
+ * note that the wall does not flatten with it, which is why `wallRatio` is so
+ * much larger there.
  */
 export const PROPORTIONS = {
   icon: {
-    plateWidthRatio: 1.83, // plate width ÷ wordmark width
-    flatness: 0.25, // ry ÷ rx
-    wallRatio: 0.36, // wall thickness ÷ ry
-    rimRatio: 0.17, // rim stroke ÷ ry
-    centerOffset: 0, // plate cx offset, as a fraction of the wordmark width
-    plateDrop: 0.12, // plate centre below the wordmark bottom, ÷ wordmark height
-    tilt: -2.5,
+    plateWidthRatio: 1.84, // outer ellipse width ÷ wordmark width
+    flatness: 0.3534, // ry ÷ rx
+    innerScaleX: 0.8962, // the hole, as a fraction of the outer ellipse
+    innerScaleY: 0.7842,
+    innerRise: 0.1934, // how far the hole is raised, ÷ ry
+    centerOffset: -0.01, // plate cx offset, as a fraction of the wordmark width
+    plateDrop: 0.028, // plate centre below the wordmark bottom, ÷ 100
+    tilt: 0,
     shadow: {gap: 0.23, scaleX: 0.8, scaleY: 0.39, opacity: 0.3, blur: 0.16},
   },
-  lockup: {
-    plateWidthRatio: 1.186,
-    flatness: 0.05,
-    wallRatio: 1.7,
-    rimRatio: 0.2,
+  // The sheet draws the plate on its own from a slightly steeper angle than
+  // the icon's, with a deeper hole; it is its own asset, so it keeps its own
+  // numbers rather than being forced to match.
+  disc: {
+    plateWidthRatio: 1.84,
+    flatness: 0.2513,
+    innerScaleX: 0.8838,
+    innerScaleY: 0.7582,
+    innerRise: 0.228,
     centerOffset: 0,
-    plateDrop: 0.21, // the swoosh tucks straight under the wordmark
-    tilt: -1.2,
+    plateDrop: 0.028,
+    tilt: 0,
+    shadow: {gap: 0.3, scaleX: 0.8, scaleY: 0.5, opacity: 0.3, blur: 0.2},
+  },
+  lockup: {
+    plateWidthRatio: 1.177,
+    flatness: 0.0934,
+    innerScaleX: 0.915,
+    innerScaleY: 0.7388,
+    innerRise: 0.2013,
+    centerOffset: -0.002,
+    plateDrop: 0.331,
+    tilt: 0,
     shadow: {gap: 1.6, scaleX: 0.86, scaleY: 1.8, opacity: 0.26, blur: 0.7},
   },
 };
 
 /** Resolves a set of proportions against a wordmark into concrete coordinates. */
-export function plateMetrics(word, variant) {
+export function plateMetrics(word, variant, {ringBoost = 1} = {}) {
   const p = PROPORTIONS[variant];
   const rx = (word.width * p.plateWidthRatio) / 2;
   const ry = rx * p.flatness;
-  const thickness = ry * p.wallRatio;
-  const rim = ry * p.rimRatio;
   const cx = word.width / 2 + word.width * p.centerOffset;
   const cy = 100 + 100 * p.plateDrop;
   const shadow = {
-    cy: cy + thickness + ry + ry * p.shadow.gap,
+    cy: cy + ry + ry * p.shadow.gap,
     rx: rx * p.shadow.scaleX,
     ry: ry * p.shadow.scaleY,
     opacity: p.shadow.opacity,
@@ -173,15 +204,18 @@ export function plateMetrics(word, variant) {
     ...p,
     rx,
     ry,
-    thickness,
-    rim,
     cx,
     cy,
+    // A boost shrinks the hole, which fattens the whole ring — the only way to
+    // keep the disc legible once it is down at favicon sizes.
+    innerScaleX: p.innerScaleX / ringBoost,
+    innerScaleY: p.innerScaleY / ringBoost,
     shadow,
     // The tilt swings the tips down by rx·sin(tilt); allow for it when sizing
     // a canvas so nothing clips.
     swing: Math.abs(Math.sin((p.tilt * Math.PI) / 180)) * rx,
-    bottom: cy + thickness + ry + rim / 2,
+    top: cy - ry,
+    bottom: cy + ry,
     shadowBottom: shadow.cy + shadow.ry + shadow.blur * 2.5,
   };
 }
@@ -189,13 +223,11 @@ export function plateMetrics(word, variant) {
 /**
  * Composes a wordmark and its plate, and reports the bounding box of the result.
  *
- * `rimScale` and `wallScale` fatten the disc for sizes where a hairline would
- * simply disappear — a 16 px favicon, mostly.
+ * `ringBoost` fattens the disc for sizes where a hairline simply disappears —
+ * a 16 px favicon, mostly.
  */
-export function buildMark({word, variant, ids, colors, withShadow = true, rimScale = 1, wallScale = 1}) {
-  const m = plateMetrics(word, variant);
-  const thickness = m.thickness * wallScale;
-  const rim = m.rim * rimScale;
+export function buildMark({word, variant, ids, colors, withShadow = true, ringBoost = 1}) {
+  const m = plateMetrics(word, variant, {ringBoost});
 
   const body =
     plate({
@@ -203,17 +235,17 @@ export function buildMark({word, variant, ids, colors, withShadow = true, rimSca
       cy: m.cy,
       rx: m.rx,
       ry: m.ry,
-      thickness,
-      rim,
+      innerScaleX: m.innerScaleX,
+      innerScaleY: m.innerScaleY,
+      innerRise: m.innerRise,
       tilt: m.tilt,
       fill: colors.plate,
-      rimFill: colors.rim,
       shadow: withShadow ? {...m.shadow, fill: colors.shadow, blurId: ids.blur} : null,
     }) + `<path d="${word.d}" fill="${colors.word}"/>`;
 
-  const left = Math.min(0, m.cx - m.rx - rim / 2);
-  const right = Math.max(word.width, m.cx + m.rx + rim / 2);
-  const ink = m.cy + thickness + m.ry + rim / 2 + m.swing;
+  const left = Math.min(0, m.cx - m.rx);
+  const right = Math.max(word.width, m.cx + m.rx);
+  const ink = m.bottom + m.swing;
   const bottom = withShadow ? Math.max(ink, m.shadowBottom) : ink;
 
   return {

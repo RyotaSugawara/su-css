@@ -1,14 +1,17 @@
 # SuCSS brand kit
 
-The mark is the word **su** resting on a shallow purple disc — the plate. The
-plate is the same lens the framework's surfaces are made of, seen edge-on: a
-hairline rim across the top face, a thicker wall at the front, and a soft
-lavender shadow underneath.
+The mark is the word **su** resting on a purple disc — the plate. The plate is
+the same lens the framework's surfaces are made of, seen edge-on, and it is
+drawn in one move: an ellipse with a second, smaller ellipse subtracted from
+it, the inner one raised. That single offset is what gives the disc its whole
+character — the ring closes to a hairline across the back, where the two edges
+nearly meet, and opens into a thick band across the front. A soft lavender
+shadow sits underneath.
 
 Everything in [`assets/brand/`](../assets/brand) is generated from one source of
 truth, [`scripts/build-brand-assets.mjs`](../scripts/build-brand-assets.mjs).
 The letterforms are outlined, so the SVGs render identically whether or not
-Poppins is installed.
+Montserrat is installed.
 
 ## Files
 
@@ -19,7 +22,7 @@ Poppins is installed.
 | `icon.svg`, `icon-512.png` | The default. Purple mark on a white tile. |
 | `icon-inverse.svg`, `icon-inverse-512.png` | White mark on a purple tile, for dark or busy backgrounds. |
 | `icon-mono.svg` | One-colour black, for print, stamps and stencils. |
-| `icon-small.svg` | 16–48 px. The inverse tile with a fattened rim — see [Small sizes](#small-sizes). |
+| `icon-small.svg` | 16–48 px. The inverse tile, no shadow — see [Small sizes](#small-sizes). |
 | `icon-small-light.svg` | The same simplification on a white tile, where a purple tile would clash. |
 
 ### Marks — the disc and letters with no tile behind them
@@ -78,10 +81,10 @@ that is what keeps the texture reading as one colour.
 **Clear space.** Keep a margin of at least half the wordmark's height on every
 side. Nothing else belongs inside it.
 
-**Small sizes.** Below about 48 px the hairline rim and the drop shadow stop
-carrying, and the white tile disappears against a light browser chrome. Use
-`icon-small.svg`, which drops the shadow, fattens the rim and the wall, and
-inverts to a purple tile so the mark holds its shape down to 16 px.
+**Small sizes.** Below about 48 px the drop shadow stops carrying, and the
+white tile disappears against a light browser chrome. Use `icon-small.svg`,
+which drops the shadow and inverts to a purple tile so the mark holds its
+shape down to 16 px.
 
 **Don't:** recolour the mark outside the palette, stretch it, rotate it, put the
 default white-tile icon on a light background, add an outline or a second
@@ -102,20 +105,24 @@ changes. The script has three dependencies the project does not otherwise need,
 so install them without writing them to `package.json`:
 
 ```bash
-npm install --no-save opentype.js playwright @expo-google-fonts/poppins
+npm install --no-save opentype.js playwright @expo-google-fonts/montserrat
 node scripts/build-brand-assets.mjs
 ```
 
-- `opentype.js` outlines the Poppins letterforms into paths.
-- `@expo-google-fonts/poppins` ships the Poppins TTFs — ExtraBold for the
-  wordmark, Regular for the tagline. Poppins is licensed under the SIL Open
-  Font License 1.1; the outlines it contributes carry that licence with them.
+- `opentype.js` outlines the Montserrat letterforms into paths.
+- `@expo-google-fonts/montserrat` ships the Montserrat TTFs — ExtraBold for the
+  mark and the wordmark, Medium for the tagline. Montserrat is licensed under
+  the SIL Open Font License 1.1; the outlines it contributes carry that licence
+  with them.
 - `playwright` drives headless Chromium to rasterise the PNGs that GitHub, npm
   and the OG crawlers need, none of which accept SVG. If Chromium is already on
   the machine at `/opt/pw-browsers/chromium`, the script uses it and skips
   Playwright's own download.
 
 The proportions of the mark — how wide the plate is against the wordmark, how
-flat it sits, how thick its wall is — are the constants in
-[`scripts/brand/geometry.mjs`](../scripts/brand/geometry.mjs). Change one there
-and every icon, logo and cover follows.
+flat it sits, how big its hole is and how far that hole is raised — are the
+constants in [`scripts/brand/geometry.mjs`](../scripts/brand/geometry.mjs).
+They are not eyeballed: each one is solved against the brand sheet by fitting
+the two ellipses to the mark's contour, which lands within about a pixel, and
+the tracking of each string is solved so its width-to-height ratio matches the
+sheet's. Change a constant there and every icon, logo and cover follows.

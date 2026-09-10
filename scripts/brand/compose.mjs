@@ -10,10 +10,11 @@ import {PALETTE, buildMark, plate, plateMetrics} from './geometry.mjs';
 const round = (n) => Math.round(n * 100) / 100;
 
 /**
- * The tagline is set to the width of the wordmark — the proportion every
- * lockup on the brand sheet uses — and hangs off whatever sits above it.
+ * The tagline runs a hair wider than the wordmark, is centred on the plate
+ * rather than on the wordmark, and hangs off whatever sits above it. The
+ * ratios are measured off the sheet's cover.
  */
-const TAGLINE = {gapUnderPlate: 59, gapUnderWordmark: 40};
+const TAGLINE = {widthRatio: 1.033, gapUnderPlate: 59, gapUnderWordmark: 42};
 
 /** Colour sets. The ghost set carries alpha so it can wash over any backdrop. */
 export const THEMES = {
@@ -21,7 +22,6 @@ export const THEMES = {
     background: PALETTE.white,
     word: 'url(#word-gradient)',
     plate: 'url(#plate-gradient)',
-    rim: 'url(#rim-gradient)',
     shadow: PALETTE.brand,
     tagline: PALETTE.brand,
   },
@@ -29,7 +29,6 @@ export const THEMES = {
     background: PALETTE.brand,
     word: PALETTE.white,
     plate: PALETTE.white,
-    rim: PALETTE.white,
     shadow: PALETTE.white,
     tagline: PALETTE.white,
   },
@@ -37,7 +36,6 @@ export const THEMES = {
     background: PALETTE.white,
     word: PALETTE.ink,
     plate: PALETTE.ink,
-    rim: PALETTE.ink,
     shadow: PALETTE.ink,
     tagline: PALETTE.inkSoft,
   },
@@ -45,7 +43,6 @@ export const THEMES = {
     background: PALETTE.ink,
     word: PALETTE.white,
     plate: PALETTE.white,
-    rim: PALETTE.white,
     shadow: PALETTE.white,
     tagline: PALETTE.white,
   },
@@ -53,7 +50,6 @@ export const THEMES = {
     background: 'none',
     word: `${PALETTE.brand}38`,
     plate: `${PALETTE.brand}16`,
-    rim: `${PALETTE.brand}16`,
     shadow: PALETTE.brand,
     tagline: `${PALETTE.brand}38`,
   },
@@ -65,13 +61,10 @@ function gradients() {
     `<stop offset="0" stop-color="${PALETTE.brandLight}"/>`,
     `<stop offset="1" stop-color="${PALETTE.brand}"/>`,
     `</linearGradient>`,
-    `<linearGradient id="plate-gradient" x1="1" y1="0" x2="0" y2="1">`,
+    `<linearGradient id="plate-gradient" x1="0.85" y1="0" x2="0.15" y2="1">`,
     `<stop offset="0" stop-color="${PALETTE.brandLight}"/>`,
+    `<stop offset="0.45" stop-color="${PALETTE.brand}"/>`,
     `<stop offset="1" stop-color="${PALETTE.brandDeep}"/>`,
-    `</linearGradient>`,
-    `<linearGradient id="rim-gradient" x1="1" y1="0" x2="0" y2="1">`,
-    `<stop offset="0" stop-color="${PALETTE.brandLight}"/>`,
-    `<stop offset="1" stop-color="${PALETTE.brand}"/>`,
     `</linearGradient>`,
   ].join('');
 }
@@ -113,22 +106,13 @@ export function iconSvg({
   word,
   theme,
   size = 512,
-  coverage = 0.68,
+  coverage = 0.663,
   withShadow = true,
-  rimScale = 1,
-  wallScale = 1,
+  ringBoost = 1,
   corner = 0.21,
 }) {
   const colors = THEMES[theme];
-  const mark = buildMark({
-    word,
-    variant: 'icon',
-    ids: {blur: 'plate-shadow'},
-    colors,
-    withShadow,
-    rimScale,
-    wallScale,
-  });
+  const mark = buildMark({word, variant: 'icon', ids: {blur: 'plate-shadow'}, colors, withShadow, ringBoost});
 
   const defs =
     (theme === 'light' ? gradients() : '') +
@@ -179,11 +163,11 @@ export function lockupGroup({wordmark, tagline, colors, parts = {}}) {
         cy: m.cy,
         rx: m.rx,
         ry: m.ry,
-        thickness: m.thickness,
-        rim: m.rim,
+        innerScaleX: m.innerScaleX,
+        innerScaleY: m.innerScaleY,
+        innerRise: m.innerRise,
         tilt: m.tilt,
         fill: colors.plate,
-        rimFill: colors.rim,
         shadow: {...m.shadow, fill: colors.shadow, blurId: 'plate-shadow'},
       }),
     );
@@ -193,13 +177,15 @@ export function lockupGroup({wordmark, tagline, colors, parts = {}}) {
 
   if (withWordmark) layers.push(`<path d="${wordmark.d}" fill="${colors.word}"/>`);
 
-  const taglineScale = wordmark.width / tagline.width;
-  const taglineWidth = withTagline ? wordmark.width : 0;
+  const taglineWidth = wordmark.width * TAGLINE.widthRatio;
+  const taglineScale = taglineWidth / tagline.width;
+  // Centred on the plate, which itself sits a touch off the wordmark's centre.
+  const taglineLeft = (withPlate ? m.cx : wordmark.width / 2) - taglineWidth / 2;
 
   if (withTagline) {
     const top = inkBottom + (withPlate ? TAGLINE.gapUnderPlate : TAGLINE.gapUnderWordmark);
     layers.push(
-      `<g transform="translate(0 ${round(top)}) scale(${round(taglineScale)})">` +
+      `<g transform="translate(${round(taglineLeft)} ${round(top)}) scale(${round(taglineScale)})">` +
         `<path d="${tagline.d}" fill="${colors.tagline}"/></g>`,
     );
     bottom = Math.max(bottom, top + 100 * taglineScale);
@@ -207,8 +193,8 @@ export function lockupGroup({wordmark, tagline, colors, parts = {}}) {
 
   const edges = [];
   if (withWordmark) edges.push([0, wordmark.width]);
-  if (withPlate) edges.push([m.cx - m.rx - m.rim / 2, m.cx + m.rx + m.rim / 2]);
-  if (withTagline) edges.push([0, taglineWidth]);
+  if (withPlate) edges.push([m.cx - m.rx, m.cx + m.rx]);
+  if (withTagline) edges.push([taglineLeft, taglineLeft + taglineWidth]);
   const left = Math.min(...edges.map(([a]) => a));
   const right = Math.max(...edges.map(([, b]) => b));
 
@@ -254,16 +240,16 @@ export function plateSvg({word, theme, variant = 'icon', padding = 0.05}) {
     cy: m.cy,
     rx: m.rx,
     ry: m.ry,
-    thickness: m.thickness,
-    rim: m.rim,
+    innerScaleX: m.innerScaleX,
+    innerScaleY: m.innerScaleY,
+    innerRise: m.innerRise,
     tilt: m.tilt,
     fill: colors.plate,
-    rimFill: colors.rim,
     shadow: {...m.shadow, fill: colors.shadow, blurId: 'plate-shadow'},
   });
-  const left = m.cx - m.rx - m.rim / 2;
-  const top = m.cy - m.ry - m.rim / 2 - m.swing;
-  const width = m.rx * 2 + m.rim;
+  const left = m.cx - m.rx;
+  const top = m.top - m.swing;
+  const width = m.rx * 2;
   const height = Math.max(m.bottom + m.swing, m.shadowBottom) - top;
   const pad = width * padding;
   return doc({

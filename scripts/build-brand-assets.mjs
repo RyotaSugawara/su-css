@@ -7,10 +7,10 @@
  * does not otherwise need, which is why they are installed on demand rather
  * than carried in package.json:
  *
- *   npm install --no-save opentype.js playwright @expo-google-fonts/poppins
+ *   npm install --no-save opentype.js playwright @expo-google-fonts/montserrat
  *   node scripts/build-brand-assets.mjs
  *
- * opentype.js outlines the Poppins letterforms so the SVGs carry no font
+ * opentype.js outlines the Montserrat letterforms so the SVGs carry no font
  * dependency; Chromium (via Playwright) rasterises the PNGs that GitHub, npm
  * and the OG crawlers need, none of which accept SVG.
  */
@@ -27,10 +27,13 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const BRAND_DIR = path.join(ROOT, 'assets', 'brand');
 const PUBLIC_DIR = path.join(ROOT, 'public');
 
-// The brand sheet sets the two-letter mark a touch wider than the wordmark,
-// which is tracked tight the way display type usually is.
-const MARK_TRACKING = 0.02;
-const WORDMARK_TRACKING = -0.025;
+// Tracking, in ems, solved so each string's width-to-height ratio matches the
+// sheet's: 1.914 for the mark, 5.443 for the wordmark, 13.76 for the tagline.
+// Display type this heavy is always set tight; the mark is tightest of all,
+// with the s and the u very nearly touching.
+const MARK_TRACKING = -0.0883;
+const WORDMARK_TRACKING = -0.0474;
+const TAGLINE_TRACKING = -0.004;
 
 const require = createRequire(import.meta.url);
 
@@ -41,14 +44,14 @@ function need(name) {
     console.error(
       `\nMissing "${name}". This script is not part of the normal build; install its\n` +
         `dependencies first:\n\n` +
-        `  npm install --no-save opentype.js playwright @expo-google-fonts/poppins\n`,
+        `  npm install --no-save opentype.js playwright @expo-google-fonts/montserrat\n`,
     );
     process.exit(1);
   }
 }
 
 function loadFont(opentype, weightDir, file) {
-  const ttf = require.resolve(`@expo-google-fonts/poppins/${weightDir}/${file}`);
+  const ttf = require.resolve(`@expo-google-fonts/montserrat/${weightDir}/${file}`);
   const buffer = fs.readFileSync(ttf);
   return opentype.parse(buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength));
 }
@@ -79,12 +82,12 @@ function chromiumPath() {
 
 async function main() {
   const opentype = need('opentype.js');
-  const extraBold = loadFont(opentype, '800ExtraBold', 'Poppins_800ExtraBold.ttf');
-  const regular = loadFont(opentype, '400Regular', 'Poppins_400Regular.ttf');
+  const extraBold = loadFont(opentype, '800ExtraBold', 'Montserrat_800ExtraBold.ttf');
+  const medium = loadFont(opentype, '500Medium', 'Montserrat_500Medium.ttf');
 
   const word = outlineText(opentype, extraBold, 'su', {tracking: MARK_TRACKING});
   const wordmark = outlineText(opentype, extraBold, 'su-css', {tracking: WORDMARK_TRACKING});
-  const tagline = outlineText(opentype, regular, 'Just HTML, already styled.');
+  const tagline = outlineText(opentype, medium, 'Just HTML, already styled.', {tracking: TAGLINE_TRACKING});
 
   console.log('\nSVG');
   const svgs = {
@@ -93,33 +96,16 @@ async function main() {
     'icon-mono.svg': iconSvg({word, theme: 'mono'}),
     // Small sizes get the inverse tile: a white plate on brand purple is the
     // only version of the mark that still reads at 16 px, on a light or a dark
-    // tab strip. The hairline rim and the thin wall are fattened for the same
-    // reason.
-    'icon-small.svg': iconSvg({
-      word,
-      theme: 'inverse',
-      coverage: 0.84,
-      withShadow: false,
-      rimScale: 2.4,
-      wallScale: 1.6,
-      corner: 0.19,
-    }),
-    'icon-small-light.svg': iconSvg({
-      word,
-      theme: 'light',
-      coverage: 0.84,
-      withShadow: false,
-      rimScale: 2.4,
-      wallScale: 1.6,
-      corner: 0.19,
-    }),
+    // tab strip. The drop shadow goes, because none of it survives down there.
+    'icon-small.svg': iconSvg({word, theme: 'inverse', coverage: 0.84, withShadow: false, ringBoost: 1, corner: 0.19}),
+    'icon-small-light.svg': iconSvg({word, theme: 'light', coverage: 0.84, withShadow: false, ringBoost: 1, corner: 0.19}),
     'mark.svg': markSvg({word, theme: 'light'}),
     'mark-inverse.svg': markSvg({word, theme: 'inverse'}),
     'logo.svg': lockupSvg({wordmark, tagline, theme: 'light'}),
     'logo-inverse.svg': lockupSvg({wordmark, tagline, theme: 'inverse'}),
     'logo-mono.svg': lockupSvg({wordmark, tagline, theme: 'mono'}),
     'logo-wordmark.svg': lockupSvg({wordmark, tagline, theme: 'light', parts: {plate: false}}),
-    'plate.svg': plateSvg({word, theme: 'light'}),
+    'plate.svg': plateSvg({word, theme: 'light', variant: 'disc'}),
     'pattern.svg': patternSvg({word}),
     'cover.svg': coverSvg({wordmark, tagline, word, width: 1600, height: 400, coverage: 0.3, tileSize: 620}),
     'og.svg': coverSvg({wordmark, tagline, word, width: 1200, height: 630, coverage: 0.42, tileSize: 520}),
@@ -146,7 +132,7 @@ async function main() {
       'apple-touch-icon.png',
       // iOS masks the corners itself and never shows transparency, so this one
       // is drawn square and full-bleed.
-      iconSvg({word, theme: 'inverse', coverage: 0.72, corner: 0, rimScale: 1.4, wallScale: 1.2}),
+      iconSvg({word, theme: 'inverse', coverage: 0.72, corner: 0}),
       180,
       180,
     ],
