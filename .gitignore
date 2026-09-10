@@ -7,3 +7,9 @@ coverage/
 .env*
 !.env.example
 dist-lib/
+
+# The site's pages are rendered from src/pages/ and src/locales/ by
+# scripts/build-pages.mjs, which `npm run dev` and `npm run build` run first.
+/index.html
+/customize.html
+/ja/
