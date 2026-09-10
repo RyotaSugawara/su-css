@@ -1,4 +1,12 @@
+<p align="center">
+  <a href="https://ryotasugawara.github.io/su-css/">
+    <img src="assets/brand/cover.png" alt="SuCSS — Just HTML, already styled." width="880">
+  </a>
+</p>
+
 # SuCSS
+
+**Just HTML, already styled.**
 
 [![CI](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml/badge.svg)](https://github.com/RyotaSugawara/su-css/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/@ryo9ra/su-css.svg)](https://www.npmjs.com/package/@ryo9ra/su-css)
@@ -130,8 +138,9 @@ Browsers without `backdrop-filter` fall back to solid surfaces.
 
 ## Development
 
-This repository also contains the demo app — a showcase, a live playground, a
-theme customizer, and a contrast checker.
+This repository also contains the demo site: a single hand-written HTML page
+(`index.html`) with no class attributes, styled entirely by the framework. It
+doubles as the element reference.
 
 ```bash
 npm install
@@ -162,6 +171,12 @@ change released: [CONTRIBUTING.md](CONTRIBUTING.md) and
 
 To report a security problem, use private vulnerability reporting rather than an
 issue: [SECURITY.md](SECURITY.md).
+
+## Brand
+
+Icons, logos, the cover artwork and the palette live in
+[`assets/brand/`](assets/brand), and how to use them is written down in
+[docs/BRAND.md](docs/BRAND.md).
 
 ## License
 
