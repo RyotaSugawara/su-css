@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0](https://github.com/RyotaSugawara/su-css/compare/v0.4.0...v0.5.0) (2026-09-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* a document containing `<div role="group">` around buttons renders differently without any change to its HTML.
+
+### Features
+
+* lay out a group of buttons from role="group" ([#56](https://github.com/RyotaSugawara/su-css/issues/56)) ([670dd0b](https://github.com/RyotaSugawara/su-css/commit/670dd0b0ec4efb6ad4bb0f1b8794ac6193dcc1dc))
+
 ## [0.4.0](https://github.com/RyotaSugawara/su-css/compare/v0.3.0...v0.4.0) (2026-09-11)
 
 
