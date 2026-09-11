@@ -1242,14 +1242,23 @@ audio {
 /* --------------------------------------------------------------------------
    8. Tables & Data Presentation
    -------------------------------------------------------------------------- */
+
+/* The panel's corners are rounded by the cells that sit in them, not by
+   clipping the table. `overflow: hidden` looked like the cheaper way to do it,
+   but a table's overflow is applied to the box that holds the caption too, so
+   the clip - corner radius and all - sat around the caption rather than around
+   the panel: it cut the first letter of the caption against the curve while
+   leaving the header's square corners to show past the panel's own. Separated
+   borders are what make the corner radii on the cells take effect, and they
+   let the table's border follow the radius, which a collapsed border does not. */
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin: 1.5rem 0;
   font-size: 0.95rem;
   text-align: left;
   border-radius: var(--radius);
-  overflow: hidden;
   border: 1px solid var(--glass-border);
   background-color: var(--glass-bg);
   background-image: var(--glass-tint);
@@ -1269,11 +1278,9 @@ caption {
   font-weight: 600;
   color: var(--text-subtle);
 
-  /* The panel's `overflow: hidden` clips the caption as well, and it clips
-     against the rounded corner: a caption flush with the table's left edge
-     loses the left of its first letter to the curve. Matching the cells'
-     inline padding clears the corner and lines the label up with the first
-     column. */
+  /* The label carries the cells' inline padding so it lines up with the first
+     column instead of with the panel's rounded edge, which starts a radius in
+     from where the caption would otherwise sit. */
   padding: 0 1rem 0.5rem;
 }
 
@@ -1321,6 +1328,33 @@ tfoot th {
   color: var(--text-main);
 }
 
+/* The four cells in the panel's corners carry its radius, a pixel in from the
+   table's own so the border stays a clean arc around them. The selectors name
+   the first and last row of the table rather than of a section, so a header
+   row keeps the top corners and a striped or hovered row in the middle of the
+   table never rounds off inside the panel. */
+:is(thead, table:not(:has(thead)) > tbody):first-of-type > tr:first-child > :is(th, td):first-child {
+  border-start-start-radius: calc(var(--radius) - 1px);
+}
+
+:is(thead, table:not(:has(thead)) > tbody):first-of-type > tr:first-child > :is(th, td):last-child {
+  border-start-end-radius: calc(var(--radius) - 1px);
+}
+
+:is(tfoot, table:not(:has(tfoot)) > tbody):last-of-type > tr:last-child > :is(th, td):first-child {
+  border-end-start-radius: calc(var(--radius) - 1px);
+}
+
+:is(tfoot, table:not(:has(tfoot)) > tbody):last-of-type > tr:last-child > :is(th, td):last-child {
+  border-end-end-radius: calc(var(--radius) - 1px);
+}
+
+/* Separated borders no longer merge the last row's rule with the table's own,
+   so the row gives its up to avoid a double line along the bottom edge. */
+:is(tfoot, table:not(:has(tfoot)) > tbody):last-of-type > tr:last-child > :is(th, td) {
+  border-bottom: 0;
+}
+
 [data-theme="dark"] th,
 [data-theme="dark"] tr:nth-child(even) td {
   background-color: rgb(255 255 255 / 4%);
@@ -1336,19 +1370,10 @@ figure:has(> table) {
   /* A scroll container clips at its padding box, and the panel's shadow is
      cast outside the table's own box - with no padding there the shadow is
      sliced flat down both sides of the table. The inline padding gives it
-     somewhere to land - a full rem, because the cast reaches about that far
-     before it fades out. */
+     somewhere to land: a rem, which is where the cast has faded into the
+     background. The panel sits that far inside the figure as a result, which
+     is the price of keeping the figure's own box where the document put it. */
   padding: 0 1rem;
-}
-
-/* Inside `main` there is a gutter to borrow that back from, so the figure
-   pulls itself out by the width of its own padding - `main` carries exactly
-   that much - and the panel lines up with the blocks above and below it
-   again. Elsewhere the padding stays, at the cost of a character of inset: a
-   figure whose parent has no gutter would otherwise push the document into a
-   horizontal scroll. */
-main figure:has(> table) {
-  margin-inline: -1rem;
 }
 
 figure figcaption {
