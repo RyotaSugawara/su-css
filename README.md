@@ -33,7 +33,7 @@ built in.
   sheet: the backdrop stays legible through them, colour blooms out of them,
   and every edge carries a specular rim. Controls are capsule-shaped and settle
   with a short overshoot.
-- **Small and dependency-free.** One CSS file, under 5 KB gzipped. No
+- **Small and dependency-free.** One CSS file, under 6 KB gzipped. No
   JavaScript, no build step.
 - **Themeable.** Every color, radius, and shadow is a CSS custom property.
 
@@ -45,8 +45,8 @@ npm install @ryo9ra/su-css
 
 | Import specifier | File | Size |
 | --- | --- | --- |
-| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 33 KB (6.8 KB gzipped) |
-| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 25 KB (4.7 KB gzipped) |
+| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 52 KB (12.5 KB gzipped) |
+| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 32 KB (5.9 KB gzipped) |
 
 From a bundler (Vite, webpack, Next.js, …):
 
@@ -101,6 +101,18 @@ Link the stylesheet and write ordinary HTML. That is the whole API.
 Interactive elements work natively too: `<dialog>` for modals,
 `<details>`/`<summary>` for accordions, and
 `<input type="checkbox" role="switch">` for toggles.
+
+ARIA carries structure as well as state. A `role="group"` around a set of
+buttons spaces them as one cluster, and every button in it keeps the look its
+own markup gives it. Give those buttons `aria-pressed` (or the links
+`aria-current`) and the same group becomes a segmented control, because a set
+of buttons that carries a selection is a choice rather than a cluster. A
+`role="toolbar"` becomes a bar of commands, where an `<hr>` stands up as a
+separator and `aria-orientation="vertical"` stacks it.
+
+> A toolbar also asks Tab to enter it once and the arrow keys to move inside
+> it. SuCSS draws the bar; that keyboard behaviour is yours to write. When you
+> cannot, reach for `role="group"` instead — it carries no such expectation.
 
 ## Theming
 

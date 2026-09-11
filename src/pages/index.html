@@ -74,11 +74,15 @@
             <strong>SuCSS</strong>
           </div>
           <div>
-            <a href="{{enHref}}" hreflang="en"{{enCurrent}}>EN</a>
-            <a href="{{jaHref}}" hreflang="ja"{{jaCurrent}}>日本語</a>
-            <button type="button" data-theme-set="light" data-i18n="theme.light"></button>
-            <button type="button" data-theme-set="dark" data-i18n="theme.dark"></button>
-            <button type="button" data-theme-set="auto" data-i18n="theme.auto"></button>
+            <div role="group" aria-label="" data-i18n-aria-label="nav.languageLabel">
+              <a href="{{enHref}}" hreflang="en"{{enCurrent}}>EN</a>
+              <a href="{{jaHref}}" hreflang="ja"{{jaCurrent}}>日本語</a>
+            </div>
+            <div role="group" aria-label="" data-i18n-aria-label="theme.label">
+              <button type="button" data-theme-set="light" aria-current="false" data-i18n="theme.light"></button>
+              <button type="button" data-theme-set="dark" aria-current="false" data-i18n="theme.dark"></button>
+              <button type="button" data-theme-set="auto" aria-current="true" data-i18n="theme.auto"></button>
+            </div>
           </div>
         </nav>
 
@@ -166,12 +170,12 @@
               <tr>
                 <td><code>@ryo9ra/su-css</code></td>
                 <td><code>dist-lib/sucss.css</code></td>
-                <td>33 KB (gzip 6.8 KB)</td>
+                <td>52 KB (gzip 12.5 KB)</td>
               </tr>
               <tr>
                 <td><code>@ryo9ra/su-css/sucss.min.css</code></td>
                 <td><code>dist-lib/sucss.min.css</code></td>
-                <td>25 KB (gzip 4.7 KB)</td>
+                <td>32 KB (gzip 5.9 KB)</td>
               </tr>
             </tbody>
           </table>
@@ -387,6 +391,28 @@
           <button type="button" disabled data-i18n="elements.buttons.disabled"></button>
           <button type="button" data-dialog="#demo-dialog" data-i18n="elements.buttons.dialog"></button>
         </p>
+
+        <div role="group" aria-label="" data-i18n-aria-label="elements.buttons.groupLabel">
+          <button data-i18n="elements.buttons.groupSave"></button>
+          <button type="button" data-i18n="elements.buttons.groupDraft"></button>
+          <button type="button" disabled data-i18n="elements.buttons.groupPublish"></button>
+        </div>
+
+        <div role="group" aria-label="" data-i18n-aria-label="elements.buttons.segmentedLabel">
+          <button type="button" aria-pressed="true" data-i18n="elements.buttons.segmentedCards"></button>
+          <button type="button" aria-pressed="false" data-i18n="elements.buttons.segmentedList"></button>
+          <button type="button" aria-pressed="false" data-i18n="elements.buttons.segmentedTable"></button>
+        </div>
+
+        <div role="toolbar" aria-label="" data-i18n-aria-label="elements.buttons.toolbarLabel">
+          <div role="group" aria-label="" data-i18n-aria-label="elements.buttons.toolbarWeightLabel">
+            <button type="button" aria-pressed="true" data-i18n="elements.buttons.toolbarBold"></button>
+            <button type="button" aria-pressed="false" data-i18n="elements.buttons.toolbarItalic"></button>
+          </div>
+          <hr />
+          <button type="button" data-i18n="elements.buttons.toolbarLink"></button>
+        </div>
+        <p data-i18n="elements.buttons.toolbarNote"></p>
 
         <p>
           <span role="status" data-i18n="elements.buttons.stable"></span>

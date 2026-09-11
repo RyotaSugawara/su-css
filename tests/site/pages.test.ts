@@ -13,7 +13,7 @@ function readTemplate(name: string): string {
 }
 
 function keysIn(html: string): string[] {
-  return [...html.matchAll(/data-i18n(?:-[a-z]+)?="([^"]+)"/g)].map((match) => match[1]);
+  return [...html.matchAll(/data-i18n(?:-[a-z-]+)?="([^"]+)"/g)].map((match) => match[1]);
 }
 
 const templateKeys = new Set(PAGES.flatMap((page) => keysIn(readTemplate(page.template))));
