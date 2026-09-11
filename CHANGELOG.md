@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.0](https://github.com/RyotaSugawara/su-css/compare/v0.3.0...v0.4.0) (2026-09-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* keep a table readable on a narrow viewport ([#41](https://github.com/RyotaSugawara/su-css/issues/41))
+
+### Bug Fixes
+
+* keep a table readable on a narrow viewport ([#41](https://github.com/RyotaSugawara/su-css/issues/41)) ([f86df4c](https://github.com/RyotaSugawara/su-css/commit/f86df4c0d6690cfaeebf88f69c0904e5b9601853))
+
 ## [0.3.0](https://github.com/RyotaSugawara/su-css/compare/v0.2.0...v0.3.0) (2026-09-10)
 
 
