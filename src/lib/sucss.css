@@ -1368,26 +1368,27 @@ tfoot th {
   background-color: rgb(255 255 255 / 4%);
 }
 
-/* Horizontal scroll container for tables on small viewports */
+/* Horizontal scroll container for tables on small viewports. It clips at its
+   padding box, and the panel's shadow is cast outside the table's own box, so
+   with no padding the figure slices that shadow flat against the table's
+   edges. The padding is where the cast lands: a rem to the sides, where it has
+   faded into the background, and a rem under the rem and a half the table
+   already keeps below itself, because the cast is thrown downwards and reaches
+   half as far again that way. */
 figure:has(> table) {
   overflow-x: auto;
-  margin: 1.5rem 0;
   border: none;
   background: transparent;
+  padding: 0 1rem 1rem;
 
-  /* A scroll container clips at its padding box, and the panel's shadow is
-     cast outside the table's own box - with no padding there the shadow is
-     sliced flat down both sides of the table. The inline padding gives it
-     somewhere to land: a rem, which is where the cast has faded into the
-     background. */
-  padding: 0 1rem;
-
-  /* That padding would leave the panel sitting a rem inside the column, out
-     of line with every block above and below it, so the figure takes the same
-     rem back out of the gutter its container lends through `--bleed` - all of
-     it inside that container's padding, so nothing widens the document. A
-     container that lends nothing keeps the panel inset rather than push the
-     page into a horizontal scroll. */
+  /* The padding would leave the panel sitting a rem inside the column, out of
+     line with every block above and below it, and the rem underneath would
+     open a gap where the page had none. So the figure gives both of them back
+     off its own margins: the inline one out of the gutter its container lends
+     through `--bleed`, all of it inside that container's padding so nothing
+     widens the document. A container that lends nothing keeps the panel inset
+     instead of pushing the page into a horizontal scroll. */
+  margin: 1.5rem 0 0.5rem;
   margin-inline: calc(-1 * min(1rem, var(--bleed, 0px)));
 }
 
