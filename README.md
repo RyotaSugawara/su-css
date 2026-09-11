@@ -33,7 +33,7 @@ built in.
   sheet: the backdrop stays legible through them, colour blooms out of them,
   and every edge carries a specular rim. Controls are capsule-shaped and settle
   with a short overshoot.
-- **Small and dependency-free.** One CSS file, under 5 KB gzipped. No
+- **Small and dependency-free.** One CSS file, under 6 KB gzipped. No
   JavaScript, no build step.
 - **Themeable.** Every color, radius, and shadow is a CSS custom property.
 
@@ -45,8 +45,8 @@ npm install @ryo9ra/su-css
 
 | Import specifier | File | Size |
 | --- | --- | --- |
-| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 33 KB (6.8 KB gzipped) |
-| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 25 KB (4.7 KB gzipped) |
+| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 52 KB (12.5 KB gzipped) |
+| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 32 KB (5.9 KB gzipped) |
 
 From a bundler (Vite, webpack, Next.js, …):
 
