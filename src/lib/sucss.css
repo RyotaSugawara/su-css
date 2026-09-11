@@ -278,12 +278,18 @@ body {
     radial-gradient(circle at 92% 85%, hsl(var(--hue) 65% 26% / 50%), transparent 48%);
 }
 
+/* `--bleed` says how much inline padding this box can lend to something that
+   wants to sit flush with its content while painting past it - see the figure
+   that wraps a table. A box may only declare as much as its own inline
+   padding, or what borrows it lands outside the box. */
 main {
+  --bleed: 1rem;
+
   width: 100%;
   max-width: var(--max-width, 960px);
   margin-left: auto;
   margin-right: auto;
-  padding: 1.5rem 1rem 3rem;
+  padding: 1.5rem var(--bleed) 3rem;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -539,6 +545,11 @@ code {
   padding: 0.2em 0.4em;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
+
+  /* Wrapped code keeps a whole chip on each line - padding, border and radius
+     on both fragments - instead of one pill sliced open mid-word. */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 pre {
@@ -1021,13 +1032,15 @@ progress::-moz-progress-bar {
    6. Semantic Containers & Layout Cards (the core "frosted panel" look)
    -------------------------------------------------------------------------- */
 article, aside, section {
+  --bleed: 1.5rem;
+
   background-color: var(--glass-bg);
   background-image: var(--glass-tint);
   backdrop-filter: var(--glass-filter);
   -webkit-backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: var(--bleed);
   box-shadow: var(--glass-shadow);
   margin-bottom: 1.5rem;
   transition: box-shadow var(--transition-liquid), transform var(--transition-liquid);
@@ -1237,14 +1250,23 @@ audio {
 /* --------------------------------------------------------------------------
    8. Tables & Data Presentation
    -------------------------------------------------------------------------- */
+
+/* The panel's corners are rounded by the cells that sit in them, not by
+   clipping the table. `overflow: hidden` looked like the cheaper way to do it,
+   but a table's overflow is applied to the box that holds the caption too, so
+   the clip - corner radius and all - sat around the caption rather than around
+   the panel: it cut the first letter of the caption against the curve while
+   leaving the header's square corners to show past the panel's own. Separated
+   borders are what make the corner radii on the cells take effect, and they
+   let the table's border follow the radius, which a collapsed border does not. */
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin: 1.5rem 0;
   font-size: 0.95rem;
   text-align: left;
   border-radius: var(--radius);
-  overflow: hidden;
   border: 1px solid var(--glass-border);
   background-color: var(--glass-bg);
   background-image: var(--glass-tint);
@@ -1263,12 +1285,30 @@ caption {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-subtle);
-  padding-bottom: 0.5rem;
+
+  /* The label carries the cells' inline padding so it lines up with the first
+     column instead of with the panel's rounded edge, which starts a radius in
+     from where the caption would otherwise sit. */
+  padding: 0 1rem 0.5rem;
 }
 
+/* Cells sit on their first line's baseline, not the browser's vertical middle:
+   when one cell in a row wraps to three lines and its neighbours to one, middle
+   alignment scatters the row's text down the height of the tallest cell, while
+   a shared baseline keeps it reading as a single line of data. */
 th, td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--glass-border);
+  vertical-align: baseline;
+}
+
+/* A package name or a file path has no space to break at, so it sets its
+   column's minimum width, and on a narrow viewport the table can only honour
+   that by starving the other columns - rows grow several lines tall and the
+   last column is pushed out of sight behind the scroll. Code in a cell may
+   break mid-token so the columns share the width that is actually there. */
+:is(th, td) code {
+  overflow-wrap: anywhere;
 }
 
 th {
@@ -1296,18 +1336,60 @@ tfoot th {
   color: var(--text-main);
 }
 
+/* The four cells in the panel's corners carry its radius, a pixel in from the
+   table's own so the border stays a clean arc around them. The selectors name
+   the first and last row of the table rather than of a section, so a header
+   row keeps the top corners and a striped or hovered row in the middle of the
+   table never rounds off inside the panel. */
+:is(thead, table:not(:has(thead)) > tbody):first-of-type > tr:first-child > :is(th, td):first-child {
+  border-start-start-radius: calc(var(--radius) - 1px);
+}
+
+:is(thead, table:not(:has(thead)) > tbody):first-of-type > tr:first-child > :is(th, td):last-child {
+  border-start-end-radius: calc(var(--radius) - 1px);
+}
+
+:is(tfoot, table:not(:has(tfoot)) > tbody):last-of-type > tr:last-child > :is(th, td):first-child {
+  border-end-start-radius: calc(var(--radius) - 1px);
+}
+
+:is(tfoot, table:not(:has(tfoot)) > tbody):last-of-type > tr:last-child > :is(th, td):last-child {
+  border-end-end-radius: calc(var(--radius) - 1px);
+}
+
+/* Separated borders no longer merge the last row's rule with the table's own,
+   so the row gives its up to avoid a double line along the bottom edge. */
+:is(tfoot, table:not(:has(tfoot)) > tbody):last-of-type > tr:last-child > :is(th, td) {
+  border-bottom: 0;
+}
+
 [data-theme="dark"] th,
 [data-theme="dark"] tr:nth-child(even) td {
   background-color: rgb(255 255 255 / 4%);
 }
 
-/* Horizontal scroll container for tables on small viewports */
+/* Horizontal scroll container for tables on small viewports. It clips at its
+   padding box, and the panel's shadow is cast outside the table's own box, so
+   with no padding the figure slices that shadow flat against the table's
+   edges. The padding is where the cast lands: a rem to the sides, where it has
+   faded into the background, and a rem under the rem and a half the table
+   already keeps below itself, because the cast is thrown downwards and reaches
+   half as far again that way. */
 figure:has(> table) {
   overflow-x: auto;
-  margin: 1.5rem 0;
   border: none;
   background: transparent;
-  padding: 0;
+  padding: 0 1rem 1rem;
+
+  /* The padding would leave the panel sitting a rem inside the column, out of
+     line with every block above and below it, and the rem underneath would
+     open a gap where the page had none. So the figure gives both of them back
+     off its own margins: the inline one out of the gutter its container lends
+     through `--bleed`, all of it inside that container's padding so nothing
+     widens the document. A container that lends nothing keeps the panel inset
+     instead of pushing the page into a horizontal scroll. */
+  margin: 1.5rem 0 0.5rem;
+  margin-inline: calc(-1 * min(1rem, var(--bleed, 0px)));
 }
 
 figure figcaption {
