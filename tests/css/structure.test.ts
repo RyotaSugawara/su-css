@@ -227,3 +227,32 @@ describe('command groups', () => {
     expect(guard).toMatch(/input:not\(/);
   });
 });
+
+describe('a group that carries a selected state', () => {
+  it('keeps a focus indicator on its members', () => {
+    // Every segment rule sets box-shadow, and all of them outrank
+    // `button:focus-visible`. Without a rule of its own, the ring disappears
+    // exactly where a keyboard user needs it most.
+    expect(
+      hasRuleMatching(/\[role="group"\][\s\S]*:focus-visible/, {
+        prop: /^box-shadow$/,
+        value: /var\(--focus-ring\)/,
+      }),
+    ).toBe(true);
+  });
+
+  it('marks the chosen member with more than a colour', () => {
+    // WCAG 1.4.1: the selection has to survive a reader who cannot separate
+    // this hue from the one beside it, so the fill carries the state too.
+    let paintsABackground = false;
+
+    root.walkRules(/\[aria-pressed="true"\]/, (rule) => {
+      if (rule.selector.includes(':hover')) return;
+      rule.walkDecls(/^background(-image|-color)?$/, (decl) => {
+        if (decl.value !== 'transparent' && decl.value !== 'none') paintsABackground = true;
+      });
+    });
+
+    expect(paintsABackground).toBe(true);
+  });
+});

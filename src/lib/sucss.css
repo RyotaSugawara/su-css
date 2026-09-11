@@ -746,6 +746,98 @@ input[type="reset"]:hover {
   gap: 0.5rem;
 }
 
+/* A group that carries a selected state is a choice, not a cluster, so it
+   becomes one recessed capsule with the segments riding inside it. Nothing but
+   the markup says which it is: `aria-pressed` and `aria-current` are what an
+   author already writes to make a set of buttons a selection, the same way the
+   tab row above reads `nav:has(> button[aria-current])`.
+   The capsule wraps rather than scrolls - a choice you cannot see is a choice
+   you have lost. */
+[role="group"]:has(> [aria-pressed]),
+[role="group"]:has(> [aria-current]) {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  max-width: 100%;
+  padding: 0.25rem;
+  background-color: var(--glass-bg);
+  background-image: var(--glass-tint);
+  backdrop-filter: var(--glass-filter-soft);
+  -webkit-backdrop-filter: var(--glass-filter-soft);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--glass-inset);
+}
+
+/* Segments never lift: the capsule is the surface, and a segment that floated
+   would leave it. They stay one touch target tall once the capsule's padding
+   is counted back in. */
+[role="group"]:has(> [aria-pressed]) > :is(button, a),
+[role="group"]:has(> [aria-current]) > :is(button, a) {
+  flex: 1 1 auto;
+  justify-content: center;
+  min-height: calc(var(--touch-target) - 0.5rem);
+  padding: 0.4rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  background-color: transparent;
+  background-image: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  box-shadow: none;
+  transition: background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-liquid);
+}
+
+[role="group"]:has(> [aria-pressed]) > :is(button, a):hover,
+[role="group"]:has(> [aria-current]) > :is(button, a):hover {
+  color: var(--text-main);
+  background-color: var(--glass-bg-hover);
+  box-shadow: var(--glass-rim);
+  transform: none;
+  filter: none;
+}
+
+/* The chosen one, and a toggle button standing on its own. Inside the capsule
+   a tinted face would barely separate from the trough it sits in, so the
+   selection is a filled pill: the primary pair is the one already proven at AA,
+   and the fill itself carries the state, not the hue alone.
+   Written as an attribute on the child so this lands at the same specificity as
+   the segment rule above and wins on order rather than on luck. */
+[role="group"] > :is(button, a)[aria-pressed="true"],
+[role="group"] > :is(button, a)[aria-current]:not([aria-current="false"]),
+button[type="button"][aria-pressed="true"],
+button[type="reset"][aria-pressed="true"] {
+  color: var(--color-primary-text);
+  background-color: transparent;
+  background-image: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  border-color: rgb(255 255 255 / 35%);
+  box-shadow: 0 1px 4px -1px hsl(var(--hue) var(--sat) 44% / 40%), var(--glass-rim);
+}
+
+/* Hovering the chosen segment must not hand it back to the quiet hover above,
+   which is a pseudo-class stronger. */
+[role="group"] > :is(button, a)[aria-pressed="true"]:hover,
+[role="group"] > :is(button, a)[aria-current]:not([aria-current="false"]):hover {
+  background-color: transparent;
+  filter: brightness(1.06);
+  transform: none;
+}
+
+/* Every rule above sets box-shadow, and all of them outrank
+   `button:focus-visible`. Without this the ring would silently disappear
+   exactly where a keyboard user needs it most. */
+:is([role="group"], [role="toolbar"]) :is(button, a):focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 /* --------------------------------------------------------------------------
    5. Forms & Inputs
    -------------------------------------------------------------------------- */

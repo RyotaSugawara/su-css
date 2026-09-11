@@ -104,7 +104,9 @@ Interactive elements work natively too: `<dialog>` for modals,
 
 ARIA carries structure as well as state. A `role="group"` around a set of
 buttons spaces them as one cluster, and every button in it keeps the look its
-own markup gives it.
+own markup gives it. Give those buttons `aria-pressed` (or the links
+`aria-current`) and the same group becomes a segmented control, because a set
+of buttons that carries a selection is a choice rather than a cluster.
 
 ## Theming
 
