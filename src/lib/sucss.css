@@ -1336,17 +1336,19 @@ figure:has(> table) {
   /* A scroll container clips at its padding box, and the panel's shadow is
      cast outside the table's own box - with no padding there the shadow is
      sliced flat down both sides of the table. The inline padding gives it
-     somewhere to land. */
-  padding: 0 0.5rem;
+     somewhere to land - a full rem, because the cast reaches about that far
+     before it fades out. */
+  padding: 0 1rem;
 }
 
 /* Inside `main` there is a gutter to borrow that back from, so the figure
-   pulls itself out by the width of its own padding and the panel lines up
-   with the blocks above and below it again. Elsewhere the padding stays, at
-   the cost of half a character of inset: a figure whose parent has no gutter
-   would otherwise push the document into a horizontal scroll. */
+   pulls itself out by the width of its own padding - `main` carries exactly
+   that much - and the panel lines up with the blocks above and below it
+   again. Elsewhere the padding stays, at the cost of a character of inset: a
+   figure whose parent has no gutter would otherwise push the document into a
+   horizontal scroll. */
 main figure:has(> table) {
-  margin-inline: -0.5rem;
+  margin-inline: -1rem;
 }
 
 figure figcaption {
