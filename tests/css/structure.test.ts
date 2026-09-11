@@ -139,6 +139,31 @@ describe('table layout on narrow viewports', () => {
     ).toBe(true);
   });
 
+  it('only lets a box lend as much gutter as it has padding', () => {
+    // The figure around a table pays for its shadow with inline padding and
+    // takes the same amount back out of `--bleed`. A box that advertises more
+    // than its own inline padding sends that borrowed rem outside itself, and
+    // the document grows a horizontal scroll.
+    const offenders: string[] = [];
+    root.walkRules((rule) => {
+      let bleed: string | undefined;
+      let inlinePadding: string | undefined;
+      rule.walkDecls((decl) => {
+        if (decl.prop === '--bleed') bleed = decl.value.trim();
+        if (decl.prop === 'padding') {
+          const parts = decl.value.trim().split(/\s+/);
+          inlinePadding = parts[1] ?? parts[0];
+        }
+        if (decl.prop === 'padding-inline') inlinePadding = decl.value.trim().split(/\s+/)[0];
+      });
+      if (bleed === undefined) return;
+      if (inlinePadding !== 'var(--bleed)' && inlinePadding !== bleed) {
+        offenders.push(`${rule.selector} (--bleed: ${bleed}, inline padding: ${inlinePadding ?? 'none'})`);
+      }
+    });
+    expect(offenders).toEqual([]);
+  });
+
   it('leaves the scroll container room for the panel’s shadow', () => {
     // A scroll container clips at its padding box, so a figure with no inline
     // padding slices the table's shadow flat down both sides.

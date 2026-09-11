@@ -278,12 +278,18 @@ body {
     radial-gradient(circle at 92% 85%, hsl(var(--hue) 65% 26% / 50%), transparent 48%);
 }
 
+/* `--bleed` says how much inline padding this box can lend to something that
+   wants to sit flush with its content while painting past it - see the figure
+   that wraps a table. A box may only declare as much as its own inline
+   padding, or what borrows it lands outside the box. */
 main {
+  --bleed: 1rem;
+
   width: 100%;
   max-width: var(--max-width, 960px);
   margin-left: auto;
   margin-right: auto;
-  padding: 1.5rem 1rem 3rem;
+  padding: 1.5rem var(--bleed) 3rem;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1026,13 +1032,15 @@ progress::-moz-progress-bar {
    6. Semantic Containers & Layout Cards (the core "frosted panel" look)
    -------------------------------------------------------------------------- */
 article, aside, section {
+  --bleed: 1.5rem;
+
   background-color: var(--glass-bg);
   background-image: var(--glass-tint);
   backdrop-filter: var(--glass-filter);
   -webkit-backdrop-filter: var(--glass-filter);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: var(--bleed);
   box-shadow: var(--glass-shadow);
   margin-bottom: 1.5rem;
   transition: box-shadow var(--transition-liquid), transform var(--transition-liquid);
@@ -1371,9 +1379,16 @@ figure:has(> table) {
      cast outside the table's own box - with no padding there the shadow is
      sliced flat down both sides of the table. The inline padding gives it
      somewhere to land: a rem, which is where the cast has faded into the
-     background. The panel sits that far inside the figure as a result, which
-     is the price of keeping the figure's own box where the document put it. */
+     background. */
   padding: 0 1rem;
+
+  /* That padding would leave the panel sitting a rem inside the column, out
+     of line with every block above and below it, so the figure takes the same
+     rem back out of the gutter its container lends through `--bleed` - all of
+     it inside that container's padding, so nothing widens the document. A
+     container that lends nothing keeps the panel inset rather than push the
+     page into a horizontal scroll. */
+  margin-inline: calc(-1 * min(1rem, var(--bleed, 0px)));
 }
 
 figure figcaption {
