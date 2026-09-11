@@ -1332,7 +1332,21 @@ figure:has(> table) {
   margin: 1.5rem 0;
   border: none;
   background: transparent;
-  padding: 0;
+
+  /* A scroll container clips at its padding box, and the panel's shadow is
+     cast outside the table's own box - with no padding there the shadow is
+     sliced flat down both sides of the table. The inline padding gives it
+     somewhere to land. */
+  padding: 0 0.5rem;
+}
+
+/* Inside `main` there is a gutter to borrow that back from, so the figure
+   pulls itself out by the width of its own padding and the panel lines up
+   with the blocks above and below it again. Elsewhere the padding stays, at
+   the cost of half a character of inset: a figure whose parent has no gutter
+   would otherwise push the document into a horizontal scroll. */
+main figure:has(> table) {
+  margin-inline: -0.5rem;
 }
 
 figure figcaption {

@@ -139,6 +139,20 @@ describe('table layout on narrow viewports', () => {
     ).toBe(true);
   });
 
+  it('leaves the scroll container room for the panel’s shadow', () => {
+    // A scroll container clips at its padding box, so a figure with no inline
+    // padding slices the table's shadow flat down both sides.
+    let inlinePadding: string | undefined;
+    root.walkRules(/^figure:has\(>\s*table\)$/, (rule) => {
+      rule.walkDecls(/^padding(-inline)?$/, (decl) => {
+        const parts = decl.value.split(/\s+/);
+        inlinePadding = decl.prop === 'padding' ? parts[1] ?? parts[0] : parts[0];
+      });
+    });
+    expect(inlinePadding).toBeDefined();
+    expect(inlinePadding).not.toBe('0');
+  });
+
   it('keeps the caption clear of the rounded corner that clips it', () => {
     // `table` paints the panel with `overflow: hidden`, and that clip follows
     // the corner radius. A caption flush with the table's edge loses the left
