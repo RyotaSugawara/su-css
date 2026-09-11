@@ -79,11 +79,15 @@
             <strong>SuCSS</strong>
           </div>
           <div>
-            <a href="{{enHref}}" hreflang="en"{{enCurrent}}>EN</a>
-            <a href="{{jaHref}}" hreflang="ja"{{jaCurrent}}>日本語</a>
-            <button type="button" data-theme-set="light" data-i18n="theme.light"></button>
-            <button type="button" data-theme-set="dark" data-i18n="theme.dark"></button>
-            <button type="button" data-theme-set="auto" data-i18n="theme.auto"></button>
+            <div role="group" aria-label="" data-i18n-aria-label="nav.languageLabel">
+              <a href="{{enHref}}" hreflang="en"{{enCurrent}}>EN</a>
+              <a href="{{jaHref}}" hreflang="ja"{{jaCurrent}}>日本語</a>
+            </div>
+            <div role="group" aria-label="" data-i18n-aria-label="theme.label">
+              <button type="button" data-theme-set="light" aria-current="false" data-i18n="theme.light"></button>
+              <button type="button" data-theme-set="dark" aria-current="false" data-i18n="theme.dark"></button>
+              <button type="button" data-theme-set="auto" aria-current="true" data-i18n="theme.auto"></button>
+            </div>
           </div>
         </nav>
 

@@ -1,9 +1,11 @@
 {
   "meta.title": "SuCSS — a classless CSS framework for plain HTML",
   "meta.description": "A classless CSS framework. Write plain semantic HTML — no class names, no custom attributes — and get liquid-glass surfaces, dark mode and accessibility with it.",
+  "theme.label": "Theme",
   "theme.light": "Light",
   "theme.dark": "Dark",
   "theme.auto": "Auto",
+  "nav.languageLabel": "Language",
   "nav.install": "Install",
   "nav.features": "Features",
   "nav.elements": "Elements",
