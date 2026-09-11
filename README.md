@@ -106,7 +106,13 @@ ARIA carries structure as well as state. A `role="group"` around a set of
 buttons spaces them as one cluster, and every button in it keeps the look its
 own markup gives it. Give those buttons `aria-pressed` (or the links
 `aria-current`) and the same group becomes a segmented control, because a set
-of buttons that carries a selection is a choice rather than a cluster.
+of buttons that carries a selection is a choice rather than a cluster. A
+`role="toolbar"` becomes a bar of commands, where an `<hr>` stands up as a
+separator and `aria-orientation="vertical"` stacks it.
+
+> A toolbar also asks Tab to enter it once and the arrow keys to move inside
+> it. SuCSS draws the bar; that keyboard behaviour is yours to write. When you
+> cannot, reach for `role="group"` instead — it carries no such expectation.
 
 ## Theming
 

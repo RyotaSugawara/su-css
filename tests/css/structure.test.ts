@@ -229,18 +229,6 @@ describe('command groups', () => {
 });
 
 describe('a group that carries a selected state', () => {
-  it('keeps a focus indicator on its members', () => {
-    // Every segment rule sets box-shadow, and all of them outrank
-    // `button:focus-visible`. Without a rule of its own, the ring disappears
-    // exactly where a keyboard user needs it most.
-    expect(
-      hasRuleMatching(/\[role="group"\][\s\S]*:focus-visible/, {
-        prop: /^box-shadow$/,
-        value: /var\(--focus-ring\)/,
-      }),
-    ).toBe(true);
-  });
-
   it('marks the chosen member with more than a colour', () => {
     // WCAG 1.4.1: the selection has to survive a reader who cannot separate
     // this hue from the one beside it, so the fill carries the state too.
@@ -254,5 +242,180 @@ describe('a group that carries a selected state', () => {
     });
 
     expect(paintsABackground).toBe(true);
+  });
+});
+
+describe('a toolbar', () => {
+  it('quiets its commands without painting over a pressed one', () => {
+    // The bar's own rule is a `:not()` more specific than the selected state,
+    // so it would silently win and flatten every pressed button in a toolbar.
+    // It has to stand aside for them instead.
+    let quietRule: string | undefined;
+
+    root.walkRules((rule) => {
+      const selector = rule.selector.replaceAll(/\s+/g, ' ');
+      if (quietRule || !selector.startsWith('[role="toolbar"] :is(button')) return;
+      if (selector.includes(':hover')) return;
+      quietRule = selector;
+    });
+
+    expect(quietRule).toBeDefined();
+    expect(quietRule).toContain('[aria-pressed="true"]');
+  });
+});
+
+/** Split a selector list on its own commas, ignoring those inside `:is(…)`. */
+function splitSelectorList(list: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let start = 0;
+
+  for (let i = 0; i < list.length; i += 1) {
+    if (list[i] === '(' || list[i] === '[') depth += 1;
+    if (list[i] === ')' || list[i] === ']') depth -= 1;
+    if (list[i] === ',' && depth === 0) {
+      parts.push(list.slice(start, i));
+      start = i + 1;
+    }
+  }
+  parts.push(list.slice(start));
+
+  return parts.map((part) => part.trim()).filter(Boolean);
+}
+
+/**
+ * Specificity of a selector, as [ids, classes-and-attributes, elements].
+ *
+ * Only the syntax this stylesheet uses is handled, which is enough to answer
+ * the one question worth asking here: does the focus ring still win? `:where()`
+ * contributes nothing, and `:is()` / `:not()` / `:has()` contribute the most
+ * specific of their arguments.
+ */
+function specificity(selector: string): [number, number, number] {
+  const total: [number, number, number] = [0, 0, 0];
+  let index = 0;
+
+  /** The index just past the `)` that closes the `(` at `from`. */
+  function endOfArguments(from: number): number {
+    let depth = 0;
+    for (let i = from; i < selector.length; i += 1) {
+      if (selector[i] === '(') depth += 1;
+      if (selector[i] === ')') {
+        depth -= 1;
+        if (depth === 0) return i + 1;
+      }
+    }
+    throw new Error(`Unclosed ( in ${selector}`);
+  }
+
+  /** The heaviest of a comma-separated selector list. */
+  function heaviestOf(list: string): [number, number, number] {
+    return splitSelectorList(list)
+      .map((part) => specificity(part))
+      .reduce((heaviest, one) => (isAtLeast(one, heaviest) ? one : heaviest), [0, 0, 0]);
+  }
+
+  while (index < selector.length) {
+    const character = selector[index];
+
+    if (character === '[') {
+      index = selector.indexOf(']', index) + 1;
+      total[1] += 1;
+    } else if (character === '#' || character === '.') {
+      const name = /^[\w-]+/.exec(selector.slice(index + 1))?.[0] ?? '';
+      index += name.length + 1;
+      total[character === '#' ? 0 : 1] += 1;
+    } else if (character === ':') {
+      const doubled = selector[index + 1] === ':';
+      const from = index + (doubled ? 2 : 1);
+      const name = (/^[\w-]+/.exec(selector.slice(from))?.[0] ?? '').toLowerCase();
+      index = from + name.length;
+
+      if (selector[index] === '(') {
+        const close = endOfArguments(index);
+        const argument = selector.slice(index + 1, close - 1);
+        index = close;
+
+        // `:where()` is the one that costs nothing, by design.
+        if (name !== 'where') {
+          const inner = ['is', 'not', 'has', 'matches'].includes(name)
+            ? heaviestOf(argument)
+            : ([0, 1, 0] as [number, number, number]);
+          total[0] += inner[0];
+          total[1] += inner[1];
+          total[2] += inner[2];
+        }
+      } else {
+        total[doubled ? 2 : 1] += 1;
+      }
+    } else if (/[\w-]/.test(character)) {
+      const name = /^[\w-]+/.exec(selector.slice(index))![0];
+      index += name.length;
+      total[2] += 1;
+    } else {
+      index += 1;
+    }
+  }
+
+  return total;
+}
+
+/** True when `one` would win the cascade against `other`, ties aside. */
+function isAtLeast(one: [number, number, number], other: [number, number, number]): boolean {
+  for (let i = 0; i < 3; i += 1) {
+    if (one[i] !== other[i]) return one[i] > other[i];
+  }
+  return true;
+}
+
+describe('the focus ring inside a group or a toolbar', () => {
+  // Every rule in that part of the stylesheet sets box-shadow, and box-shadow
+  // is what draws the ring. A rule that outranks the ring does not look broken
+  // in the file - it silently erases the one affordance a keyboard user has.
+  const groupScoped = /\[role="(group|toolbar)"\]/;
+
+  interface Rule {
+    selector: string;
+    specificity: [number, number, number];
+    order: number;
+  }
+
+  const shadowRules: Rule[] = [];
+  let order = 0;
+
+  root.walkRules((rule) => {
+    order += 1;
+    const selector = rule.selector.replaceAll(/\s+/g, ' ');
+    if (!groupScoped.test(selector)) return;
+
+    for (const single of splitSelectorList(selector)) {
+      if (!groupScoped.test(single)) continue;
+      rule.walkDecls('box-shadow', () => {
+        shadowRules.push({ selector: single, specificity: specificity(single), order });
+      });
+    }
+  });
+
+  const ringRules = shadowRules.filter((rule) => rule.selector.includes(':focus-visible'));
+
+  it('is drawn by a rule of its own', () => {
+    expect(ringRules.length).toBeGreaterThan(0);
+  });
+
+  it('outranks every rule that would paint over it', () => {
+    const losers = shadowRules
+      .filter((rule) => !rule.selector.includes(':focus-visible'))
+      .filter((rule) =>
+        ringRules.every(
+          (ring) =>
+            !isAtLeast(ring.specificity, rule.specificity) ||
+            (ring.order < rule.order &&
+              isAtLeast(rule.specificity, ring.specificity) &&
+              isAtLeast(ring.specificity, rule.specificity)),
+        ),
+      )
+      .map((rule) => `${rule.selector} (${rule.specificity.join(',')})`);
+
+    expect(losers).toEqual([]);
   });
 });
