@@ -539,6 +539,11 @@ code {
   padding: 0.2em 0.4em;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
+
+  /* Wrapped code keeps a whole chip on each line - padding, border and radius
+     on both fragments - instead of one pill sliced open mid-word. */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 pre {
@@ -1263,12 +1268,32 @@ caption {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-subtle);
-  padding-bottom: 0.5rem;
+
+  /* The panel's `overflow: hidden` clips the caption as well, and it clips
+     against the rounded corner: a caption flush with the table's left edge
+     loses the left of its first letter to the curve. Matching the cells'
+     inline padding clears the corner and lines the label up with the first
+     column. */
+  padding: 0 1rem 0.5rem;
 }
 
+/* Cells sit on their first line's baseline, not the browser's vertical middle:
+   when one cell in a row wraps to three lines and its neighbours to one, middle
+   alignment scatters the row's text down the height of the tallest cell, while
+   a shared baseline keeps it reading as a single line of data. */
 th, td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--glass-border);
+  vertical-align: baseline;
+}
+
+/* A package name or a file path has no space to break at, so it sets its
+   column's minimum width, and on a narrow viewport the table can only honour
+   that by starving the other columns - rows grow several lines tall and the
+   last column is pushed out of sight behind the scroll. Code in a cell may
+   break mid-token so the columns share the width that is actually there. */
+:is(th, td) code {
+  overflow-wrap: anywhere;
 }
 
 th {

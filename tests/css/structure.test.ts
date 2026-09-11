@@ -120,3 +120,37 @@ describe('embedded media containment', () => {
     expect(hasRuleMatching(/(^|,)\s*img/, { prop: /^height$/, value: /^auto$/ })).toBe(true);
   });
 });
+
+describe('table layout on narrow viewports', () => {
+  // A table's columns can only be as narrow as their longest unbreakable word.
+  // One package name or file path in a cell is enough to claim the width of a
+  // phone screen, and the table pays for it by starving every other column:
+  // rows grow several lines tall and the last column ends up off-screen behind
+  // the figure's horizontal scroll.
+  it('lets code in a cell break mid-token so columns can share the width', () => {
+    expect(
+      hasRuleMatching(/th,\s*td\)?\s*code/, { prop: /^overflow-wrap$/, value: /^anywhere$/ }),
+    ).toBe(true);
+  });
+
+  it('aligns cells on their first line so a row that wraps still reads as one', () => {
+    expect(
+      hasRuleMatching(/^th,\s*td$/, { prop: /^vertical-align$/, value: /^baseline$/ }),
+    ).toBe(true);
+  });
+
+  it('keeps the caption clear of the rounded corner that clips it', () => {
+    // `table` paints the panel with `overflow: hidden`, and that clip follows
+    // the corner radius. A caption flush with the table's edge loses the left
+    // of its first letter to the curve.
+    let inlinePadding: string | undefined;
+    root.walkRules(/^caption$/, (rule) => {
+      rule.walkDecls(/^padding(-inline)?$/, (decl) => {
+        const parts = decl.value.split(/\s+/);
+        inlinePadding = decl.prop === 'padding' ? parts[1] ?? parts[0] : parts[0];
+      });
+    });
+    expect(inlinePadding).toBeDefined();
+    expect(inlinePadding).not.toBe('0');
+  });
+});
