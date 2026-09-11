@@ -193,3 +193,37 @@ describe('table layout on narrow viewports', () => {
     expect(inlinePadding).not.toBe('0');
   });
 });
+
+describe('command groups', () => {
+  /** The rule that lays out a `role="group"` whose members are commands. */
+  function clusterSelector(): string | undefined {
+    let found: string | undefined;
+    root.walkRules((rule) => {
+      const selector = rule.selector.replaceAll(/\s+/g, ' ');
+      if (found || !selector.startsWith('[role="group"]:has(')) return;
+      if (selector.includes(':not(')) found = selector;
+    });
+    return found;
+  }
+
+  it('gives a group of buttons its own spacing', () => {
+    expect(hasRuleMatching(/^\[role="group"\]:has\(/, { prop: /^gap$/ })).toBe(true);
+  });
+
+  it('leaves a group of form fields alone', () => {
+    // `role="group"` is also the standard stand-in for a <fieldset> around form
+    // controls, and that use is the more common one. Laying it out in a row
+    // collapses a stacked form into a single line, so the selector has to
+    // disqualify a group holding anything a form would.
+    const selector = clusterSelector();
+    expect(selector).toBeDefined();
+
+    const guard = selector!.slice(selector!.indexOf(':not('));
+
+    for (const field of ['label', 'select', 'textarea', 'fieldset']) {
+      expect(guard, `a group holding <${field}> must not be laid out`).toContain(field);
+    }
+    // A text input disqualifies the group; a button-shaped one does not.
+    expect(guard).toMatch(/input:not\(/);
+  });
+});

@@ -124,7 +124,8 @@ function fillText(html, dictionary, {template}) {
     let openTag = out.slice(start, openEnd);
 
     // Attributes first: data-i18n-placeholder="key" writes placeholder="…".
-    for (const [, attribute, key] of openTag.matchAll(/data-i18n-([a-z]+)="([^"]*)"/g)) {
+    // The attribute name may be hyphenated, so aria-label is reachable too.
+    for (const [, attribute, key] of openTag.matchAll(/data-i18n-([a-z-]+)="([^"]*)"/g)) {
       const text = dictionary[key];
       if (text === undefined) throw new Error(`${template}: no text for ${key}`);
 
@@ -135,7 +136,7 @@ function fillText(html, dictionary, {template}) {
     }
 
     // The keys have done their work; they are not part of the output.
-    openTag = openTag.replace(/\s*data-i18n(?:-[a-z]+)?="[^"]*"/g, '');
+    openTag = openTag.replace(/\s*data-i18n(?:-[a-z-]+)?="[^"]*"/g, '');
 
     const contentKey = /data-i18n="([^"]*)"/.exec(out.slice(start, openEnd))?.[1];
 

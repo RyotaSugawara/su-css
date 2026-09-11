@@ -102,6 +102,10 @@ Interactive elements work natively too: `<dialog>` for modals,
 `<details>`/`<summary>` for accordions, and
 `<input type="checkbox" role="switch">` for toggles.
 
+ARIA carries structure as well as state. A `role="group"` around a set of
+buttons spaces them as one cluster, and every button in it keeps the look its
+own markup gives it.
+
 ## Theming
 
 Override custom properties on `:root`. Shifting `--hue` recolors the whole page,
