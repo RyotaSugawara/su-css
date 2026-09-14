@@ -1496,6 +1496,46 @@ th {
   color: var(--text-main);
 }
 
+/* A sortable table names the column it is ordered by with `aria-sort`, and the
+   value gives the direction. The marker is a triangle drawn out of borders
+   rather than the characters ▲ / ▼: those are not in every font, so they fall
+   back to whatever the system has - an emoji, on some of them - and the glyph's
+   size and baseline move with that substitution. A border triangle needs no
+   glyph and no data URI, which is what a framework that ships as one file can
+   afford. The same reasoning picks the shape for every other state marker.
+
+   Direction is carried by the shape: the triangle points the way the rows are
+   ordered, so the header still answers "which way round?" without colour
+   perception, and the colour only says "this is the sorted column". A header
+   with `none`, with `other`, or with no attribute at all is left as it was. */
+th[aria-sort="ascending"]::after,
+th[aria-sort="descending"]::after {
+  content: "";
+
+  /* No whitespace separates the marker from the header's last word, so there is
+     no break opportunity between them: a header that wraps on a narrow screen
+     can never leave the triangle stranded on a line of its own. The gap is a
+     margin for that reason, not a space. */
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-inline-start: 0.4em;
+  border-inline: 0.3em solid transparent;
+
+  /* Cells sit on their first line's baseline, and an inline-block with no line
+     boxes of its own puts its bottom margin edge on that baseline - which
+     leaves a marker this short sitting low against the x-height beside it. */
+  vertical-align: 0.1em;
+}
+
+th[aria-sort="ascending"]::after {
+  border-bottom: 0.36em solid var(--color-primary);
+}
+
+th[aria-sort="descending"]::after {
+  border-top: 0.36em solid var(--color-primary);
+}
+
 tr:nth-child(even) td {
   background-color: rgb(255 255 255 / 8%);
 }
