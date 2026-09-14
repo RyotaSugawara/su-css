@@ -419,3 +419,76 @@ describe('the focus ring inside a group or a toolbar', () => {
     expect(losers).toEqual([]);
   });
 });
+
+describe('a field the author marked invalid', () => {
+  const INVALID = /\[aria-invalid="true"\]/;
+
+  /** Every rule that marks an invalid field, with the box-shadow it draws. */
+  const markedRules: { selector: string; specificity: [number, number, number]; order: number }[] = [];
+  let seen = 0;
+
+  root.walkRules((rule) => {
+    seen += 1;
+    const selector = rule.selector.replaceAll(/\s+/g, ' ');
+    if (!INVALID.test(selector)) return;
+
+    for (const single of splitSelectorList(selector)) {
+      if (!INVALID.test(single)) continue;
+      rule.walkDecls('box-shadow', () => {
+        markedRules.push({ selector: single, specificity: specificity(single), order: seen });
+      });
+    }
+  });
+
+  it('marks the field with more than a colour', () => {
+    // WCAG 1.4.1: a border that only changes hue is invisible to a reader who
+    // cannot separate this red from the theme's own border colour, so the
+    // marked field carries a second, inset line as well.
+    expect(markedRules.length).toBeGreaterThan(0);
+    expect(markedRules.some((rule) => !rule.selector.includes(':focus-visible'))).toBe(true);
+  });
+
+  it('keeps the focus ring it would otherwise paint over', () => {
+    // The plain marked-field rule sets box-shadow and sits after the focus
+    // ring's own rule, so without a ring rule of its own the one affordance a
+    // keyboard user has would vanish the moment a field is marked.
+    const rings = markedRules.filter((rule) => rule.selector.includes(':focus-visible'));
+    expect(rings.length).toBeGreaterThan(0);
+
+    const losers = markedRules
+      .filter((rule) => !rule.selector.includes(':focus-visible'))
+      .filter((rule) => rings.every((ring) => !isAtLeast(ring.specificity, rule.specificity)))
+      .map((rule) => `${rule.selector} (${rule.specificity.join(',')})`);
+
+    expect(losers).toEqual([]);
+  });
+
+  it('never settles for the bare [aria-invalid] attribute', () => {
+    // `aria-invalid="false"` is a valid — and common — way of saying the field
+    // is fine. A selector that only tests for the attribute's presence paints
+    // every one of those red.
+    const sloppy: string[] = [];
+    root.walkRules((rule) => {
+      for (const single of splitSelectorList(rule.selector.replaceAll(/\s+/g, ' '))) {
+        if (/\[aria-invalid(\]|[~|^$*]?=(?!"true"))/.test(single)) sloppy.push(single);
+      }
+    });
+    expect(sloppy).toEqual([]);
+  });
+
+  it('never uses :invalid or :user-invalid, so an untouched required field stays quiet', () => {
+    // `<input required>` matches `:invalid` from the moment the page loads: a
+    // form built on it opens painted red before anyone has typed a character.
+    const offenders: string[] = [];
+    root.walkRules((rule) => {
+      if (/:(user-)?invalid\b/.test(rule.selector)) offenders.push(rule.selector);
+    });
+    expect(offenders).toEqual([]);
+  });
+
+  it('draws the error text from a role the message declares itself', () => {
+    // CSS cannot follow the aria-describedby / aria-errormessage reference that
+    // ties a message to its field, so the message has to carry `role="alert"`.
+    expect(hasRuleMatching(/\[role="alert"\]/, { prop: /^color$/, value: /var\(--color-danger\)/ })).toBe(true);
+  });
+});
