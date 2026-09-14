@@ -419,3 +419,95 @@ describe('the focus ring inside a group or a toolbar', () => {
     expect(losers).toEqual([]);
   });
 });
+
+describe('landmark roles', () => {
+  // The framework's promise is that plain semantic HTML renders correctly, but
+  // a landmark is just as validly expressed as a role on a <div> - a CMS's
+  // output, or a page SuCSS was dropped onto. Each element below and the role
+  // it implies have to reach the same rules.
+  const landmarks: [element: string, role: string][] = [
+    ['header', 'banner'],
+    ['nav', 'navigation'],
+    ['main', 'main'],
+    ['footer', 'contentinfo'],
+    ['aside', 'complementary'],
+    ['section', 'region'],
+    ['search', 'search'],
+  ];
+
+  /** Every rule's selector list, split and normalised, in source order. */
+  const selectorLists = (() => {
+    const lists: string[][] = [];
+    root.walkRules((rule) => {
+      lists.push(splitSelectorList(rule.selector.replaceAll(/\s+/g, ' ')));
+    });
+    return lists;
+  })();
+
+  /** True when `selector` names `element` as a type selector of its own. */
+  function mentions(selector: string, element: string): boolean {
+    return new RegExp(String.raw`(^|[\s(,>+~])${element}($|[\s),>+~:[])`).test(selector);
+  }
+
+  it.each(landmarks)('styles <%s> and role="%s" from the same rules', (element, role) => {
+    const paired = selectorLists.filter(
+      (list) =>
+        list.some((selector) => mentions(selector, element)) &&
+        list.some((selector) => selector.includes(`[role="${role}"]`)),
+    );
+
+    expect(paired.length).toBeGreaterThan(0);
+  });
+
+  it.each(landmarks)('never styles a bare <%s> without also taking role="%s"', (element, role) => {
+    // A rule whose subject is the element itself - `header`, not `header nav` -
+    // is decoration the role has to inherit, or the two diverge.
+    const orphans = selectorLists
+      .filter((list) => list.includes(element))
+      .filter((list) => !list.some((selector) => selector.includes(`[role="${role}"]`)))
+      .map((list) => list.join(', '));
+
+    expect(orphans).toEqual([]);
+  });
+
+  it('gives <search> a display of its own', () => {
+    // <search> is newer than the browsers the build targets, and an unknown
+    // element is `display: inline`. Without this the landmark's contents run
+    // together on anything older.
+    const declared = selectorLists.some((list, index) => {
+      if (!list.includes('search')) return false;
+      let found = false;
+      let seen = -1;
+      root.walkRules((rule) => {
+        seen += 1;
+        if (seen !== index) return;
+        rule.walkDecls('display', () => {
+          found = true;
+        });
+      });
+      return found;
+    });
+
+    expect(declared).toBe(true);
+  });
+
+  it('leaves the panel rule light enough for the grid override to win', () => {
+    // The roles are added as their own selectors rather than folded into an
+    // `:is()`: wrapping the list would lift `article` and `section` to
+    // attribute weight, and the grid layout further down - which is only a
+    // type selector and a `:has()` - would silently lose to it.
+    const panel = selectorLists.find((list) => list.includes('article') && list.includes('section'));
+    expect(panel).toBeDefined();
+
+    const grid = selectorLists.find((list) => list.includes('section:has(> article + article)'));
+    expect(grid).toBeDefined();
+
+    const heaviestPlainPanel = panel!
+      .filter((selector) => !selector.includes('[role='))
+      .map((selector) => specificity(selector))
+      .reduce((heaviest, one) => (isAtLeast(one, heaviest) ? one : heaviest), [0, 0, 0] as [number, number, number]);
+
+    expect(isAtLeast(specificity('section:has(> article + article)'), heaviestPlainPanel)).toBe(true);
+    expect(isAtLeast(heaviestPlainPanel, specificity('section:has(> article + article)'))).toBe(false);
+  });
+});
