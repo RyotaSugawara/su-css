@@ -22,11 +22,15 @@
   --color-primary-subtle: hsl(var(--hue) 70% 95% / 70%);
   --color-primary-text: #fff;
 
-  /* Contextual Status Colors */
-  --color-success: #00a45e;
-  --color-warning: #c96a00;
-  --color-danger: #d3352f;
-  --color-info: #0074b3;
+  /* Contextual Status Colors. Fixed hex rather than hsl(var(--hue) ...): a
+     danger colour that followed the theme's hue would stop being red. Each
+     theme carries its own pair of values because one fixed colour cannot clear
+     AA on both a white and a near-black surface - light needs them darker,
+     dark needs them brighter. */
+  --color-success: #00754a;
+  --color-warning: #9c5200;
+  --color-danger: #c22d28;
+  --color-info: #006ba6;
 
   /* Neutrals - Light Mode Defaults (the pale base the gradient mesh sits on) */
   --bg-body: #eef0fb;
@@ -119,6 +123,11 @@
     /* Primary is light in dark mode, so button text must stay dark for AA contrast */
     --color-primary-text: #150f26;
 
+    --color-success: #16b177;
+    --color-warning: #e08200;
+    --color-danger: #f0736d;
+    --color-info: #35a4f5;
+
     --glass-brightness: 0.72;
     --glass-bg: rgb(23 19 38 / 46%);
     --glass-bg-strong: rgb(23 19 38 / 68%);
@@ -160,6 +169,11 @@
   --color-primary-subtle: hsl(var(--hue) 60% 30% / 45%);
   --color-primary-text: #150f26;
 
+  --color-success: #16b177;
+  --color-warning: #e08200;
+  --color-danger: #f0736d;
+  --color-info: #35a4f5;
+
   --glass-brightness: 0.72;
   --glass-bg: rgb(23 19 38 / 46%);
   --glass-bg-strong: rgb(23 19 38 / 68%);
@@ -199,6 +213,11 @@
   --color-primary-active: hsl(var(--hue) var(--sat) 32%);
   --color-primary-subtle: hsl(var(--hue) 70% 95% / 70%);
   --color-primary-text: #fff;
+
+  --color-success: #00754a;
+  --color-warning: #9c5200;
+  --color-danger: #c22d28;
+  --color-info: #006ba6;
 
   --glass-brightness: 1.04;
   --glass-bg: rgb(255 255 255 / 40%);

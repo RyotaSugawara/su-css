@@ -78,7 +78,7 @@ describe('theme parity', () => {
   };
 
   it('every theme override block defines the same set of tokens (no missing/typo\'d variables)', () => {
-    // Not every :root token is theme-dependent (e.g. --color-success is
+    // Not every :root token is theme-dependent (e.g. --font-sans is
     // intentionally invariant), so compare the override blocks against each
     // other rather than against the full :root token list.
     const overrideBlocks = Object.entries(themeSelectors).map(
@@ -90,6 +90,38 @@ describe('theme parity', () => {
       for (const name of overriddenNames) {
         expect(tokens, `${label} is missing ${name}`).toHaveProperty(name);
       }
+    }
+  });
+});
+
+describe('status colors', () => {
+  // The four status tokens are read as text and as borders on every surface a
+  // form or a message can sit on. A single fixed value cannot clear AA on both
+  // a white and a near-black one, so each theme declares its own pair - and
+  // this is the check that keeps a future palette tweak from quietly dropping
+  // one of the eight below the line.
+  const statusTokens = ['--color-success', '--color-warning', '--color-danger', '--color-info'];
+  const surfaces = ['--bg-surface', '--bg-body', '--bg-input'];
+
+  const themes: [string, TokenMap][] = [
+    ['light (:root)', themeTokens(':root')],
+    ['light ([data-theme="light"])', themeTokens('[data-theme="light"]')],
+    ['dark (prefers-color-scheme)', themeTokens(':root:not([data-theme="light"])')],
+    ['dark ([data-theme="dark"])', themeTokens('[data-theme="dark"]')],
+  ];
+
+  const cases = themes.flatMap(([label, tokens]) =>
+    statusTokens.flatMap((token) => surfaces.map((surface) => [label, token, surface, tokens] as const)),
+  );
+
+  it.each(cases)('%s: %s meets AA as text on %s', (_label, token, surface, tokens) => {
+    expect(getContrastRatio(rgb(tokens, token), rgb(tokens, surface))).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
+  });
+
+  it.each(statusTokens)('%s does not follow --hue (a danger colour has to stay red)', (token) => {
+    for (const [label, tokens] of themes) {
+      expect(tokens[token], `${label} declares ${token}`).toBeDefined();
+      expect(tokens[token], `${label}: ${token} must be a fixed hex`).toMatch(/^#[0-9a-f]{3,8}$/i);
     }
   });
 });
