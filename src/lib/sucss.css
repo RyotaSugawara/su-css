@@ -305,7 +305,7 @@ body {
    wants to sit flush with its content while painting past it - see the figure
    that wraps a table. A box may only declare as much as its own inline
    padding, or what borrows it lands outside the box. */
-main {
+main, [role="main"] {
   --bleed: 1rem;
 
   width: 100%;
@@ -935,7 +935,11 @@ button[type="reset"][aria-pressed="true"] {
 /* --------------------------------------------------------------------------
    5. Forms & Inputs
    -------------------------------------------------------------------------- */
-form {
+
+/* <search> is a form's landmark twin: it holds the same controls and wants the
+   same stack. Naming `display` here is also what keeps the layout upright in a
+   browser that predates the element and would otherwise leave it inline. */
+form, search, [role="search"] {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -1291,7 +1295,14 @@ progress::-moz-progress-bar {
 /* --------------------------------------------------------------------------
    6. Semantic Containers & Layout Cards (the core "frosted panel" look)
    -------------------------------------------------------------------------- */
-article, aside, section {
+
+/* A landmark is as validly written as a role on a <div> - a CMS's output, or a
+   page SuCSS was dropped onto - so the panels answer to both. The roles are
+   their own selectors rather than an :is() around the list: wrapping it would
+   lift `article` and `section` to attribute weight, and the grid layout below -
+   a type selector and a :has() - would quietly lose to it. */
+article, aside, section,
+[role="complementary"], [role="region"] {
   --bleed: 1.5rem;
 
   background-color: var(--glass-bg);
@@ -1306,7 +1317,8 @@ article, aside, section {
   transition: box-shadow var(--transition-liquid), transform var(--transition-liquid);
 }
 
-article:last-child, aside:last-child, section:last-child {
+article:last-child, aside:last-child, section:last-child,
+[role="complementary"]:last-child, [role="region"]:last-child {
   margin-bottom: 0;
 }
 
@@ -1328,7 +1340,7 @@ section:has(> section + section) {
 }
 
 /* Header & Navigation Bar - the frosted nav is the signature glass moment */
-header {
+header, [role="banner"] {
   position: relative;
   width: 100%;
   background-color: var(--glass-bg-strong);
@@ -1344,7 +1356,7 @@ header {
 }
 
 @media (min-width: 768px) {
-  header {
+  header, [role="banner"] {
     position: sticky;
     top: 0;
     z-index: 50;
@@ -1352,7 +1364,9 @@ header {
 }
 
 header > div,
-footer > div {
+footer > div,
+[role="banner"] > div,
+[role="contentinfo"] > div {
   max-width: var(--max-width, 960px);
   width: 100%;
   margin-left: auto;
@@ -1362,7 +1376,13 @@ footer > div {
   gap: 0.75rem;
 }
 
-header nav {
+/* Where a landmark is the subject, its role selector has to carry weight of
+   its own - this one outranks `header > div` for a nav written as a role.
+   Where the landmark is only an ancestor, :where() spends nothing, so the
+   element selectors below keep exactly the weight they had. */
+header nav,
+:is(header, [role="banner"]) [role="navigation"],
+[role="banner"] nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1372,7 +1392,9 @@ header nav {
 
 header nav > div,
 header nav menu,
-footer > div > div {
+:where(header, [role="banner"]) :where(nav, [role="navigation"]) > :is(div, menu),
+footer > div > div,
+[role="contentinfo"] > div > div {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -1381,8 +1403,11 @@ footer > div > div {
 
 /* Tab Navigation inside nav */
 header nav:last-child,
+:is(header, [role="banner"]) [role="navigation"]:last-child,
+[role="banner"] nav:last-child,
 nav:has(> button[aria-current]),
-nav:has(> a[aria-current]) {
+nav:has(> a[aria-current]),
+[role="navigation"]:has(> :is(button, a)[aria-current]) {
   display: flex;
   align-items: center;
 
@@ -1400,7 +1425,9 @@ nav:has(> a[aria-current]) {
 header nav button,
 header nav a,
 nav:has(> button[aria-current]) button,
-nav:has(> a[aria-current]) a {
+nav:has(> a[aria-current]) a,
+:where(header, [role="banner"]) :where(nav, [role="navigation"]) :is(button, a),
+:where(nav, [role="navigation"]):has(> :is(button, a)[aria-current]) :is(button, a) {
   background-image: none;
   background-color: transparent;
   color: var(--text-muted);
@@ -1416,7 +1443,9 @@ nav:has(> a[aria-current]) a {
 header nav button:hover,
 header nav a:hover,
 nav:has(> button[aria-current]) button:hover,
-nav:has(> a[aria-current]) a:hover {
+nav:has(> a[aria-current]) a:hover,
+:where(header, [role="banner"]) :where(nav, [role="navigation"]) :is(button, a):hover,
+:where(nav, [role="navigation"]):has(> :is(button, a)[aria-current]) :is(button, a):hover {
   color: var(--text-main);
   background-color: var(--glass-bg-hover);
   box-shadow: var(--glass-rim);
@@ -1430,7 +1459,11 @@ header nav a[aria-current="true"],
 nav:has(> button[aria-current]) button[aria-current="page"],
 nav:has(> button[aria-current]) button[aria-current="true"],
 nav:has(> a[aria-current]) a[aria-current="page"],
-nav:has(> a[aria-current]) a[aria-current="true"] {
+nav:has(> a[aria-current]) a[aria-current="true"],
+:where(header, [role="banner"]) :where(nav, [role="navigation"])
+  :is(button, a):is([aria-current="page"], [aria-current="true"]),
+:where(nav, [role="navigation"]):has(> :is(button, a)[aria-current])
+  :is(button, a):is([aria-current="page"], [aria-current="true"]) {
   color: var(--color-primary);
   background-color: var(--color-primary-subtle);
   background-image: var(--glass-tint);
@@ -1439,7 +1472,7 @@ nav:has(> a[aria-current]) a[aria-current="true"] {
 }
 
 /* Footer */
-footer {
+footer, [role="contentinfo"] {
   margin-top: auto;
   padding: 1.5rem 1rem;
   border-top: 1px solid var(--glass-border);
@@ -1452,7 +1485,8 @@ footer {
   text-align: center;
 }
 
-footer > div {
+footer > div,
+[role="contentinfo"] > div {
   flex-flow: row wrap;
   align-items: center;
   justify-content: space-between;
@@ -1779,6 +1813,7 @@ dialog::backdrop {
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-transparency: reduce) {
   article, aside, section, header, footer, dialog, fieldset, details,
+  [role="banner"], [role="complementary"], [role="region"], [role="contentinfo"],
   table, pre, kbd, blockquote,
   input[type="text"], input[type="email"], input[type="password"],
   input[type="number"], input[type="search"], input[type="tel"],
@@ -1803,6 +1838,7 @@ dialog::backdrop {
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   article, aside, section, header, footer, dialog, fieldset, details,
+  [role="banner"], [role="complementary"], [role="region"], [role="contentinfo"],
   table, pre, kbd, blockquote,
   input[type="text"], input[type="email"], input[type="password"],
   input[type="number"], input[type="search"], input[type="tel"],
