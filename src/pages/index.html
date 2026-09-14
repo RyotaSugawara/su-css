@@ -170,12 +170,12 @@
               <tr>
                 <td><code>@ryo9ra/su-css</code></td>
                 <td><code>dist-lib/sucss.css</code></td>
-                <td>55 KB (gzip 13.2 KB)</td>
+                <td>56 KB (gzip 13.6 KB)</td>
               </tr>
               <tr>
                 <td><code>@ryo9ra/su-css/sucss.min.css</code></td>
                 <td><code>dist-lib/sucss.min.css</code></td>
-                <td>33 KB (gzip 6.0 KB)</td>
+                <td>34 KB (gzip 6.1 KB)</td>
               </tr>
             </tbody>
           </table>
@@ -310,6 +310,17 @@
 
             <label for="email" data-i18n="elements.form.email"></label>
             <input type="email" id="email" name="email" placeholder="you@example.com" required />
+
+            <label for="backup-email" data-i18n="elements.form.backupEmail"></label>
+            <input
+              type="email"
+              id="backup-email"
+              name="backup-email"
+              value="ada@example"
+              aria-invalid="true"
+              aria-describedby="backup-email-error"
+            />
+            <p id="backup-email-error" role="alert" data-i18n="elements.form.backupEmailError"></p>
 
             <label for="readonly" data-i18n="elements.form.readonly"></label>
             <input type="text" id="readonly" name="readonly" value="su-0042" readonly />
