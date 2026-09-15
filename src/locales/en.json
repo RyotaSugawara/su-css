@@ -102,6 +102,8 @@
   "elements.form.logo": "Logo image",
   "elements.form.submit": "Submit",
   "elements.form.reset": "Reset",
+  "elements.form.backupEmail": "Backup email (marked invalid)",
+  "elements.form.backupEmailError": "That domain does not exist. Check the part after the @.",
   "elements.buttons.heading": "Buttons and states",
   "elements.buttons.button": "Button",
   "elements.buttons.disabled": "Disabled",

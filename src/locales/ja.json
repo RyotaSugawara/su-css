@@ -102,6 +102,8 @@
   "elements.form.logo": "ロゴ画像",
   "elements.form.submit": "送信",
   "elements.form.reset": "リセット",
+  "elements.form.backupEmail": "予備のメールアドレス（エラー状態）",
+  "elements.form.backupEmailError": "そのドメインは見つかりません。@ より後ろを確認してください。",
   "elements.buttons.heading": "ボタンと状態",
   "elements.buttons.button": "ボタン",
   "elements.buttons.disabled": "無効",
