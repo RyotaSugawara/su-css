@@ -22,11 +22,15 @@
   --color-primary-subtle: hsl(var(--hue) 70% 95% / 70%);
   --color-primary-text: #fff;
 
-  /* Contextual Status Colors */
-  --color-success: #00a45e;
-  --color-warning: #c96a00;
-  --color-danger: #d3352f;
-  --color-info: #0074b3;
+  /* Contextual Status Colors. Fixed hex rather than hsl(var(--hue) ...): a
+     danger colour that followed the theme's hue would stop being red. Each
+     theme carries its own pair of values because one fixed colour cannot clear
+     AA on both a white and a near-black surface - light needs them darker,
+     dark needs them brighter. */
+  --color-success: #00754a;
+  --color-warning: #9c5200;
+  --color-danger: #c22d28;
+  --color-info: #006ba6;
 
   /* Neutrals - Light Mode Defaults (the pale base the gradient mesh sits on) */
   --bg-body: #eef0fb;
@@ -87,6 +91,7 @@
 
   /* Accessibility & Focus Ring */
   --focus-ring: 0 0 0 3px hsl(var(--hue) var(--sat) 82%);
+  --focus-ring-danger: 0 0 0 3px hsl(2deg 70% 84%);
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Liquid motion: a short overshoot, so surfaces settle instead of stopping. */
@@ -119,6 +124,11 @@
     /* Primary is light in dark mode, so button text must stay dark for AA contrast */
     --color-primary-text: #150f26;
 
+    --color-success: #16b177;
+    --color-warning: #e08200;
+    --color-danger: #f0736d;
+    --color-info: #35a4f5;
+
     --glass-brightness: 0.72;
     --glass-bg: rgb(23 19 38 / 46%);
     --glass-bg-strong: rgb(23 19 38 / 68%);
@@ -136,6 +146,7 @@
     --shadow-lg: var(--glass-shadow-lg);
 
     --focus-ring: 0 0 0 3px hsl(var(--hue) var(--sat) 45% / 45%);
+    --focus-ring-danger: 0 0 0 3px hsl(3deg 80% 55% / 45%);
   }
 }
 
@@ -160,6 +171,11 @@
   --color-primary-subtle: hsl(var(--hue) 60% 30% / 45%);
   --color-primary-text: #150f26;
 
+  --color-success: #16b177;
+  --color-warning: #e08200;
+  --color-danger: #f0736d;
+  --color-info: #35a4f5;
+
   --glass-brightness: 0.72;
   --glass-bg: rgb(23 19 38 / 46%);
   --glass-bg-strong: rgb(23 19 38 / 68%);
@@ -177,6 +193,7 @@
   --shadow-lg: var(--glass-shadow-lg);
 
   --focus-ring: 0 0 0 3px hsl(var(--hue) var(--sat) 45% / 45%);
+  --focus-ring-danger: 0 0 0 3px hsl(3deg 80% 55% / 45%);
 }
 
 /* Explicit Light Theme */
@@ -200,6 +217,11 @@
   --color-primary-subtle: hsl(var(--hue) 70% 95% / 70%);
   --color-primary-text: #fff;
 
+  --color-success: #00754a;
+  --color-warning: #9c5200;
+  --color-danger: #c22d28;
+  --color-info: #006ba6;
+
   --glass-brightness: 1.04;
   --glass-bg: rgb(255 255 255 / 40%);
   --glass-bg-strong: rgb(255 255 255 / 60%);
@@ -217,6 +239,7 @@
   --shadow-lg: var(--glass-shadow-lg);
 
   --focus-ring: 0 0 0 3px hsl(var(--hue) var(--sat) 82%);
+  --focus-ring-danger: 0 0 0 3px hsl(2deg 70% 84%);
 }
 
 /* --------------------------------------------------------------------------
@@ -1007,6 +1030,64 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: none;
   border-color: var(--border-color-focus);
   box-shadow: var(--focus-ring), var(--glass-inset);
+}
+
+/* A field the author has declared invalid. `aria-invalid="true"` and not
+   `:invalid`: an `<input required>` is `:invalid` from the moment the page
+   loads, so the whole form would open painted red before anyone typed a
+   character. `:user-invalid` fixes that but can only speak for the browser's
+   own constraint validation - a server's answer, or the author's, has no way
+   in. `aria-invalid` is the author saying so, and it is the same attribute
+   assistive technology reads, so the visual state and the announced one cannot
+   drift apart. The value is matched exactly, because `aria-invalid="false"` is
+   a valid, and very common, way of saying the field is fine.
+
+   WCAG 1.4.1: the red border is doubled by an inset line, so the field reads as
+   marked even where the hue does not separate from the theme's own. */
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: var(--color-danger);
+  box-shadow: inset 0 0 0 1px var(--color-danger), var(--glass-inset);
+}
+
+/* The rule above sets box-shadow, which is what draws the focus ring, and it
+   comes after the ring's own rule - without this the marked field would lose
+   its ring entirely. It keeps the ring and tints it instead. */
+input[aria-invalid="true"]:focus-visible,
+select[aria-invalid="true"]:focus-visible,
+textarea[aria-invalid="true"]:focus-visible {
+  outline: none;
+  border-color: var(--color-danger);
+  box-shadow: var(--focus-ring-danger), inset 0 0 0 1px var(--color-danger), var(--glass-inset);
+}
+
+/* A checkbox or a radio is drawn by the browser, and it paints over anything
+   inset behind it - the border and the second line above never reach the
+   screen. An outline is drawn outside that native box, so it survives, and the
+   accent colour carries the state through to the checked mark. The focus ring
+   is a box-shadow, so the two never compete for the same property. */
+input[type="checkbox"][aria-invalid="true"],
+input[type="radio"][aria-invalid="true"] {
+  accent-color: var(--color-danger);
+  outline: 2px solid var(--color-danger);
+  outline-offset: 2px;
+}
+
+/* The error text. CSS cannot follow the `aria-describedby` / `aria-errormessage`
+   reference that ties a message to its field - there is no selector for "the
+   element this id points at" - so the message has to say what it is, and
+   `role="alert"` is the standard way of saying it. Scoped to a form rather than
+   claiming every `[role="alert"]` on the page: a standalone alert is a separate
+   pattern with its own styling, and a bare `[role="alert"]` rule is less
+   specific than this one, so it keeps working everywhere else. */
+form [role="alert"] {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-danger);
+  border-inline-start: 2px solid var(--color-danger);
+  padding-inline-start: 0.6rem;
 }
 
 input:disabled, select:disabled, textarea:disabled {

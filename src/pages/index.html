@@ -366,6 +366,17 @@
             <label for="email" data-i18n="elements.form.email"></label>
             <input type="email" id="email" name="email" placeholder="you@example.com" required />
 
+            <label for="backup-email" data-i18n="elements.form.backupEmail"></label>
+            <input
+              type="email"
+              id="backup-email"
+              name="backup-email"
+              value="ada@example"
+              aria-invalid="true"
+              aria-describedby="backup-email-error"
+            />
+            <p id="backup-email-error" role="alert" data-i18n="elements.form.backupEmailError"></p>
+
             <label for="readonly" data-i18n="elements.form.readonly"></label>
             <input type="text" id="readonly" name="readonly" value="su-0042" readonly />
 
