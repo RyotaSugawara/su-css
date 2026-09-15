@@ -161,6 +161,18 @@ export const specimens = [
 </div>`,
   },
   {
+    id: 'busy',
+    title: 'aria-busy — 処理中',
+    note: 'ボタンはラベルの前、領域は角に輪が回る。OS の「視覚効果を減らす」を入れると、回転が止まって輪だけが残るはず。',
+    html: `
+<button type="submit" aria-busy="true">公開しています</button>
+<button type="submit" aria-busy="true" disabled>押せない公開中</button>
+<section aria-busy="true" aria-live="polite">
+  <h3>最近のデプロイ</h3>
+  <p>直近 10 件を取得しています…</p>
+</section>`,
+  },
+  {
     id: 'disabled',
     title: 'aria-disabled と inert',
     note: '操作できないものが褪せる。inert は中身ごと。',

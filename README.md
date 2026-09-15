@@ -45,8 +45,8 @@ npm install @ryo9ra/su-css
 
 | Import specifier | File | Size |
 | --- | --- | --- |
-| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 64 KB (16.1 KB gzipped) |
-| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 36 KB (6.4 KB gzipped) |
+| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 67 KB (17.1 KB gzipped) |
+| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 36 KB (6.6 KB gzipped) |
 
 From a bundler (Vite, webpack, Next.js, …):
 
@@ -115,9 +115,10 @@ separator and `aria-orientation="vertical"` stacks it.
 > cannot, reach for `role="group"` instead — it carries no such expectation.
 
 State works the same way. `aria-invalid="true"` marks a field as in error,
-`aria-disabled` and `inert` fade what cannot be operated, `aria-sort` marks the
-column a table is ordered by, and a message that carries a sentence takes a
-block: `role="alert"` for something wrong, `role="note"` for something worth
+`aria-disabled` and `inert` fade what cannot be operated, `aria-busy` puts a
+turning ring on what is still loading, `aria-sort` marks the column a table is
+ordered by, and a message that carries a sentence takes a block:
+`role="alert"` for something wrong, `role="note"` for something worth
 knowing. There is no success or warning colour, because severity has no ARIA
 role to hang one on.
 

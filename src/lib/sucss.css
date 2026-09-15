@@ -1930,3 +1930,78 @@ dialog::backdrop {
 :is(button, input[type="submit"], input[type="button"], input[type="reset"])[aria-disabled="true"]:not(:where(:focus-visible)) {
   box-shadow: none;
 }
+
+/* --------------------------------------------------------------------------
+   12. Work in progress (aria-busy)
+   `aria-busy="true"` is the author saying the contents of this element are not
+   final yet - a button waiting on its request, a list waiting on its data.
+   Assistive technology already reads it, so the page can say the same thing on
+   screen without inventing an attribute for it.
+   Not the same as unavailable, above: busy is a thing in motion, not a thing
+   switched off, so it does not borrow that section's fade. A fade would also
+   put the region's own text - which is still real text a reader may be part
+   way through - below the contrast this framework promises, and WCAG exempts
+   an inactive control from that, not a busy one.
+   -------------------------------------------------------------------------- */
+
+/* Matched exactly, because `aria-busy="false"` is how an author says the
+   loading has finished, and it is left on the element far more often than it
+   is taken off. */
+[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* One shape for both cases below: a page that has two ways of saying "wait"
+   is a page that has to teach the reader both. */
+@keyframes sucss-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* The button is already `inline-flex` with a `gap`, so the indicator lands
+   before the label, spaced, with nothing added to the layout. `flex: none`
+   keeps it round when the label is long enough to squeeze the row.
+   `<input type="submit">` is left out on purpose: it is a replaced element and
+   cannot carry generated content, so a rule here would silently do nothing.
+   Nothing is disabled either - `aria-busy` says the content is unsettled, not
+   that the control is out. An author who wants the press refused writes
+   `disabled` as well, and that is the author's call to make. */
+button[aria-busy="true"]::before {
+  content: "";
+  flex: none;
+  width: 0.9em;
+  height: 0.9em;
+  border: 2px solid currentcolor;
+  border-block-start-color: transparent;
+  border-radius: 50%;
+  animation: sucss-spin 640ms linear infinite;
+}
+
+/* A region carries the same indicator in its corner rather than in its flow.
+   Absolute positioning is what makes that safe to apply to an element whose
+   inner layout is unknown: in the flow, a generated box becomes a flex item, a
+   grid item or an anonymous table cell depending on what it landed in, and
+   moves the content it was meant to annotate. Out of flow it cannot.
+   The controls are excluded because they either have the rule above or cannot
+   render generated content at all. */
+:not(button, input, select, textarea, a, img, progress)[aria-busy="true"] {
+  position: relative;
+}
+
+:not(button, input, select, textarea, a, img, progress)[aria-busy="true"]::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.75rem;
+  inset-inline-end: 0.75rem;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentcolor;
+  border-block-start-color: transparent;
+  border-radius: 50%;
+  animation: sucss-spin 640ms linear infinite;
+
+  /* It is an annotation, not a target: it must not take a click meant for
+     what it is sitting on top of. */
+  pointer-events: none;
+}
