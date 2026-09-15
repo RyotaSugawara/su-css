@@ -419,3 +419,85 @@ describe('the focus ring inside a group or a toolbar', () => {
     expect(losers).toEqual([]);
   });
 });
+
+describe('a control that is unavailable but still reachable', () => {
+  const ariaDisabled = /\[aria-disabled="true"\]/;
+
+  /** Every rule whose selector list has a part matching `[aria-disabled="true"]`. */
+  function ariaDisabledRules(): { selector: string; declarations: Map<string, string> }[] {
+    const rules: { selector: string; declarations: Map<string, string> }[] = [];
+
+    root.walkRules((rule) => {
+      const selector = rule.selector.replaceAll(/\s+/g, ' ');
+      if (!ariaDisabled.test(selector)) return;
+
+      const declarations = new Map<string, string>();
+      rule.walkDecls((decl) => {
+        declarations.set(decl.prop, decl.value.trim());
+      });
+      rules.push({ selector, declarations });
+    });
+
+    return rules;
+  }
+
+  it('never has the pointer swallowed by the stylesheet', () => {
+    // This is the whole point of `aria-disabled` over `disabled`: the control
+    // stays focusable, reachable and announceable, so an assistive technology
+    // user can find out *why* it is unavailable. `pointer-events: none` takes
+    // that back, and no author can restore it from their own CSS. Stopping the
+    // click belongs in the handler, not here.
+    const offenders = ariaDisabledRules()
+      .filter((rule) => rule.declarations.get('pointer-events') === 'none')
+      .map((rule) => rule.selector);
+
+    expect(offenders).toEqual([]);
+  });
+
+  it('leaves the focus ring to the rule that draws it', () => {
+    // box-shadow is the ring, and flattening an ARIA-disabled button means
+    // setting it to none. A rule that does so while the control is focused
+    // erases the one affordance a keyboard user has on a control that - unlike
+    // a `disabled` one - they can still land on.
+    const offenders = ariaDisabledRules()
+      .filter((rule) => rule.declarations.get('box-shadow') === 'none')
+      .filter((rule) => !/:not\(:where\([^)]*:focus-visible/.test(rule.selector))
+      .map((rule) => rule.selector);
+
+    expect(offenders).toEqual([]);
+  });
+
+  it('fades at the same strength as a natively disabled control', () => {
+    // Two ways of saying "unavailable" that do not look alike read as two
+    // different states.
+    let nativeOpacity: string | undefined;
+    root.walkRules(/^button:disabled/, (rule) => {
+      rule.walkDecls('opacity', (decl) => {
+        nativeOpacity ??= decl.value.trim();
+      });
+    });
+
+    const ariaOpacity = ariaDisabledRules().find((rule) => rule.selector === '[aria-disabled="true"]')
+      ?.declarations.get('opacity');
+
+    expect(nativeOpacity).toBeDefined();
+    expect(ariaOpacity).toBe(nativeOpacity);
+  });
+});
+
+describe('an inert subtree', () => {
+  it('is drawn as unavailable, since the browser only behaves as if it were', () => {
+    // `inert` takes its subtree out of focus and hit testing but changes
+    // nothing on screen, so without this the page offers controls that quietly
+    // do nothing.
+    expect(hasRuleMatching(/^\[inert\]$/, { prop: /^opacity$/, value: /^0?\.\d+$/ })).toBe(true);
+  });
+
+  it('does not fade twice where one unavailable region nests in another', () => {
+    // Opacity multiplies down the tree: 0.55 inside 0.55 is 0.30, which takes
+    // the text below the contrast the rest of the stylesheet is checked at.
+    expect(
+      hasRuleMatching(/\[inert\][^,]*\s\S*:is\([^)]*\[inert\]/, { prop: /^opacity$/, value: /^1$/ }),
+    ).toBe(true);
+  });
+});

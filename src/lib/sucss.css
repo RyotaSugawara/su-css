@@ -1699,3 +1699,55 @@ dialog::backdrop {
     background-image: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   11. Unavailable controls and regions (aria-disabled, inert)
+   Two states the browser understands and never draws. `aria-disabled` marks
+   the controls `disabled` cannot reach - a link, a `role`d div, a summary -
+   and `inert` marks a whole subtree. Both borrow the vocabulary `:disabled`
+   already established, so a page does not grow a third look for a third way
+   of saying "not now".
+   -------------------------------------------------------------------------- */
+
+/* Deliberately no `pointer-events: none`. `aria-disabled` exists to say a
+   control is unavailable *while leaving it focusable and reachable*, which is
+   the only reason to reach for it over `disabled`: the control keeps its place
+   in the tab order and a screen reader can still say why it is out. Swallowing
+   the pointer here throws that away, and no author can get it back from CSS.
+   Stopping the click is the handler's job. `tests/css/structure.test.ts` holds
+   this rule to that. */
+[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* `inert` already takes its subtree out of focus, hit testing and selection.
+   The one thing the browser does not do is say so on screen; this is the
+   saying so. */
+[inert] {
+  opacity: 0.55;
+  cursor: default;
+  user-select: none;
+}
+
+/* Opacity multiplies down the tree, so an unavailable control inside an
+   unavailable region would land at 0.30 and take its text out of legibility on
+   the way. The outermost one is the one that speaks - everything below it is
+   already faded by it. */
+:is([aria-disabled="true"], [inert]) :is([aria-disabled="true"], [inert], :disabled) {
+  opacity: 1;
+}
+
+/* A button disabled by ARIA is the same button as one disabled by the
+   attribute, so it loses the lift and the shadow the way `button:disabled`
+   does, not just the colour. What it must not lose is the focus ring: this
+   control is still in the tab order. `:not(:where(…))` excludes the focused
+   state at no cost in specificity, leaving the ring's own rule to win. */
+:is(button, input[type="submit"], input[type="button"], input[type="reset"])[aria-disabled="true"] {
+  transform: none;
+  filter: none;
+}
+
+:is(button, input[type="submit"], input[type="button"], input[type="reset"])[aria-disabled="true"]:not(:where(:focus-visible)) {
+  box-shadow: none;
+}
