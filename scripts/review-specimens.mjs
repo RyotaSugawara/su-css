@@ -173,6 +173,23 @@ export const specimens = [
 </section>`,
   },
   {
+    id: 'disclosure',
+    title: 'aria-expanded + [popover] — 開閉',
+    note: 'ボタンを押すと popover が開く。開閉自体は JS ゼロ。山形を回転させているのは下の短い script で、aria-expanded を揃えるだけの仕事。CSS はその属性を描くだけで、この script の存在を前提にしていない。',
+    html: `
+<button type="button" popovertarget="specimen-popover" aria-expanded="false">その他のオプション</button>
+<div id="specimen-popover" popover>
+  <p>popover の中身。dialog と同じトークンで描いている。</p>
+</div>
+<script>
+  // aria-expanded は popovertarget からは自動で揃わない。<details> だけの特権。
+  document.querySelector('#specimen-popover').addEventListener('toggle', (event) => {
+    document.querySelector('[popovertarget="specimen-popover"]')
+      .setAttribute('aria-expanded', String(event.newState === 'open'));
+  });
+</script>`,
+  },
+  {
     id: 'disabled',
     title: 'aria-disabled と inert',
     note: '操作できないものが褪せる。inert は中身ごと。',

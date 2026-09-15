@@ -45,7 +45,7 @@ npm install @ryo9ra/su-css
 
 | Import specifier | File | Size |
 | --- | --- | --- |
-| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 67 KB (17.1 KB gzipped) |
+| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 69 KB (17.9 KB gzipped) |
 | `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 36 KB (6.6 KB gzipped) |
 
 From a bundler (Vite, webpack, Next.js, …):
@@ -99,8 +99,10 @@ Link the stylesheet and write ordinary HTML. That is the whole API.
 ```
 
 Interactive elements work natively too: `<dialog>` for modals,
-`<details>`/`<summary>` for accordions, and
-`<input type="checkbox" role="switch">` for toggles.
+`<details>`/`<summary>` for accordions, `<input type="checkbox" role="switch">`
+for toggles, and `popovertarget` with `[popover]` for a panel that opens and
+closes with no script at all — the panel shares its glass surface with
+`<dialog>` rather than a separate look of its own.
 
 ARIA carries structure as well as state. A `role="group"` around a set of
 buttons spaces them as one cluster, and every button in it keeps the look its
@@ -116,11 +118,16 @@ separator and `aria-orientation="vertical"` stacks it.
 
 State works the same way. `aria-invalid="true"` marks a field as in error,
 `aria-disabled` and `inert` fade what cannot be operated, `aria-busy` puts a
-turning ring on what is still loading, `aria-sort` marks the column a table is
-ordered by, and a message that carries a sentence takes a block:
-`role="alert"` for something wrong, `role="note"` for something worth
-knowing. There is no success or warning colour, because severity has no ARIA
-role to hang one on.
+turning ring on what is still loading, `aria-expanded` turns a chevron toward
+what a button opens, `aria-sort` marks the column a table is ordered by, and a
+message that carries a sentence takes a block: `role="alert"` for something
+wrong, `role="note"` for something worth knowing. There is no success or
+warning colour, because severity has no ARIA role to hang one on.
+
+> Keeping `aria-expanded` in step with an open `[popover]` is the one thing
+> the browser does not do for you — only `<details>` gets that for free. A few
+> lines on the panel's own `toggle` event are enough; SuCSS's demo site does
+> exactly that.
 
 ## Theming
 

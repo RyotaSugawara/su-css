@@ -38,6 +38,8 @@ describe('the review bench specimens', () => {
       'aria-disabled',
       'aria-sort',
       'aria-busy',
+      'aria-expanded',
+      'popover',
       'aria-orientation',
       'role="group"',
       'role="toolbar"',

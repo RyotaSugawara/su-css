@@ -882,3 +882,87 @@ describe('work in progress', () => {
     }
   });
 });
+
+describe('disclosure buttons and popovers', () => {
+  /** Every rule whose selector mentions aria-expanded, flattened for matching. */
+  function expandedRules(): { selector: string; declarations: Map<string, string> }[] {
+    const rules: { selector: string; declarations: Map<string, string> }[] = [];
+    root.walkRules((rule) => {
+      const selector = rule.selector.replaceAll(/\s+/g, ' ');
+      if (!selector.includes('aria-expanded')) return;
+      const declarations = new Map<string, string>();
+      rule.walkDecls((decl) => {
+        declarations.set(decl.prop, decl.value);
+      });
+      rules.push({ selector, declarations });
+    });
+    return rules;
+  }
+
+  it('marks a disclosure button, not any element that can carry the state', () => {
+    const rules = expandedRules();
+
+    expect(rules.length).toBeGreaterThan(0);
+    for (const { selector } of rules) {
+      expect(selector, `${selector} should be scoped to button`).toMatch(/^button\[aria-expanded/);
+    }
+  });
+
+  it('rotates the marker rather than swapping its shape', () => {
+    const marker = expandedRules().find(({ selector }) => selector === 'button[aria-expanded]::after');
+    const rotated = expandedRules().find(
+      ({ selector }) => selector === 'button[aria-expanded="true"]::after',
+    );
+
+    expect(marker).toBeDefined();
+    expect(marker?.declarations.get('transition')).toMatch(/transform/);
+    expect(rotated?.declarations.get('transform')).toMatch(/rotate\(180deg\)/);
+  });
+
+  it('draws the marker in the colour it inherits, not a new token', () => {
+    const marker = expandedRules().find(({ selector }) => selector === 'button[aria-expanded]::after');
+
+    expect(marker?.declarations.get('border-block-start'), 'should inherit its colour').toMatch(
+      /currentcolor/,
+    );
+  });
+
+  it('shares the dialog surface with [popover] instead of repeating it', () => {
+    let found = false;
+    root.walkRules((rule) => {
+      if (found) return;
+      const selectors = rule.selector.split(',').map((selector) => selector.trim());
+      if (selectors.includes('dialog') && selectors.includes('[popover]')) {
+        found = true;
+      }
+    });
+    expect(found).toBe(true);
+  });
+
+  it('never reaches for :popover-open', () => {
+    // Styling stays on a plain attribute selector: [popover] is already
+    // display: none while closed, so nothing here needs the pseudo-class, and
+    // reaching for it would raise the declared browser target for nothing.
+    let found = false;
+    root.walkRules((rule) => {
+      if (rule.selector.includes(':popover-open')) found = true;
+    });
+    expect(found).toBe(false);
+  });
+
+  it('lets a dialog claim the viewport without doing the same to a popover', () => {
+    function widthOn(selector: string): string[] {
+      const found: string[] = [];
+      root.walkRules((rule) => {
+        if (!rule.selector.split(',').map((s) => s.trim()).includes(selector)) return;
+        rule.walkDecls('width', (decl) => {
+          found.push(decl.value);
+        });
+      });
+      return found;
+    }
+
+    expect(widthOn('[popover]').length).toBe(0);
+    expect(widthOn('dialog').length).toBeGreaterThan(0);
+  });
+});
