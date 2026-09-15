@@ -666,3 +666,103 @@ describe('a field the author marked invalid', () => {
     expect(hasRuleMatching(/\[role="alert"\]/, { prop: /^color$/, value: /var\(--color-danger\)/ })).toBe(true);
   });
 });
+
+describe('the sorted column of a table', () => {
+  /**
+   * Declarations of `prop` on the rules whose selector list contains `selector`
+   * verbatim, in source order. Matching the whole compound keeps
+   * `th[aria-sort="ascending"]` from being answered by a rule that only names
+   * `th[aria-sort="ascending"]::after`, which is the distinction every
+   * assertion below rests on.
+   */
+  function declarationsOn(selector: string, prop: string): string[] {
+    const values: string[] = [];
+    root.walkRules((rule) => {
+      const selectors = rule.selector.split(',').map((one) => one.replaceAll(/\s+/g, ' ').trim());
+      if (!selectors.includes(selector)) return;
+      rule.walkDecls(prop, (decl) => {
+        values.push(decl.value.trim());
+      });
+    });
+    return values;
+  }
+
+  /** The border widths a rule leaves on `::after` for `aria-sort` of `value`. */
+  function markerBorders(value: string): Record<string, string> {
+    const sides: Record<string, string> = {};
+    for (const side of ['top', 'bottom', 'inline']) {
+      const [declared] = declarationsOn(`th[aria-sort="${value}"]::after`, `border-${side}`);
+      if (declared !== undefined) sides[side] = declared;
+    }
+    return sides;
+  }
+
+  it('draws a marker on the header cell that carries the direction', () => {
+    for (const value of ['ascending', 'descending']) {
+      expect(declarationsOn(`th[aria-sort="${value}"]::after`, 'content')).not.toEqual([]);
+    }
+  });
+
+  // A column that is sorted the other way must not be a recolouring of the
+  // same mark: someone who cannot tell the two colours apart would be left
+  // with no way to read the direction off the table at all.
+  it('points the marker a different way for each direction, not a different colour', () => {
+    const ascending = markerBorders('ascending');
+    const descending = markerBorders('descending');
+
+    // The triangle is a border on one edge of a zero-sized box, so the edge
+    // that carries it is the direction the marker points.
+    expect(Object.keys(ascending)).toContain('bottom');
+    expect(Object.keys(ascending)).not.toContain('top');
+    expect(Object.keys(descending)).toContain('top');
+    expect(Object.keys(descending)).not.toContain('bottom');
+  });
+
+  it('takes the marker’s colour from a token rather than naming one', () => {
+    for (const value of ['ascending', 'descending']) {
+      const borders = Object.values(markerBorders(value));
+      expect(borders.length).toBeGreaterThan(0);
+      for (const border of borders) {
+        expect(border).toMatch(/transparent|var\(--[\w-]+\)/);
+      }
+    }
+  });
+
+  it('leaves an unsorted column and one with no attribute as they were', () => {
+    // `none` is the default, and `other` means sorted by something this
+    // stylesheet cannot draw a direction for. Neither may grow a marker, and
+    // neither may a bare `th` — a selector that matches `[aria-sort]` as a
+    // whole would give all three one.
+    const marked: string[] = [];
+    root.walkRules((rule) => {
+      let draws = false;
+      rule.walkDecls('content', () => {
+        draws = true;
+      });
+      if (!draws) return;
+      for (const single of splitSelectorList(rule.selector.replaceAll(/\s+/g, ' '))) {
+        if (!/\bth\b/.test(single)) continue;
+        if (/\[aria-sort="(ascending|descending)"\]/.test(single)) continue;
+        marked.push(single);
+      }
+    });
+    expect(marked).toEqual([]);
+  });
+
+  it('keeps the marker from being stranded on its own line', () => {
+    // The gap before the marker is a margin, not whitespace in `content`: a
+    // space there is a break opportunity, and a header that wraps on a narrow
+    // screen would drop the triangle onto a line by itself.
+    for (const value of ['ascending', 'descending']) {
+      const selector = `th[aria-sort="${value}"]::after`;
+      for (const content of declarationsOn(selector, 'content')) {
+        expect(content).not.toMatch(/\s/);
+      }
+    }
+    const gaps = [
+      ...declarationsOn('th[aria-sort="ascending"]::after', 'margin-inline-start'),
+      ...declarationsOn('th[aria-sort="descending"]::after', 'margin-inline-start'),
+    ];
+    expect(gaps.length).toBeGreaterThan(0);
+  });
+});
