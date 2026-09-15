@@ -24,7 +24,7 @@
   "features.glass.title": "リキッドグラス",
   "features.glass.body": "面はすりガラスではなくレンズです。背景が透けたまま色がにじみ、縁には光の線が乗ります。",
   "features.small.title": "1ファイル・依存ゼロ",
-  "features.small.body": "CSSが1枚だけ。minify + gzip で 6 KB。JavaScriptもビルドステップもありません。",
+  "features.small.body": "CSSが1枚だけ。minify + gzip で 6.4 KB。JavaScriptもビルドステップもありません。",
   "features.tokens.title": "変数で調整",
   "features.tokens.body": "色も角丸もリズムもCSSカスタムプロパティです。<code>--hue</code> を変えればページ全体が動きます — <a href=\"./customize.html\">カスタマイザーで試す</a>。",
   "install.heading": "インストール",
