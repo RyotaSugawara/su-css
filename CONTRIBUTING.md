@@ -83,7 +83,22 @@ npm run test      # unit, contrast and structure tests
 npm run build     # demo site
 npm run build:lib # dist-lib/sucss.css and dist-lib/sucss.min.css
 npm run build:pages # render the site's pages (dev and build run this first)
+npm run build:review # dist-review/index.html — every ARIA case on one page
 ```
+
+**Look at a change before you push it.** A classless framework cannot be
+reviewed from a diff: the rules are written against elements, attributes and
+ARIA states, so what a rule does is only visible on real markup.
+`npm run build:review` renders `dist-review/index.html` from
+`src/lib/sucss.css` and `scripts/review-specimens.mjs` — one self-contained
+page, openable straight from disk, with a light/dark and a phone/tablet/full
+switch. Each case sits in its own document, so no case can leak layout into the
+next.
+
+When a feature lands, add a case for it in `scripts/review-specimens.mjs`. That
+case is what makes the *next* change to that feature reviewable, and it is
+where a regression a test cannot see — a focus ring painted over, a rule that
+catches markup it should have left alone — shows up.
 
 **The site's pages are build output, not source.** `index.html`,
 `customize.html` and everything under `ja/` is rendered — and git-ignored. The

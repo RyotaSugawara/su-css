@@ -800,3 +800,85 @@ describe('called-out messages', () => {
     expect(hasRuleMatching(/\[role="alert"\]:not\(form \*\)/, { prop: /^display$/, value: /^block$/ })).toBe(true);
   });
 });
+
+describe('work in progress', () => {
+  /** Every rule whose selector mentions aria-busy, flattened for matching. */
+  function busyRules(): { selector: string; declarations: Map<string, string> }[] {
+    const rules: { selector: string; declarations: Map<string, string> }[] = [];
+    root.walkRules((rule) => {
+      const selector = rule.selector.replaceAll(/\s+/g, ' ');
+      if (!selector.includes('aria-busy')) return;
+      const declarations = new Map<string, string>();
+      rule.walkDecls((decl) => {
+        declarations.set(decl.prop, decl.value);
+      });
+      rules.push({ selector, declarations });
+    });
+    return rules;
+  }
+
+  it('reads the attribute exactly, so aria-busy="false" stays quiet', () => {
+    // `aria-busy="false"` is how an author says the loading finished, and it is
+    // left on the element far more often than it is removed.
+    const rules = busyRules();
+
+    expect(rules.length).toBeGreaterThan(0);
+    for (const { selector } of rules) {
+      expect(selector, `${selector} would match aria-busy="false"`).toMatch(/\[aria-busy="true"\]/);
+      expect(selector, `${selector} matches the attribute regardless of value`).not.toMatch(
+        /\[aria-busy\]/,
+      );
+    }
+  });
+
+  it('gives a busy button an indicator before its label', () => {
+    const indicator = busyRules().find(({ selector }) =>
+      /^button\[aria-busy="true"\]::before$/.test(selector),
+    );
+
+    expect(indicator).toBeDefined();
+    expect(indicator?.declarations.get('animation')).toMatch(/sucss-spin/);
+  });
+
+  it('leaves the indicator visible when the movement is taken away', () => {
+    // The reduced-motion block above runs every animation to its end instantly.
+    // That is fine while the only thing animated is the indicator's rotation —
+    // a stopped ring is still a ring. Animate its opacity or its size and the
+    // same block would erase it, taking the state with it.
+    const properties: string[] = [];
+    root.walkAtRules('keyframes', (atRule) => {
+      if (atRule.params !== 'sucss-spin') return;
+      atRule.walkDecls((decl) => {
+        properties.push(decl.prop);
+      });
+    });
+
+    expect(properties.length).toBeGreaterThan(0);
+    expect([...new Set(properties)]).toEqual(['transform']);
+  });
+
+  it('does not disable what it marks', () => {
+    // `aria-busy` says the content is unsettled, not that the control is out.
+    // Swallowing the pointer, or borrowing the unavailable section's fade,
+    // would say the second thing — and the fade would drop the region's own
+    // text, which is still text someone may be reading, below AA.
+    for (const { selector, declarations } of busyRules()) {
+      if (selector.endsWith('::after') || selector.endsWith('::before')) continue;
+      expect(declarations.get('pointer-events'), `${selector} swallows the pointer`).not.toBe(
+        'none',
+      );
+      expect(declarations.has('opacity'), `${selector} fades what it marks`).toBe(false);
+    }
+  });
+
+  it('draws the indicator in the colour it inherits, not a new token', () => {
+    const indicators = busyRules().filter(({ selector }) => /::(before|after)$/.test(selector));
+
+    expect(indicators.length).toBeGreaterThan(0);
+    for (const { selector, declarations } of indicators) {
+      expect(declarations.get('border'), `${selector} should inherit its colour`).toMatch(
+        /currentcolor/,
+      );
+    }
+  });
+});
