@@ -174,7 +174,14 @@ npm run build    # build the demo site
 npm run lint     # TypeScript + Stylelint
 npm run test     # unit, contrast, CSS structure and page tests
 npm run build:pages  # render the pages on their own (dev and build do it first)
+npm run build:review # one page showing every ARIA case, to look at a change
 ```
+
+`npm run build:review` writes `dist-review/index.html`: every element, ARIA
+role and state the framework styles, each in its own document, against the
+current `src/lib/sucss.css`. It is one self-contained file with a light/dark
+and a phone/tablet/full switch, so a change can be looked at without running
+the site.
 
 The framework itself is a single hand-written file: [`src/lib/sucss.css`](src/lib/sucss.css).
 `npm run build:lib` generates the distributable CSS, and `npm run release:dry-run`
