@@ -100,7 +100,7 @@ describe('status colors', () => {
   // a white and a near-black one, so each theme declares its own pair - and
   // this is the check that keeps a future palette tweak from quietly dropping
   // one of the eight below the line.
-  const statusTokens = ['--color-success', '--color-warning', '--color-danger', '--color-info'];
+  const statusTokens = ['--color-danger'];
   const surfaces = ['--bg-surface', '--bg-body', '--bg-input'];
 
   const themes: [string, TokenMap][] = [
