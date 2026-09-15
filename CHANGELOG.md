@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.6.0](https://github.com/RyotaSugawara/su-css/compare/v0.5.0...v0.6.0) (2026-09-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* a document that already carries `aria-expanded` on a button, or `[popover]`, renders differently without any change to its HTML.
+* **review:** a document that already carries `aria-busy="true"` renders differently without any change to its HTML — a turning ring before a button's label, or in the corner of a region.
+* `role="alert"` outside a form, and `role="note"` anywhere, render differently without any change to their HTML.
+* three documented custom properties are gone. Overriding them already did nothing, but a theme that sets them should stop.
+
+### Features
+
+* draw role="alert" and role="note" as called-out blocks ([#68](https://github.com/RyotaSugawara/su-css/issues/68)) ([3f401fe](https://github.com/RyotaSugawara/su-css/commit/3f401fe15c64ee39eea3640fe97041a12be721ff)), closes [#53](https://github.com/RyotaSugawara/su-css/issues/53)
+* drop the status colour tokens nothing can use ([#66](https://github.com/RyotaSugawara/su-css/issues/66)) ([17dabca](https://github.com/RyotaSugawara/su-css/commit/17dabca4bb9a38e007a8b1780cc2f1b7cde7c47b)), closes [#64](https://github.com/RyotaSugawara/su-css/issues/64)
+* render a disclosure from aria-expanded and a panel from [popover] ([#71](https://github.com/RyotaSugawara/su-css/issues/71)) ([c3d5516](https://github.com/RyotaSugawara/su-css/commit/c3d5516cc8de43863d3fc92237365aefb8c3a2ba))
+
+
+### Chores
+
+* **review:** build a one-page review bench from the stylesheet ([#69](https://github.com/RyotaSugawara/su-css/issues/69)) ([56cfd78](https://github.com/RyotaSugawara/su-css/commit/56cfd7812b4b06a2d308e4cb0d3a11ba6c5f9785))
+
 ## [0.5.0](https://github.com/RyotaSugawara/su-css/compare/v0.4.0...v0.5.0) (2026-09-15)
 
 
