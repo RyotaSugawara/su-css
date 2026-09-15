@@ -1806,11 +1806,20 @@ details[open] summary {
 }
 
 /* Dialog / Modal, and the surface a [popover] panel shares with it. Sharing
-   the rule rather than repeating it is what #54 asks for, and what is left out
-   is deliberate: a dialog is a modal, so it centers itself and claims most of
-   a small screen, while a popover is usually anchored near whatever opened it
+   the rule rather than repeating it is what #54 asks for. What is left out on
+   purpose is sizing, not position: a dialog is a modal, so it claims most of a
+   small screen, while a popover is usually anchored near whatever opened it
    and often holds far less - forcing a dialog's width onto it would balloon a
-   small menu out to most of the viewport. Positioning stays dialog's alone.
+   small menu out to most of the viewport. Centering itself is not something
+   either one can leave out, though: the UA stylesheet gives `[popover]` (and
+   `dialog`) `margin: auto` against its own `inset: 0` to center the box on the
+   viewport, and this file's own reset above (`*, *::before, *::after { margin:
+   0 }`) zeroes it right back out - an author rule always wins over a
+   user-agent one at equal specificity, `*` included. Left alone, a popover
+   opens pinned to the top-left corner instead of centered, sitting over
+   whatever was already there - including, in testing, the very button that
+   would have closed it again. `margin: auto` has to be restated here for the
+   same reason dialog restates it below: this file already took it away once.
 
    Nothing here reaches for `:popover-open`. `[popover]` is already `display:
    none` while closed, in every browser that implements the attribute at all,
@@ -1822,6 +1831,7 @@ details[open] summary {
    accepted cost of styling an attribute this new. */
 dialog,
 [popover] {
+  margin: auto;
   padding: 1.75rem;
   border-radius: var(--radius);
   border: 1px solid var(--glass-border);
@@ -1834,7 +1844,6 @@ dialog,
 }
 
 dialog {
-  margin: auto;
   max-width: 500px;
   width: 90%;
 }

@@ -45,7 +45,7 @@ npm install @ryo9ra/su-css
 
 | Import specifier | File | Size |
 | --- | --- | --- |
-| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 69 KB (17.9 KB gzipped) |
+| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 70 KB (18.1 KB gzipped) |
 | `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 36 KB (6.6 KB gzipped) |
 
 From a bundler (Vite, webpack, Next.js, …):

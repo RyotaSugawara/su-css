@@ -950,6 +950,25 @@ describe('disclosure buttons and popovers', () => {
     expect(found).toBe(false);
   });
 
+  it("restates margin: auto on [popover], because the file's own reset would otherwise zero it", () => {
+    // The universal reset (\`*, *::before, *::after { margin: 0 }\`) is author
+    // origin, so it beats the UA stylesheet's own \`margin: auto\` on [popover]
+    // at any specificity - including \`*\`. Without restating it, a popover
+    // opens pinned to the inset: 0 corner instead of centered, sitting over
+    // whatever else was there. Confirmed the hard way: the panel covered its
+    // own invoking button and nothing could close it.
+    let found = false;
+    root.walkRules((rule) => {
+      if (found) return;
+      const selectors = rule.selector.split(',').map((selector) => selector.trim());
+      if (!selectors.includes('[popover]')) return;
+      rule.walkDecls('margin', (decl) => {
+        if (decl.value.trim() === 'auto') found = true;
+      });
+    });
+    expect(found).toBe(true);
+  });
+
   it('lets a dialog claim the viewport without doing the same to a popover', () => {
     function widthOn(selector: string): string[] {
       const found: string[] = [];
