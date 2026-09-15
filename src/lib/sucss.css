@@ -1805,8 +1805,32 @@ details[open] summary {
   padding-bottom: 0.5rem;
 }
 
-/* Dialog / Modal */
-dialog {
+/* Dialog / Modal, and the surface a [popover] panel shares with it. Sharing
+   the rule rather than repeating it is what #54 asks for. What is left out on
+   purpose is sizing, not position: a dialog is a modal, so it claims most of a
+   small screen, while a popover is usually anchored near whatever opened it
+   and often holds far less - forcing a dialog's width onto it would balloon a
+   small menu out to most of the viewport. Centering itself is not something
+   either one can leave out, though: the UA stylesheet gives `[popover]` (and
+   `dialog`) `margin: auto` against its own `inset: 0` to center the box on the
+   viewport, and this file's own reset above (`*, *::before, *::after { margin:
+   0 }`) zeroes it right back out - an author rule always wins over a
+   user-agent one at equal specificity, `*` included. Left alone, a popover
+   opens pinned to the top-left corner instead of centered, sitting over
+   whatever was already there - including, in testing, the very button that
+   would have closed it again. `margin: auto` has to be restated here for the
+   same reason dialog restates it below: this file already took it away once.
+
+   Nothing here reaches for `:popover-open`. `[popover]` is already `display:
+   none` while closed, in every browser that implements the attribute at all,
+   so a plain attribute selector only ever paints the open state - the pseudo-
+   class would buy nothing but a higher declared browser target. In a browser
+   that does not implement `[popover]`, the attribute does nothing and the
+   panel renders as a plain, permanently visible block; decorating it here
+   makes that block look like a surface that is stuck open, which is the
+   accepted cost of styling an attribute this new. */
+dialog,
+[popover] {
   margin: auto;
   padding: 1.75rem;
   border-radius: var(--radius);
@@ -1817,6 +1841,9 @@ dialog {
   -webkit-backdrop-filter: var(--glass-filter);
   color: var(--text-main);
   box-shadow: var(--glass-shadow-lg);
+}
+
+dialog {
   max-width: 500px;
   width: 90%;
 }
@@ -1834,7 +1861,7 @@ dialog::backdrop {
    shipping the visual effect.
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-transparency: reduce) {
-  article, aside, section, header, footer, dialog, fieldset, details,
+  article, aside, section, header, footer, dialog, fieldset, details, [popover],
   [role="banner"], [role="complementary"], [role="region"], [role="contentinfo"],
   table, pre, kbd, blockquote,
   input[type="text"], input[type="email"], input[type="password"],
@@ -1859,7 +1886,7 @@ dialog::backdrop {
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  article, aside, section, header, footer, dialog, fieldset, details,
+  article, aside, section, header, footer, dialog, fieldset, details, [popover],
   [role="banner"], [role="complementary"], [role="region"], [role="contentinfo"],
   table, pre, kbd, blockquote,
   input[type="text"], input[type="email"], input[type="password"],
@@ -2004,4 +2031,33 @@ button[aria-busy="true"]::before {
   /* It is an annotation, not a target: it must not take a click meant for
      what it is sitting on top of. */
   pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   13. Disclosure buttons (aria-expanded)
+   A button that opens something elsewhere - a menu, a filter panel - says so
+   with `aria-expanded`, and the marker draws that on screen: the borders-only
+   triangle #50 already draws for aria-sort, for the same reason repeated
+   there - no glyph, no font fallback, no baseline to chase across platforms.
+   It points down toward what is collapsed, and rotates to point up once
+   `aria-expanded="true"` says it has already opened - the same two states a
+   native <select> already draws this way.
+   No margin moves it from the label: button is already inline-flex with a
+   gap (see §4), so the generated box becomes the last flex item and that gap
+   places it, the same reasoning the aria-busy indicator relies on.
+   The panel this button opens - a [popover], most often - shares its glass
+   surface with dialog rather than repeating it; see that rule above.
+   -------------------------------------------------------------------------- */
+button[aria-expanded]::after {
+  content: "";
+  flex: none;
+  width: 0;
+  height: 0;
+  border-inline: 0.3em solid transparent;
+  border-block-start: 0.36em solid currentcolor;
+  transition: transform var(--transition-liquid);
+}
+
+button[aria-expanded="true"]::after {
+  transform: rotate(180deg);
 }

@@ -1,6 +1,7 @@
 /**
  * The demo site's only JavaScript: the theme switch, the copy buttons, the
- * dialog demo, and the current-section marker in the nav.
+ * dialog demo, the popover disclosure demo, and the current-section marker
+ * in the nav.
  *
  * SuCSS itself ships no JavaScript. Everything here belongs to the page.
  *
@@ -90,6 +91,22 @@ for (const button of document.querySelectorAll('[data-copy]')) {
 for (const button of document.querySelectorAll('[data-dialog]')) {
   button.addEventListener('click', () => {
     document.querySelector(button.dataset.dialog)?.showModal();
+  });
+}
+
+/* -- Popover disclosure demo ----------------------------------------------
+   `popovertarget` opens and closes the panel with no script at all - the
+   browser wires the click. What it does not do is keep the invoking button's
+   `aria-expanded` in step: only <details> gets that for free. So the marker
+   this page demonstrates (drawn purely from `aria-expanded` in
+   src/lib/sucss.css) needs this much JavaScript to move, on this page or any
+   other - a few lines the CSS itself never assumes are there. */
+
+for (const panel of document.querySelectorAll('[popover]')) {
+  panel.addEventListener('toggle', (event) => {
+    for (const invoker of document.querySelectorAll(`[popovertarget="${panel.id}"]`)) {
+      invoker.setAttribute('aria-expanded', String(event.newState === 'open'));
+    }
   });
 }
 
