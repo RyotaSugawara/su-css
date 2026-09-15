@@ -55,6 +55,21 @@ const agent = `
       var margin = parseFloat(getComputedStyle(element).marginBottom) || 0;
       bottom = Math.max(bottom, element.getBoundingClientRect().bottom + scrollY + margin);
     });
+
+    // A [popover] or <dialog> is position: fixed, centered by the UA
+    // stylesheet's own margin: auto against inset: 0 - it never contributes
+    // to an ancestor's box, at any depth, so the walk above cannot see one
+    // that just opened. offsetHeight reads straight from its own content
+    // instead of from wherever the current (possibly too short) viewport
+    // happens to have centered it, so it stays right through the very
+    // resize this triggers.
+    Array.prototype.forEach.call(
+      document.querySelectorAll('[popover]:popover-open, dialog[open]'),
+      function (element) {
+        bottom = Math.max(bottom, element.offsetHeight + 32);
+      },
+    );
+
     return Math.ceil(
       bottom +
         (parseFloat(style.paddingBottom) || 0) +
@@ -78,6 +93,17 @@ const agent = `
       observer.observe(element);
     });
   }
+
+  // A [popover] or <dialog> is position: fixed, so opening one never
+  // changes any ancestor's own box - not even the stage div that wraps
+  // every specimen, which is all ResizeObserver above is watching. Confirmed
+  // the hard way: a popover opened, rendered, and was centered on a viewport
+  // this iframe never grew to fit, because nothing told the parent a taller
+  // frame was needed. Neither event bubbles, so each element needs its own
+  // listener rather than one delegated at the document.
+  Array.prototype.forEach.call(document.querySelectorAll('[popover], dialog'), function (element) {
+    element.addEventListener('toggle', send);
+  });
   if (document.fonts) document.fonts.ready.then(send);
   send();
 })();

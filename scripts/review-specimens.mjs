@@ -175,11 +175,15 @@ export const specimens = [
   {
     id: 'disclosure',
     title: 'aria-expanded + [popover] — 開閉',
-    note: 'ボタンを押すと popover が開く。開閉自体は JS ゼロ。山形を回転させているのは下の短い script で、aria-expanded を揃えるだけの仕事。CSS はその属性を描くだけで、この script の存在を前提にしていない。',
+    note:
+      'ボタンを押すと popover が開く。開閉自体は JS ゼロ。山形を回転させているのは下の短い script で、aria-expanded を揃えるだけの仕事。CSS はその属性を描くだけで、この script の存在を前提にしていない。' +
+      'この見本だけ高さを確保しているのはレビュー台の都合：[popover] は自分のビューポート全体を使って中央寄せになるので、枠が狭いままだと開いたパネルが自分を開いたボタンを覆う。実際のページはもっと縦に長いので起きない。',
     html: `
-<button type="button" popovertarget="specimen-popover" aria-expanded="false">その他のオプション</button>
-<div id="specimen-popover" popover>
-  <p>popover の中身。dialog と同じトークンで描いている。</p>
+<div style="min-height:260px">
+  <button type="button" popovertarget="specimen-popover" aria-expanded="false">その他のオプション</button>
+  <div id="specimen-popover" popover>
+    <p>popover の中身。dialog と同じトークンで描いている。</p>
+  </div>
 </div>
 <script>
   // aria-expanded は popovertarget からは自動で揃わない。<details> だけの特権。

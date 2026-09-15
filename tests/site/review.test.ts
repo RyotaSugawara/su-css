@@ -54,3 +54,34 @@ describe('the review bench specimens', () => {
     }
   });
 });
+
+describe('the review bench height-tracking agent', () => {
+  const build = readFileSync(path.join(root, 'scripts/build-review.mjs'), 'utf8');
+
+  it('re-measures on toggle, not only through ResizeObserver on body children', () => {
+    // A [popover] or <dialog> is position: fixed, so opening one never
+    // changes any ancestor's own box - not the body, and not the stage div
+    // that wraps every specimen. ResizeObserver watching those ancestors
+    // alone cannot see it open. Confirmed the hard way: the bench never
+    // grew to fit an opened popover, which then rendered clipped by its own
+    // iframe with no way to reach whatever of it fell outside.
+    expect(build).toMatch(/addEventListener\(['"]toggle['"],\s*send\)/);
+  });
+
+  it('measures an open popover or dialog from its own content, not its clipped position', () => {
+    expect(build).toContain('popover]:popover-open');
+    expect(build).toMatch(/offsetHeight/);
+  });
+});
+
+describe('the disclosure specimen', () => {
+  it('reserves enough height that an open popover cannot cover its own button', () => {
+    // [popover] centers on its whole viewport - the review bench's, here,
+    // not the page's. A specimen too short leaves no room between a button
+    // near the top and a panel centered below it, and the panel ends up
+    // sitting on the button that opened it - which was also the only way to
+    // close it again.
+    const disclosure = specimens.find((specimen) => specimen.id === 'disclosure');
+    expect(disclosure?.html).toMatch(/min-height/);
+  });
+});
