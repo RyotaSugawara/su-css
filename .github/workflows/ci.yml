@@ -47,6 +47,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Install Playwright's Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Behavior scripts (real keyboard nav, against the built site)
+        run: npm run test:behaviors
+
       - name: Verify the npm package contents
         run: npm pack --dry-run
 
