@@ -518,6 +518,40 @@ blockquote p:last-child {
   margin-bottom: 0;
 }
 
+/* Called-out messages. `role="status"` above is a badge because a status is a
+   word or two - "Saved", "3 unread". These two carry a sentence, so they take
+   the shape a blockquote already established for a called-out block: a coloured
+   band down the leading edge and a face behind the text.
+   Only two of them exist because only two severities have a role to stand on.
+   `alert` means something is wrong and `note` means something is worth knowing;
+   "succeeded" and "be careful" would need a class to say which they are, and
+   this framework does not have one.
+   An alert inside a form is excluded rather than overridden: the forms section
+   draws a field's error as a line of text beside its input, and that rule
+   declares only what it changes - a face and a radius set here would leak
+   through it and turn every validation message into a panel. */
+[role="alert"]:not(form *),
+[role="note"] {
+  display: block;
+  margin: 1.5rem 0;
+  padding: 0.85rem 1.25rem;
+  border-inline-start: 4px solid var(--border-color);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background-color: var(--bg-subtle);
+  color: var(--text-muted);
+  box-shadow: var(--glass-rim);
+}
+
+/* The face is mixed from the danger colour rather than stored as a token: one
+   more colour that only one rule would ever read is a token that has to be
+   declared in four theme blocks and checked in every one. Mixing against the
+   surface keeps it correct in both themes for free. */
+[role="alert"]:not(form *) {
+  border-inline-start-color: var(--color-danger);
+  background-color: color-mix(in oklab, var(--color-danger) 10%, var(--bg-surface));
+  color: var(--text-main);
+}
+
 blockquote cite {
   display: block;
   font-style: normal;

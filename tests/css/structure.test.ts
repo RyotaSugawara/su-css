@@ -766,3 +766,37 @@ describe('the sorted column of a table', () => {
     expect(gaps.length).toBeGreaterThan(0);
   });
 });
+
+describe('called-out messages', () => {
+  /** The selectors of the rule that paints a standalone alert or note. */
+  function calloutSelectors(): string[] {
+    const found: string[] = [];
+    root.walkRules((rule) => {
+      const selector = rule.selector.replaceAll(/\s+/g, ' ');
+      if (selector.includes('[role="alert"]') && !selector.startsWith('form ')) {
+        found.push(selector);
+      }
+    });
+    return found;
+  }
+
+  it('never turns a field error into a panel', () => {
+    // The forms section draws a field's error as a line of text beside its
+    // input, and declares only what it changes. A face, a radius or block
+    // padding set by the standalone rule would leak straight through it, so the
+    // standalone rule has to exclude a form rather than rely on being outranked.
+    const selectors = calloutSelectors();
+
+    expect(selectors.length).toBeGreaterThan(0);
+    for (const selector of selectors) {
+      expect(selector, `${selector} would also match a field's error`).toContain(':not(form *)');
+    }
+  });
+
+  it('keeps a status a badge and a message a block', () => {
+    // A status is a word or two and stays inline; alert and note carry a
+    // sentence, so they take the blockquote's shape instead.
+    expect(hasRuleMatching(/\[role="status"\]/, { prop: /^display$/, value: /inline-flex/ })).toBe(true);
+    expect(hasRuleMatching(/\[role="alert"\]:not\(form \*\)/, { prop: /^display$/, value: /^block$/ })).toBe(true);
+  });
+});
