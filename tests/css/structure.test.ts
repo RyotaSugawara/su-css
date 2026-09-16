@@ -264,6 +264,47 @@ describe('a toolbar', () => {
   });
 });
 
+describe('a tablist', () => {
+  it('marks the selected tab with more than a colour, the same as aria-pressed', () => {
+    // WCAG 1.4.1, the same reasoning the segmented-control test above uses:
+    // aria-selected="true" has to carry a fill, not just a hue shift.
+    let paintsABackground = false;
+
+    root.walkRules(/\[role="tab"\]\[aria-selected="true"\]/, (rule) => {
+      if (rule.selector.includes(':hover')) return;
+      rule.walkDecls(/^background(-image|-color)?$/, (decl) => {
+        if (decl.value !== 'transparent' && decl.value !== 'none') paintsABackground = true;
+      });
+    });
+
+    expect(paintsABackground).toBe(true);
+  });
+
+  it('stacks vertically under aria-orientation="vertical", like a toolbar', () => {
+    let stacksVertically = false;
+
+    root.walkRules('[role="tablist"][aria-orientation="vertical"]', (rule) => {
+      rule.walkDecls('flex-direction', (decl) => {
+        if (decl.value === 'column') stacksVertically = true;
+      });
+    });
+
+    expect(stacksVertically).toBe(true);
+  });
+
+  it('gives the panel a focus ring, since an author makes it a tab stop of its own', () => {
+    let ringsOnFocus = false;
+
+    root.walkRules('[role="tabpanel"]:focus-visible', (rule) => {
+      rule.walkDecls('box-shadow', (decl) => {
+        if (decl.value !== 'none') ringsOnFocus = true;
+      });
+    });
+
+    expect(ringsOnFocus).toBe(true);
+  });
+});
+
 /** Split a selector list on its own commas, ignoring those inside `:is(…)`. */
 function splitSelectorList(list: string): string[] {
   const parts: string[] = [];
@@ -372,7 +413,7 @@ describe('the focus ring inside a group or a toolbar', () => {
   // Every rule in that part of the stylesheet sets box-shadow, and box-shadow
   // is what draws the ring. A rule that outranks the ring does not look broken
   // in the file - it silently erases the one affordance a keyboard user has.
-  const groupScoped = /\[role="(group|toolbar)"\]/;
+  const groupScoped = /\[role="(group|toolbar|tablist)"\]/;
 
   interface Rule {
     selector: string;

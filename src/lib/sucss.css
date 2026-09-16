@@ -954,6 +954,95 @@ button[type="reset"][aria-pressed="true"] {
   box-shadow: var(--focus-ring);
 }
 
+/* Tabs. A tablist reuses the segmented control's own capsule above - one
+   recessed trough with a chosen pill riding inside it - because the contract
+   is the same: `role="tab"` carries `aria-selected` the way a segmented
+   button carries `aria-pressed`. What differs is behaviour, not looks: a tab
+   list is expected to move the selection (and the panel it reveals) as focus
+   moves between tabs, which needs `@ryo9ra/su-css/behaviors.js` or a
+   hand-written equivalent - this stylesheet only ever draws whichever tab
+   already reads `aria-selected="true"`. */
+[role="tablist"] {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  max-width: 100%;
+  padding: 0.25rem;
+  background-color: var(--glass-bg);
+  background-image: var(--glass-tint);
+  backdrop-filter: var(--glass-filter-soft);
+  -webkit-backdrop-filter: var(--glass-filter-soft);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--glass-inset);
+}
+
+[role="tablist"][aria-orientation="vertical"] {
+  flex-direction: column;
+  align-items: stretch;
+  width: fit-content;
+}
+
+[role="tablist"] > [role="tab"] {
+  flex: 1 1 auto;
+  justify-content: center;
+  min-height: calc(var(--touch-target) - 0.5rem);
+  padding: 0.4rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background-color: transparent;
+  background-image: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  box-shadow: none;
+  transition: background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-liquid);
+}
+
+[role="tablist"] > [role="tab"]:hover {
+  color: var(--text-main);
+  background-color: var(--glass-bg-hover);
+  box-shadow: var(--glass-rim);
+  transform: none;
+  filter: none;
+}
+
+/* The chosen tab, drawn exactly like a pressed segment: a filled pill rather
+   than a tinted face, so the selection reads on the recessed trough. */
+[role="tablist"] > [role="tab"][aria-selected="true"] {
+  color: var(--color-primary-text);
+  background-color: transparent;
+  background-image: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  border-color: rgb(255 255 255 / 35%);
+  box-shadow: 0 1px 4px -1px hsl(var(--hue) var(--sat) 44% / 40%), var(--glass-rim);
+}
+
+[role="tablist"] > [role="tab"][aria-selected="true"]:hover {
+  background-color: transparent;
+  filter: brightness(1.06);
+  transform: none;
+}
+
+[role="tablist"] > [role="tab"]:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* The panel a tab reveals. An author gives it tabindex="0" (WAI-ARIA APG) so
+   a keyboard user can read or scroll it as one stop without tabbing through
+   every interactive element inside - that ring is drawn here rather than
+   left to the global input/select rules below, which never see this role. */
+[role="tabpanel"]:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius);
+}
+
 /* --------------------------------------------------------------------------
    5. Forms & Inputs
    -------------------------------------------------------------------------- */

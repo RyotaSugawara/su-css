@@ -56,7 +56,7 @@ const report = (name, content) => {
 report('sucss.css', banner + source);
 report('sucss.min.css', banner + minified);
 
-const behaviorFiles = ['behaviors.js', 'behaviors/enhance.js', 'behaviors/toolbar.js'];
+const behaviorFiles = ['behaviors.js', 'behaviors/enhance.js', 'behaviors/toolbar.js', 'behaviors/tablist.js'];
 let behaviorsTotal = 0;
 let behaviorsTotalGzip = 0;
 
