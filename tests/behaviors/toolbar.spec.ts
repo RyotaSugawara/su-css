@@ -93,3 +93,50 @@ test('a mouse click updates which item Tab would return to', async ({page}) => {
   await expect(link).toHaveAttribute('tabindex', '0');
   await expect(bold).toHaveAttribute('tabindex', '-1');
 });
+
+test('moving through the nested toggle-button group never traps focus, and never presses a button on its own', async ({
+  page,
+}) => {
+  const bar = toolbar(page);
+  const bold = bar.getByRole('button', {name: 'Bold'});
+  const italic = bar.getByRole('button', {name: 'Italic'});
+  const link = bar.getByRole('button', {name: 'Link'});
+
+  // Bold and Italic are nested inside their own role="group" - one composite
+  // this toolbar's own CSS already draws as a segmented control - but moving
+  // the arrow key through it is exactly like moving through any other
+  // command: it does not, on its own, toggle aria-pressed. That is what
+  // makes flat traversal correct here rather than a shortcut: a toggle
+  // button's own selection and its focus are independent, unlike a native
+  // role="radiogroup" where arrowing through would change the selection too.
+  await bold.focus();
+  await page.keyboard.press('ArrowRight'); // into Italic, still inside the group
+  await expect(italic).toBeFocused();
+  await expect(bold).toHaveAttribute('aria-pressed', 'true'); // unchanged by the move
+  await expect(italic).toHaveAttribute('aria-pressed', 'false'); // unchanged by the move
+
+  // One more step carries focus straight out of the group and on to the
+  // toolbar's next command - nothing about the group's own boundary holds
+  // focus back.
+  await page.keyboard.press('ArrowRight');
+  await expect(link).toBeFocused();
+});
+
+test('a synthetic click - carrying none of the browser\'s own click-focus - still moves the tab stop', async ({
+  page,
+}) => {
+  const bar = toolbar(page);
+  const bold = bar.getByRole('button', {name: 'Bold'});
+  const link = bar.getByRole('button', {name: 'Link'});
+
+  // page.click() drives a real mousedown/mouseup, which Chromium already
+  // focuses on its own - the same native behaviour Safari lacks, so it can't
+  // tell this fix's own .focus() call apart from the browser's. Dispatching
+  // a bare 'click' event through the DOM carries no such default action in
+  // any engine, Chromium included: it exercises only the click listener
+  // toolbar.js adds for Safari, the same path a real Safari tap takes.
+  await link.evaluate((el) => el.dispatchEvent(new MouseEvent('click', {bubbles: true})));
+  await expect(link).toBeFocused();
+  await expect(link).toHaveAttribute('tabindex', '0');
+  await expect(bold).toHaveAttribute('tabindex', '-1');
+});
