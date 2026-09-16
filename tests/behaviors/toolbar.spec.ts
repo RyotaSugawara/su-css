@@ -121,3 +121,22 @@ test('moving through the nested toggle-button group never traps focus, and never
   await page.keyboard.press('ArrowRight');
   await expect(link).toBeFocused();
 });
+
+test('a synthetic click - carrying none of the browser\'s own click-focus - still moves the tab stop', async ({
+  page,
+}) => {
+  const bar = toolbar(page);
+  const bold = bar.getByRole('button', {name: 'Bold'});
+  const link = bar.getByRole('button', {name: 'Link'});
+
+  // page.click() drives a real mousedown/mouseup, which Chromium already
+  // focuses on its own - the same native behaviour Safari lacks, so it can't
+  // tell this fix's own .focus() call apart from the browser's. Dispatching
+  // a bare 'click' event through the DOM carries no such default action in
+  // any engine, Chromium included: it exercises only the click listener
+  // toolbar.js adds for Safari, the same path a real Safari tap takes.
+  await link.evaluate((el) => el.dispatchEvent(new MouseEvent('click', {bubbles: true})));
+  await expect(link).toBeFocused();
+  await expect(link).toHaveAttribute('tabindex', '0');
+  await expect(bold).toHaveAttribute('tabindex', '-1');
+});

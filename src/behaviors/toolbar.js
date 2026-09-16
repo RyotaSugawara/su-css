@@ -76,14 +76,26 @@ function initToolbar(toolbar) {
     moveFocus(current, to);
   });
 
-  // Whatever a click, or a script's own .focus() call, lands on becomes the
-  // one item in the tab order, so the keyboard and the pointer never
-  // disagree about which command Tab would return to.
+  // Whatever gets focus becomes the one item in the tab order, so the
+  // keyboard and the pointer never disagree about which command Tab would
+  // return to.
   toolbar.addEventListener('focusin', (event) => {
     const current = items(toolbar);
     const at = current.indexOf(event.target);
     if (at === -1) return;
     for (const element of current) element.tabIndex = element === event.target ? 0 : -1;
+  });
+
+  // Safari does not focus a <button> on click - macOS Safari only does it
+  // once "Full Keyboard Access" is turned on, and iOS Safari never does,
+  // tap included - so the focusin handler above never runs there on its own.
+  // Chromium and Firefox already focus a clicked button and would fire this
+  // a second, harmless time (.focus() on the already-focused element is a
+  // no-op); this line is the fix for the one platform that needed it.
+  toolbar.addEventListener('click', (event) => {
+    const target = event.target.closest(ITEM_SELECTOR);
+    if (!target || !items(toolbar).includes(target)) return;
+    if (document.activeElement !== target) target.focus();
   });
 }
 

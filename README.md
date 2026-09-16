@@ -48,8 +48,8 @@ npm install @ryo9ra/su-css
 | --- | --- | --- |
 | `@ryo9ra/su-css` | `dist-lib/sucss.css` | 70 KB (18.1 KB gzipped) |
 | `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 36 KB (6.6 KB gzipped) |
-| `@ryo9ra/su-css/behaviors.js` | `dist-lib/behaviors.js` + its own imports | 5.2 KB (2.4 KB gzipped) |
-| `@ryo9ra/su-css/behaviors.min.js` | `dist-lib/behaviors.min.js` | 1.3 KB (0.7 KB gzipped) |
+| `@ryo9ra/su-css/behaviors.js` | `dist-lib/behaviors.js` + its own imports | 5.8 KB (2.7 KB gzipped) |
+| `@ryo9ra/su-css/behaviors.min.js` | `dist-lib/behaviors.min.js` | 1.4 KB (0.7 KB gzipped) |
 
 From a bundler (Vite, webpack, Next.js, …):
 
