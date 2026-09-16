@@ -129,7 +129,7 @@
   "elements.buttons.toolbarBold": "Bold",
   "elements.buttons.toolbarItalic": "Italic",
   "elements.buttons.toolbarLink": "Link",
-  "elements.buttons.toolbarNote": "A toolbar asks Tab to enter it once and the arrow keys to move inside. SuCSS draws the bar; that keyboard behaviour is yours to write. Use role=\"group\" when you cannot.",
+  "elements.buttons.toolbarNote": "A toolbar asks Tab to enter it once and the arrow keys to move inside. SuCSS draws the bar; @ryo9ra/su-css/behaviors.js writes the keyboard part, or write it yourself. Use role=\"group\" when you cannot do either.",
   "elements.buttons.stable": "Stable",
   "elements.buttons.zeroDeps": "Zero dependencies",
   "elements.buttons.download": "Download",

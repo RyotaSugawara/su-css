@@ -33,8 +33,9 @@ built in.
   sheet: the backdrop stays legible through them, colour blooms out of them,
   and every edge carries a specular rim. Controls are capsule-shaped and settle
   with a short overshoot.
-- **Small and dependency-free.** One CSS file, under 7 KB gzipped. No
-  JavaScript, no build step.
+- **Small and dependency-free.** One CSS file, no build step. The look needs
+  no JavaScript at all — an optional script adds keyboard behaviour to the
+  few patterns that need it (`role="toolbar"`, for now).
 - **Themeable.** Every color, radius, and shadow is a CSS custom property.
 
 ## Install
@@ -47,6 +48,7 @@ npm install @ryo9ra/su-css
 | --- | --- | --- |
 | `@ryo9ra/su-css` | `dist-lib/sucss.css` | 70 KB (18.1 KB gzipped) |
 | `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 36 KB (6.6 KB gzipped) |
+| `@ryo9ra/su-css/behaviors.js` | `dist-lib/behaviors.js` + its own import | 5.0 KB (2.3 KB gzipped) |
 
 From a bundler (Vite, webpack, Next.js, …):
 
@@ -64,6 +66,36 @@ Or straight from a CDN, with no install at all:
 > releases may still change how things look, so pin an exact version in
 > production by appending it to the package name —
 > `@ryo9ra/su-css@1.2.3/dist-lib/sucss.min.css`.
+
+### Optional keyboard behaviors
+
+The stylesheet alone gets every element to a reachable, focus-visible state,
+`role="toolbar"` included — Tab reaches it, but the arrow keys inside it do
+nothing on their own, because that is scripted behaviour and this package
+ships none by default. `behaviors.js` is that script, opted into separately:
+
+```js
+import '@ryo9ra/su-css/behaviors.js';
+```
+
+Importing it scans the page once for the patterns it knows and wires up
+their standard keyboard behaviour — right now, roving-tabindex arrow-key
+navigation for `role="toolbar"`. It reads the same markup the stylesheet
+already does: no new attribute, no class. Nothing about the way something
+*looks* depends on this import; skip it and a toolbar is still a toolbar,
+just one where only Tab moves through it.
+
+For DOM added after that initial scan — a panel inserted by your own script,
+say — call `enhance` yourself instead, which does the same scan without the
+side effect of running on import, so a bundler can drop it entirely when
+nothing calls it:
+
+```js
+import {enhance} from '@ryo9ra/su-css/behaviors/enhance.js';
+
+enhance(); // the whole document, same as importing behaviors.js
+enhance(myNewPanel); // or scoped to a subtree
+```
 
 ## Usage
 
@@ -113,8 +145,9 @@ of buttons that carries a selection is a choice rather than a cluster. A
 separator and `aria-orientation="vertical"` stacks it.
 
 > A toolbar also asks Tab to enter it once and the arrow keys to move inside
-> it. SuCSS draws the bar; that keyboard behaviour is yours to write. When you
-> cannot, reach for `role="group"` instead — it carries no such expectation.
+> it. SuCSS draws the bar; `@ryo9ra/su-css/behaviors.js` writes the keyboard
+> part — see below — or write it yourself. When you cannot do either, reach
+> for `role="group"` instead: it carries no such expectation.
 
 State works the same way. `aria-invalid="true"` marks a field as in error,
 `aria-disabled` and `inert` fade what cannot be operated, `aria-busy` puts a
@@ -191,9 +224,13 @@ current `src/lib/sucss.css`. It is one self-contained file with a light/dark
 and a phone/tablet/full switch, so a change can be looked at without running
 the site.
 
-The framework itself is a single hand-written file: [`src/lib/sucss.css`](src/lib/sucss.css).
-`npm run build:lib` generates the distributable CSS, and `npm run release:dry-run`
-shows exactly what would be published.
+The stylesheet itself is a single hand-written file:
+[`src/lib/sucss.css`](src/lib/sucss.css). The optional keyboard behaviors are
+hand-written too, unbundled, under [`src/behaviors/`](src/behaviors) —
+[#55](https://github.com/RyotaSugawara/su-css/issues/55) explains why no
+build step touches them either. `npm run build:lib` copies both into
+`dist-lib/` (the CSS gets minified too; the JS does not need to be), and
+`npm run release:dry-run` shows exactly what would be published.
 
 Versioning is automated. Land [Conventional Commits](https://www.conventionalcommits.org/)
 on `main` (`feat:`, `fix:`, `feat!:`) and release-please keeps a release PR open
@@ -204,7 +241,9 @@ challenge before they become installable.
 The test suite parses `src/lib/sucss.css` directly: `tests/css/contrast.test.ts`
 checks every token pair against WCAG AA in both themes, and
 `tests/css/structure.test.ts` asserts the accessibility features promised above
-are actually present.
+are actually present. `tests/behaviors/` tests the keyboard behaviors the same
+way a person would use them — see CONTRIBUTING.md for why that one needs a
+real browser instead.
 
 Conventions, the invariants the stylesheet has to hold to, and how to get a
 change released: [CONTRIBUTING.md](CONTRIBUTING.md) and

@@ -1,13 +1,19 @@
 /**
  * The demo site's only JavaScript: the theme switch, the copy buttons, the
  * dialog demo, the popover disclosure demo, and the current-section marker
- * in the nav.
+ * in the nav. The one thing here that is not bespoke to this page is the
+ * import below - SuCSS's own optional behaviors.js, loaded the way any
+ * consumer would load it, so the demo site's own toolbar (below, from the
+ * same [role="toolbar"] markup #45 draws) gets real arrow-key navigation
+ * rather than only claiming it works.
  *
- * SuCSS itself ships no JavaScript. Everything here belongs to the page.
+ * The stylesheet itself still ships no JavaScript - everything else here
+ * belongs to the page, and the look does not depend on any of it running.
  *
  * The pages are rendered per language at build time, so nothing here has to
  * translate anything: the few strings this file writes arrive with the page.
  */
+import './behaviors.js';
 
 const root = document.documentElement;
 const THEME_KEY = 'sucss-theme';

@@ -84,7 +84,18 @@ npm run build     # demo site
 npm run build:lib # dist-lib/sucss.css and dist-lib/sucss.min.css
 npm run build:pages # render the site's pages (dev and build run this first)
 npm run build:review # dist-review/index.html — every ARIA case on one page
+npm run test:behaviors # keyboard behavior, against a real browser (Playwright)
 ```
+
+**A behavior script's tests need a real browser, not a DOM emulator.**
+`src/behaviors.js` and `src/behaviors/*.js` are the optional scripts #55
+decided on — no build step, no bundler needed to run them, read straight from
+`src/` by anything that imports them. What they do is keyboard focus, and
+jsdom (what `npm run test` runs under) does not reproduce that faithfully, so
+`npm run test:behaviors` runs under Playwright instead, against the actual
+built demo site. The first run downloads Chromium
+(`npx playwright install --with-deps chromium` if `npm run test:behaviors`
+itself does not prompt you to).
 
 **Look at a change before you push it.** A classless framework cannot be
 reviewed from a diff: the rules are written against elements, attributes and

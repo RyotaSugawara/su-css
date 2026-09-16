@@ -30,14 +30,21 @@
     ".": "./dist-lib/sucss.css",
     "./sucss.css": "./dist-lib/sucss.css",
     "./sucss.min.css": "./dist-lib/sucss.min.css",
+    "./behaviors.js": "./dist-lib/behaviors.js",
+    "./behaviors/enhance.js": "./dist-lib/behaviors/enhance.js",
     "./package.json": "./package.json"
   },
   "sideEffects": [
-    "*.css"
+    "*.css",
+    "./dist-lib/behaviors.js",
+    "./src/behaviors.js"
   ],
   "files": [
     "dist-lib/sucss.css",
     "dist-lib/sucss.min.css",
+    "dist-lib/behaviors.js",
+    "dist-lib/behaviors/enhance.js",
+    "dist-lib/behaviors/toolbar.js",
     "README.md",
     "LICENSE"
   ],
@@ -64,10 +71,12 @@
     "check:unpublished": "node scripts/check-unpublished.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:behaviors": "playwright test",
     "prepack": "npm run build:lib",
     "release:dry-run": "npm publish --dry-run"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^26.4.0",
     "esbuild": "^0.28.2",
     "postcss": "^8.5.26",
