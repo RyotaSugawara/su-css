@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/RyotaSugawara/su-css/compare/v0.6.0...v0.7.0) (2026-09-16)
+
+
+### Features
+
+* add an optional behaviors.js for toolbar keyboard navigation ([#72](https://github.com/RyotaSugawara/su-css/issues/72)) ([ee793bd](https://github.com/RyotaSugawara/su-css/commit/ee793bd4e059900ead4890bc240f5ec365115c5d)), closes [#55](https://github.com/RyotaSugawara/su-css/issues/55)
+
 ## [0.6.0](https://github.com/RyotaSugawara/su-css/compare/v0.5.0...v0.6.0) (2026-09-15)
 
 
