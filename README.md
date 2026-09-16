@@ -48,7 +48,8 @@ npm install @ryo9ra/su-css
 | --- | --- | --- |
 | `@ryo9ra/su-css` | `dist-lib/sucss.css` | 70 KB (18.1 KB gzipped) |
 | `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 36 KB (6.6 KB gzipped) |
-| `@ryo9ra/su-css/behaviors.js` | `dist-lib/behaviors.js` + its own import | 5.0 KB (2.3 KB gzipped) |
+| `@ryo9ra/su-css/behaviors.js` | `dist-lib/behaviors.js` + its own imports | 5.2 KB (2.4 KB gzipped) |
+| `@ryo9ra/su-css/behaviors.min.js` | `dist-lib/behaviors.min.js` | 1.3 KB (0.7 KB gzipped) |
 
 From a bundler (Vite, webpack, Next.js, …):
 
@@ -84,6 +85,16 @@ navigation for `role="toolbar"`. It reads the same markup the stylesheet
 already does: no new attribute, no class. Nothing about the way something
 *looks* depends on this import; skip it and a toolbar is still a toolbar,
 just one where only Tab moves through it.
+
+`behaviors.js` imports two small files of its own — reading them as written
+is the point, matching the stylesheet's own no-build-step story. A page that
+would rather pay a build step for one smaller request instead can import
+`behaviors.min.js` in its place: the same script, bundled and minified, same
+as `sucss.min.css` is to `sucss.css`.
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css/dist-lib/behaviors.min.js"></script>
+```
 
 For DOM added after that initial scan — a panel inserted by your own script,
 say — call `enhance` yourself instead, which does the same scan without the
@@ -228,9 +239,11 @@ The stylesheet itself is a single hand-written file:
 [`src/lib/sucss.css`](src/lib/sucss.css). The optional keyboard behaviors are
 hand-written too, unbundled, under [`src/behaviors/`](src/behaviors) —
 [#55](https://github.com/RyotaSugawara/su-css/issues/55) explains why no
-build step touches them either. `npm run build:lib` copies both into
-`dist-lib/` (the CSS gets minified too; the JS does not need to be), and
-`npm run release:dry-run` shows exactly what would be published.
+build step is needed to *run* them. `npm run build:lib` copies both into
+`dist-lib/` as published, and minifies each — the CSS into `sucss.min.css`,
+the behaviors bundled into one `behaviors.min.js` — as an option next to the
+readable original, never in place of it. `npm run release:dry-run` shows
+exactly what would be published.
 
 Versioning is automated. Land [Conventional Commits](https://www.conventionalcommits.org/)
 on `main` (`feat:`, `fix:`, `feat!:`) and release-please keeps a release PR open

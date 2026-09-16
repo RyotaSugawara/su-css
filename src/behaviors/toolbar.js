@@ -8,11 +8,14 @@
  * This is that script - reading the same `[role="toolbar"]` the stylesheet
  * already draws, nothing more.
  *
- * A nested composite (the segmented control README's own toolbar demo nests
- * inside itself, a `role="group"` of buttons with `aria-pressed`) is not
- * treated specially: every focusable command in the toolbar, at any depth,
- * is one flat stop. That is a simplification, not a claim that it is always
- * the right behaviour for a nested widget - see the note this ships with.
+ * A nested composite - the segmented control the demo's own toolbar nests, a
+ * `role="group"` of buttons carrying `aria-pressed` - is deliberately just
+ * more flat stops: moving focus through toggle buttons does not activate
+ * them, unlike a native `role="radiogroup"`, where the arrow keys move focus
+ * and change the selection together. Nothing here needs the two kept apart,
+ * so flat traversal is correct, not a shortcut. A real `radiogroup` would
+ * need selection-follows-focus handling of its own - out of scope until the
+ * stylesheet draws one.
  */
 
 const ITEM_SELECTOR = 'button, a[href], input[type="button"], input[type="submit"], input[type="reset"]';

@@ -4,17 +4,22 @@
  * Input : src/lib/sucss.css (the framework itself, hand written)
  *         src/behaviors.js, src/behaviors/*.js (the optional behavior
  *         scripts, hand written, unbundled - see #55: no build step is
- *         needed to run them, so none is used to publish them either)
- * Output: dist-lib/sucss.css      — readable, with a version banner
- *         dist-lib/sucss.min.css  — minified via esbuild
- *         dist-lib/behaviors.js   — copied as-is, with the same banner
- *         dist-lib/behaviors/*.js — likewise, imported by the file above
+ *         needed to run them, so the readable entries below are published
+ *         exactly as written)
+ * Output: dist-lib/sucss.css       — readable, with a version banner
+ *         dist-lib/sucss.min.css   — minified via esbuild
+ *         dist-lib/behaviors.js    — copied as-is, with the same banner
+ *         dist-lib/behaviors/*.js  — likewise, imported by the file above
+ *         dist-lib/behaviors.min.js — the same script, bundled into one file
+ *         and minified, for a page that would rather pay a build step than
+ *         three small requests and the comments above - an option, the same
+ *         way sucss.min.css is one, not a replacement for the readable entry
  */
 import {mkdir, readFile, rm, writeFile} from 'node:fs/promises';
 import {gzipSync} from 'node:zlib';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {transform} from 'esbuild';
+import {build, transform} from 'esbuild';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const srcFile = path.join(root, 'src/lib/sucss.css');
@@ -66,3 +71,23 @@ for (const relPath of behaviorFiles) {
 }
 
 console.log(`behaviors.js + its imports, combined: ${kb(behaviorsTotal)} (gzip ${kb(behaviorsTotalGzip)})`);
+
+const {
+  outputFiles: [bundled],
+  warnings: bundleWarnings,
+} = await build({
+  entryPoints: [path.join(root, 'src/behaviors.js')],
+  bundle: true,
+  minify: true,
+  write: false,
+  target: ['chrome111', 'edge111', 'firefox128', 'safari16.4'],
+  format: 'esm',
+});
+
+for (const warning of bundleWarnings) {
+  console.warn(`esbuild: ${warning.text}`);
+}
+
+const behaviorsMin = banner + bundled.text;
+await writeFile(path.join(outDir, 'behaviors.min.js'), behaviorsMin);
+report('behaviors.min.js', behaviorsMin);

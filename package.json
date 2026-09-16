@@ -31,18 +31,21 @@
     "./sucss.css": "./dist-lib/sucss.css",
     "./sucss.min.css": "./dist-lib/sucss.min.css",
     "./behaviors.js": "./dist-lib/behaviors.js",
+    "./behaviors.min.js": "./dist-lib/behaviors.min.js",
     "./behaviors/enhance.js": "./dist-lib/behaviors/enhance.js",
     "./package.json": "./package.json"
   },
   "sideEffects": [
     "*.css",
     "./dist-lib/behaviors.js",
+    "./dist-lib/behaviors.min.js",
     "./src/behaviors.js"
   ],
   "files": [
     "dist-lib/sucss.css",
     "dist-lib/sucss.min.css",
     "dist-lib/behaviors.js",
+    "dist-lib/behaviors.min.js",
     "dist-lib/behaviors/enhance.js",
     "dist-lib/behaviors/toolbar.js",
     "README.md",

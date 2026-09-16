@@ -16,7 +16,7 @@ SuCSS は npm パッケージ [`@ryo9ra/su-css`](https://www.npmjs.com/package/@
 > **前提: npm アカウントで 2FA が有効になっていること。**
 > ステージ済みパッケージを承認・却下できるのは、パッケージへの書き込み権限があり **かつ 2FA を有効にしているユーザーのみ**です。
 > 2FA が無効だと、ステージしたものを公開できなくなります。
-公開されるのは `src/lib/sucss.css` から生成したCSS 2ファイルと、`src/behaviors.js` / `src/behaviors/*.js`（任意のキーボード挙動スクリプト、#55）をそのままコピーしたものだけです。デモサイト（素のHTMLとVite）のコードや依存関係は含まれません。
+公開されるのは `src/lib/sucss.css` から生成したCSS 2ファイルと、`src/behaviors.js` / `src/behaviors/*.js`（任意のキーボード挙動スクリプト、#55）をそのままコピーしたもの、そしてそれを esbuild でバンドル・minify した `behaviors.min.js` だけです。デモサイト（素のHTMLとVite）のコードや依存関係は含まれません。
 
 ---
 
