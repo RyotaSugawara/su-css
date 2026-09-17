@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/RyotaSugawara/su-css/compare/v0.7.0...v0.8.0) (2026-09-17)
+
+
+### Features
+
+* draw role="tablist" and add automatic-activation keyboard behavior ([#76](https://github.com/RyotaSugawara/su-css/issues/76)) ([cb845d1](https://github.com/RyotaSugawara/su-css/commit/cb845d119aae4a28b63d8826f666a546bb426c58))
+
 ## [0.7.0](https://github.com/RyotaSugawara/su-css/compare/v0.6.0...v0.7.0) (2026-09-16)
 
 
