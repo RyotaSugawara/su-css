@@ -7,7 +7,9 @@
  * calling this once for you on import.
  */
 import {enhanceToolbars} from './toolbar.js';
+import {enhanceTablists} from './tablist.js';
 
 export function enhance(root = document) {
   enhanceToolbars(root);
+  enhanceTablists(root);
 }

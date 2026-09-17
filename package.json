@@ -48,6 +48,7 @@
     "dist-lib/behaviors.min.js",
     "dist-lib/behaviors/enhance.js",
     "dist-lib/behaviors/toolbar.js",
+    "dist-lib/behaviors/tablist.js",
     "README.md",
     "LICENSE"
   ],

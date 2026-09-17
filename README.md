@@ -35,7 +35,7 @@ built in.
   with a short overshoot.
 - **Small and dependency-free.** One CSS file, no build step. The look needs
   no JavaScript at all — an optional script adds keyboard behaviour to the
-  few patterns that need it (`role="toolbar"`, for now).
+  few patterns that need it (`role="toolbar"`, `role="tablist"`).
 - **Themeable.** Every color, radius, and shadow is a CSS custom property.
 
 ## Install
@@ -46,10 +46,10 @@ npm install @ryo9ra/su-css
 
 | Import specifier | File | Size |
 | --- | --- | --- |
-| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 70 KB (18.1 KB gzipped) |
-| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 36 KB (6.6 KB gzipped) |
-| `@ryo9ra/su-css/behaviors.js` | `dist-lib/behaviors.js` + its own imports | 5.8 KB (2.7 KB gzipped) |
-| `@ryo9ra/su-css/behaviors.min.js` | `dist-lib/behaviors.min.js` | 1.4 KB (0.7 KB gzipped) |
+| `@ryo9ra/su-css` | `dist-lib/sucss.css` | 73 KB (18.7 KB gzipped) |
+| `@ryo9ra/su-css/sucss.min.css` | `dist-lib/sucss.min.css` | 38 KB (6.7 KB gzipped) |
+| `@ryo9ra/su-css/behaviors.js` | `dist-lib/behaviors.js` + its own imports | 10.1 KB (4.4 KB gzipped) |
+| `@ryo9ra/su-css/behaviors.min.js` | `dist-lib/behaviors.min.js` | 2.8 KB (1.0 KB gzipped) |
 
 From a bundler (Vite, webpack, Next.js, …):
 
@@ -71,26 +71,30 @@ Or straight from a CDN, with no install at all:
 ### Optional keyboard behaviors
 
 The stylesheet alone gets every element to a reachable, focus-visible state,
-`role="toolbar"` included — Tab reaches it, but the arrow keys inside it do
-nothing on their own, because that is scripted behaviour and this package
-ships none by default. `behaviors.js` is that script, opted into separately:
+`role="toolbar"` and `role="tablist"` included — Tab reaches them, but the
+arrow keys inside do nothing on their own, because that is scripted
+behaviour and this package ships none by default. `behaviors.js` is that
+script, opted into separately:
 
 ```js
 import '@ryo9ra/su-css/behaviors.js';
 ```
 
 Importing it scans the page once for the patterns it knows and wires up
-their standard keyboard behaviour — right now, roving-tabindex arrow-key
-navigation for `role="toolbar"`. It reads the same markup the stylesheet
-already does: no new attribute, no class. Nothing about the way something
-*looks* depends on this import; skip it and a toolbar is still a toolbar,
-just one where only Tab moves through it.
+their standard keyboard behaviour: roving-tabindex arrow-key navigation for
+`role="toolbar"`, and the same plus automatic activation for `role="tablist"`
+— arrowing to a tab selects it and swaps its panel immediately, no Enter or
+Space needed, the way WAI-ARIA APG's tabs are expected to behave. It reads
+the same markup the stylesheet already does: no new attribute, no class.
+Nothing about the way something *looks* depends on this import; skip it and
+a toolbar or a tab list still looks like one, just with only Tab moving
+through it.
 
-`behaviors.js` imports two small files of its own — reading them as written
-is the point, matching the stylesheet's own no-build-step story. A page that
-would rather pay a build step for one smaller request instead can import
-`behaviors.min.js` in its place: the same script, bundled and minified, same
-as `sucss.min.css` is to `sucss.css`.
+`behaviors.js` imports a few small files of its own — reading them as
+written is the point, matching the stylesheet's own no-build-step story. A
+page that would rather pay a build step for one smaller request instead can
+import `behaviors.min.js` in its place: the same script, bundled and
+minified, same as `sucss.min.css` is to `sucss.css`.
 
 ```html
 <script type="module" src="https://cdn.jsdelivr.net/npm/@ryo9ra/su-css/dist-lib/behaviors.min.js"></script>
@@ -153,12 +157,18 @@ own markup gives it. Give those buttons `aria-pressed` (or the links
 `aria-current`) and the same group becomes a segmented control, because a set
 of buttons that carries a selection is a choice rather than a cluster. A
 `role="toolbar"` becomes a bar of commands, where an `<hr>` stands up as a
-separator and `aria-orientation="vertical"` stacks it.
+separator and `aria-orientation="vertical"` stacks it. A `role="tablist"` of
+`role="tab"` buttons — each carrying `aria-selected` and `aria-controls` to
+its own `role="tabpanel"` — draws exactly like the segmented control above,
+because the same rule ("a set that carries a selection is a choice") draws
+both.
 
-> A toolbar also asks Tab to enter it once and the arrow keys to move inside
-> it. SuCSS draws the bar; `@ryo9ra/su-css/behaviors.js` writes the keyboard
-> part — see below — or write it yourself. When you cannot do either, reach
-> for `role="group"` instead: it carries no such expectation.
+> A toolbar or a tab list also asks Tab to enter it once and the arrow keys
+> to move inside it — a tab list additionally expects the arrow keys to move
+> the selection and swap the panel with them. SuCSS draws the bar;
+> `@ryo9ra/su-css/behaviors.js` writes the keyboard part — see below — or
+> write it yourself. When you cannot do either, reach for `role="group"`
+> instead: it carries no such expectation.
 
 State works the same way. `aria-invalid="true"` marks a field as in error,
 `aria-disabled` and `inert` fade what cannot be operated, `aria-busy` puts a

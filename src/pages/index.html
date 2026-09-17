@@ -526,6 +526,50 @@
       </section>
 
       <section>
+        <h3 data-i18n="elements.tabs.heading"></h3>
+        <p data-i18n="elements.tabs.body"></p>
+
+        <div role="tablist" aria-label="" data-i18n-aria-label="elements.tabs.listLabel">
+          <button
+            type="button"
+            role="tab"
+            id="demo-tab-overview"
+            aria-selected="true"
+            aria-controls="demo-panel-overview"
+            data-i18n="elements.tabs.tabOverview"
+          ></button>
+          <button
+            type="button"
+            role="tab"
+            id="demo-tab-details"
+            aria-selected="false"
+            aria-controls="demo-panel-details"
+            data-i18n="elements.tabs.tabDetails"
+          ></button>
+          <button
+            type="button"
+            role="tab"
+            id="demo-tab-history"
+            aria-selected="false"
+            aria-controls="demo-panel-history"
+            data-i18n="elements.tabs.tabHistory"
+          ></button>
+        </div>
+
+        <div id="demo-panel-overview" role="tabpanel" aria-labelledby="demo-tab-overview" tabindex="0">
+          <p data-i18n="elements.tabs.panelOverview"></p>
+        </div>
+        <div id="demo-panel-details" role="tabpanel" aria-labelledby="demo-tab-details" tabindex="0" hidden>
+          <p data-i18n="elements.tabs.panelDetails"></p>
+        </div>
+        <div id="demo-panel-history" role="tabpanel" aria-labelledby="demo-tab-history" tabindex="0" hidden>
+          <p data-i18n="elements.tabs.panelHistory"></p>
+        </div>
+
+        <p data-i18n="elements.tabs.note"></p>
+      </section>
+
+      <section>
         <h3 data-i18n="elements.unavailable.heading"></h3>
         <p data-i18n="elements.unavailable.body"></p>
 

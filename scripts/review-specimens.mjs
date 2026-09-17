@@ -112,6 +112,40 @@ export const specimens = [
 </div>`,
   },
   {
+    id: 'tablist',
+    title: 'role="tablist" — タブ',
+    note:
+      '選択中のタブは aria-pressed と同じ塗りで描かれる。クリックでの切り替えはこの見本だけの短い script の仕事で、' +
+      '実際の矢印キー移動と automatic activation(選択がそのまま移動先になる)は @ryo9ra/su-css/behaviors.js が担う — CSS 側はその存在を前提にしていない。',
+    html: `
+<div role="tablist" aria-label="セクション">
+  <button type="button" role="tab" id="specimen-tab-a" aria-selected="true" aria-controls="specimen-panel-a">概要</button>
+  <button type="button" role="tab" id="specimen-tab-b" aria-selected="false" aria-controls="specimen-panel-b">詳細</button>
+  <button type="button" role="tab" id="specimen-tab-c" aria-selected="false" aria-controls="specimen-panel-c">履歴</button>
+</div>
+<div id="specimen-panel-a" role="tabpanel" aria-labelledby="specimen-tab-a" tabindex="0">
+  <p>概要パネルの中身。</p>
+</div>
+<div id="specimen-panel-b" role="tabpanel" aria-labelledby="specimen-tab-b" tabindex="0" hidden>
+  <p>詳細パネルの中身。</p>
+</div>
+<div id="specimen-panel-c" role="tabpanel" aria-labelledby="specimen-tab-c" tabindex="0" hidden>
+  <p>履歴パネルの中身。</p>
+</div>
+<script>
+  // この見本だけの簡易配線。実際の roving tabindex と automatic activation は behaviors.js の仕事。
+  document.querySelectorAll('[role="tab"][aria-controls^="specimen-panel"]').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('[role="tab"][aria-controls^="specimen-panel"]').forEach((other) => {
+        var chosen = other === tab;
+        other.setAttribute('aria-selected', String(chosen));
+        document.getElementById(other.getAttribute('aria-controls')).hidden = !chosen;
+      });
+    });
+  });
+</script>`,
+  },
+  {
     id: 'focus-ring',
     title: 'フォーカスリング',
     note: 'Tab で辿ると、group / toolbar の中でもリングが他の塗りに負けずに出る。',
